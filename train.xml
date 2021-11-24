@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <corpus>
-  <utterance text="give me the cities in california" sensical="true"/>
-  <utterance text="california nup nup weeble wobbler" sensical="false"/>
+  <utterance text="Give me the cities in california" sensical="true"/>
+  <utterance text="Inflation has risen across wealthy nations over the past year." sensical="true"/>
+  <utterance text="Last spring, Mr. Biden's advisers made a forecasting error that helped turn their fears into reality." sensical="true"/>
+  <utterance text="Administration officials overestimated how quickly Americans would start spending money in restaurants and theme parks." sensical="true"/>
+  <utterance text="Advisers, along with economists and some scientists, believed that widespread availability of coronavirus vaccinations would speed the return to prepandemic life." sensical="true"/>
+  <utterance text="The emergence of the Delta variant of the virus over the summer and fall slowed that return to normalcy." sensical="true"/>
+  <utterance text="That view is the closest thing the administration has offered to an explanation for why the White House was surprised by the size and durability of a price surge." sensical="true"/>
+  <utterance text=" From the administration's perspective, the problem is not that there is too much money sloshing around." sensical="true"/>
+  <utterance text="We're still dealing with the difficult challenges and complications caused by Covid-19" sensical="true"/>
+  <utterance text="While prices are up broadly across industries and sectors of the economy, there is a wide gulf in the inflation rates of physical things people buy and the services they consume" sensical="true"/>
+  <utterance text="His and youngest the sister's of of two she from of the most mistress had." sensical="false"/>
+  <utterance text="House a  in been daughters very marriage, her  early a father." sensical="false"/>
+  <utterance text="As excellent family, of had as both governess friend, Emma." sensical="false"/>
+  <utterance text="Very miss daughters, particularly fond a sixteen taylor in than a years less." sensical="false"/>
+  <utterance text="Intimacy of was it more the her the esteeming she what hardly ceased to highly being had away." sensical="false"/>
+  <utterance text="Alloy were much own situation to well evils, a which were disposition herself threatened the too enjoyments." sensical="false"/>
+  <utterance text="Any was not at misfortunes did they rank her." sensical="false"/>
+  <utterance text="In of at disagreeable shape all sorrow taylor consciousness." sensical="false"/>
+  <utterance text="Think her and dinner, usual, had to and composed father as had after then himself." sensical="false"/>
+  <utterance text="California nup nup weeble wobbler" sensical="false"/>
 </corpus>
