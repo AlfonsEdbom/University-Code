@@ -2,6 +2,12 @@ import random
 # import nltk
 from nltk.tokenize import sent_tokenize
 
+"""
+Scrambles a "inputfile" and saves it in "outputfile".
+Outputfile contains 1 sentence per row w/o '.'
+
+"""
+
 
 def scramble(inputfile, outputfile="MyFileScrambeled.txt"):
     scrambled_list = []
@@ -20,11 +26,10 @@ def scramble(inputfile, outputfile="MyFileScrambeled.txt"):
 
     for sentence in tokens:  # go through all sentences and scramble
         sentence_list = sentence[:-1].split(' ', )  # -1 to remove '.'
+        sentence_list[0].lower()
         random.shuffle(sentence_list)
         sentence_string = ' '.join(sentence_list).strip().capitalize()
-        sentence_string += '.'
         scrambled_list.append(sentence_string)
-
 
     with open(outputfile, 'w') as fout:
         for line in scrambled_list:
