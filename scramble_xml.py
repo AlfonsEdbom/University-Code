@@ -55,7 +55,7 @@ def rest(inputfile, outputfile):
 
 
 if __name__ == '__main__':
-    my_list = get_data("train.xml", "utterance")
+    my_list = get_data("train_old.xml", "utterance")
     print(my_list)
     my_scrambled_list = scramble_sentences(my_list)
     print(my_scrambled_list)

@@ -1,7 +1,7 @@
 import nltk
 from xml.dom import minidom
 
-dom = minidom.parse("train.xml")
+dom = minidom.parse("train_old.xml")
 
 for qtag in dom.getElementsByTagName("utterance"):
     if qtag.getAttribute("sensical") == "true":
