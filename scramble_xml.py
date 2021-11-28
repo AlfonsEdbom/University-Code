@@ -45,7 +45,7 @@ def scramble_sentences(sentence_list):
 def scrambled_to_xml(scrambled_list):
     # TODO: ADD this and look into maybe using ElementTree instead
     print(scrambled_list)
-    tree = ET.parse('train_old.xml')
+    tree = ET.parse('train.xml')
     root = tree.getroot()
 
     for sentence in scrambled_list:
@@ -65,7 +65,7 @@ def rest(inputfile, outputfile):
 
 
 def test_func():
-    myTree = ET.parse('train_old.xml')
+    myTree = ET.parse('train.xml')
     myRoot = myTree.getroot()
 
     for child in myRoot:
@@ -87,7 +87,7 @@ def get_data_minidom(inputfile, tag="utterance"):
 
 
 if __name__ == '__main__':
-    my_list = get_data("train_old.xml")
+    my_list = get_data("train.xml")
     # print(my_list)
     my_scrambled_list = scramble_sentences(my_list)
     # print(my_scrambled_list)
