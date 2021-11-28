@@ -9,13 +9,9 @@ Scrambles all sentences with a certain tag in inputfile and adds them with anoth
 """
 
 
-def scramble(inputfile, tag='sensical'):
-    pass
-
-
 def get_data(inputfile, conditional_phrase='sensical', attribute='text'):
     sentence_list = []
-    tree = ET.parse(inputfile)
+    tree = ET.parse('train.xml')
     root = tree.getroot()
 
     for child in root:
@@ -41,7 +37,6 @@ def scramble_sentences(sentence_list):
 
 
 
-
 def scrambled_to_xml(scrambled_list):
     # TODO: ADD this and look into maybe using ElementTree instead
     print(scrambled_list)
@@ -49,27 +44,12 @@ def scrambled_to_xml(scrambled_list):
     root = tree.getroot()
 
     for sentence in scrambled_list:
-        ET.SubElement(root, 'newutterance', text=sentence, sensical='false')
+        ET.SubElement(root, 'utterance', text=sentence, sensical='false')
 
     tree.write('train_tested.xml', encoding='UTF-8', xml_declaration=True)
     #test = minidom.parse("train_tested.xml") #TODO: Might need use minidom to make nice doc again
     #test.toprettyxml())
 
-
-def rest(inputfile, outputfile):
-    scrambled_list = []
-
-    with open(outputfile, 'w') as fout:
-        for line in scrambled_list:
-            fout.write(line + '\n')
-
-
-def test_func():
-    myTree = ET.parse('train.xml')
-    myRoot = myTree.getroot()
-
-    for child in myRoot:
-        mystring = child.get('text')
 
 
 def get_data_minidom(inputfile, tag="utterance"):
@@ -88,7 +68,7 @@ def get_data_minidom(inputfile, tag="utterance"):
 
 if __name__ == '__main__':
     my_list = get_data("train.xml")
-    # print(my_list)
+    print(my_list)
     my_scrambled_list = scramble_sentences(my_list)
-    # print(my_scrambled_list)
+    print(my_scrambled_list)
     scrambled_to_xml(my_scrambled_list)
