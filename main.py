@@ -1,7 +1,8 @@
 import nltk
 from xml.dom import minidom
-from collections import Counter
-
+import tensorflow as tf
+from tensorflow import keras
+import numpy as np
 
 def weeble_wobble():
     dom = minidom.parse("train.xml")
@@ -96,13 +97,55 @@ def test2(word_index, reverse_word_index, filename):
 
     return sentence_list, sense_list
 
+def test3(train_data, train_labels, test_data, testlabels):
+    print(len(train_data[0]), len(train_data[10]))
+    train_data = keras.preprocessing.sequence.pad_sequences(train_data,
+                                                            value=word_index['<PAD>'],
+                                                            padding='post',
+                                                            maxlen=20)
+    test_data = keras.preprocessing.sequence.pad_sequences(train_data,
+                                                            value=word_index['<PAD>'],
+                                                            padding='post',
+                                                            maxlen=20)
 
+    print(len(train_data[0]), len(train_data[10]))
+    print(len(train_labels))
+
+    size = 200
+
+    model =keras.Sequential()
+
+    model.add(keras.layers.Embedding(size, 16))
+    model.add(keras.layers.GlobalAveragePooling1D())  # flattens 16D vector to 1D vector
+    model.add(keras.layers.Dense(16, activation=tf.nn.relu))  # 16 nodes for 16 dimensions, first NN layer
+    model.add(keras.layers.Dense(1, activation=tf.nn.sigmoid))
+
+    model.summary()
+
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+                  loss='binary_crossentropy',
+                  metrics=['accuracy'])
+
+    x_val = train_data[:100]
+    partial_x_train = train_data[100:]
+
+    y_val = train_labels[:100]
+    partial_y_train = train_labels[100:]
+
+    history = model.fit(partial_x_train,
+                        partial_y_train,
+                        epochs=40,
+                        batch_size=512,
+                        validation_data=(x_val, y_val),
+                        verbose=1)
+
+    results = model.evaluate(test_data, test_labels)
+    print(f'Results: {results}')
 
 if __name__ == "__main__":
     word_index, reverse_word_index = test()
-    train = test2(word_index, reverse_word_index, "train_tested.xml")
-    test = test2(word_index, reverse_word_index, "test.xml")
-
-
+    train_data, train_labels = test2(word_index, reverse_word_index, "train_tested.xml")
+    test_data, test_labels = test2(word_index, reverse_word_index, "test.xml")
+    test3(train_data, train_labels, test_data, test_labels)
 
 
