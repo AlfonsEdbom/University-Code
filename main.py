@@ -2,18 +2,96 @@ import nltk
 from xml.dom import minidom
 import tensorflow as tf
 from tensorflow import keras
+from tensorflow.keras import layers
 import numpy as np
 
 
-# Read file, save content how?
-# list, numpyarray, string,....?
-# Make dict translating words into numbers
-# Split sentences into words
-# order by freq.
-# Add to dict in order
-# Add START, UNK, PAD
-# Apply dict to all words and in #1
-# Make model using keras
+def keras_preprocessing():
+    dom = minidom.parse("train_tested.xml") #open .xml file
+
+    sentence_list = [i.getAttribute('text')for i
+                     in dom.getElementsByTagName("utterance")] #only take text for vectorization
+
+    max_features = 10000 #maximum vocab size
+    max_sent_len = len(max(sentence_list, key=len).split()) #gets the length of longest sentence
+    train_text = tf.constant(sentence_list) #converts list to tensor containing text
+
+    text_vectorizer = layers.TextVectorization(max_tokens= max_features,
+                                               standardize="lower_and_strip_punctuation",
+                                               output_mode="int",
+                                               output_sequence_length=max_sent_len) #create layer that does (str ->int)
+    text_vectorizer.adapt(train_text) #vectorize train_text
+
+    #print(f"vocabulary used now: {text_vectorizer.get_vocabulary()}")
+
+    #Create train_dataset
+    dom2 = minidom.parse('train_tested.xml')
+    train_list = [i.getAttribute('text') for i in dom2.getElementsByTagName('utterance')]
+    train_sense = [1 if i.getAttribute('sensical') == 'true' else 0 for i in dom2.getElementsByTagName('utterance')]
+    train_dataset = tf.data.Dataset.from_tensor_slices((train_list, train_sense))
+    train_dataset = train_dataset.shuffle(len(train_dataset))
+
+
+    #Create test_dataset
+    dom3 = minidom.parse('test.xml')
+    test_list = [i.getAttribute('text') for i in dom3.getElementsByTagName('utterance')]
+    test_sense = [1 if i.getAttribute('sensical') == 'true' else 0 for i in dom3.getElementsByTagName('utterance')]
+    test_cutoff = len(test_list)//2
+    test_dataset = tf.data.Dataset.from_tensor_slices((test_list[:test_cutoff], test_sense[:test_cutoff])) #TODO Shuffle these somehow
+    validation_dataset = tf.data.Dataset.from_tensor_slices((test_list[test_cutoff:], test_sense[test_cutoff:]))
+
+    #Create model
+    embedding_dim = 16
+    model = tf.keras.Sequential()
+    model.add(layers.Embedding(max_features, embedding_dim))
+    model.add(layers.GlobalAveragePooling1D())
+    model.add(layers.Dense(1))
+
+    model.summary()
+
+    model.compile(loss='binary_crossentropy',
+                  optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+                  metrics=['accuracy'])
+
+    epochs = 10
+    history = model.fit(
+        train_dataset,
+        validation_data=validation_dataset,
+        epochs=epochs)
+
+    """
+    inputs = keras.Input(shape=(None, ), dtype="int64") #what inputs the model will accept
+
+    #WTF is this?!?!?
+    x = layers.Embedding(input_dim=text_vectorizer.vocabulary_size(),
+                         output_dim=16)(inputs) #turns indexes into dense vector of
+    x = layers.GRU(8)(x)
+    outputs = layers.Dense(1)(x)
+
+    #WTF is this?!?!? ends
+
+    model = keras.Model(inputs, outputs)
+
+    dom2 = minidom.parse('train_tested.xml')
+    train_list = [i.getAttribute('text') for i
+                  in dom2.getElementsByTagName('utterance')]
+
+    train_sense = [1 if i.getAttribute('sensical') == 'true' else 0
+                   for i in dom2.getElementsByTagName('utterance')]
+
+    train_dataset = tf.data.Dataset.from_tensor_slices((train_list, train_sense))
+
+    train_dataset = train_dataset.batch(2).map(lambda x, y: (text_vectorizer(x), y))
+    print(''\nTraining model...')
+    model.compile(optimizer='rmsprop", loss="mse')
+    model.fit(train_dataset)
+    #model = tf.keras.models.Sequential()
+    #model.add(tf.keras.Input(shape=(1,), dtype=tf.string))
+    #model.add(text_vectorizer)
+
+
+    #print(f"Encoded text:\n {text_vectorizer(['give me the cities in blahblah']).numpy()}")
+    """
 def file_to_dict(filename):
     """
     Creates dictionaries to transform words into integers and then back again
@@ -100,6 +178,14 @@ def file_to_list(word_index, reverse_word_index, filename):
 
 def make_model(train_data, train_labels, test_data, test_labels):
     #print(len(train_data[0]), len(train_data[10]))
+    np.asarray(train_labels)
+    test_data = np.array(test_data)
+    test_labels = np.array(test_labels)
+
+    indices = np.arange(test_data.shape[0])
+    np.random.shuffle(indices)
+    test_data = test_data[indices]
+    test_labels = test_labels[indices]
 
     train_data = keras.preprocessing.sequence.pad_sequences(train_data,
                                                             value=word_index['<PAD>'],
@@ -109,10 +195,7 @@ def make_model(train_data, train_labels, test_data, test_labels):
                                                            value=word_index['<PAD>'],
                                                            padding='post',
                                                            maxlen=20)
-    #np.asarray(train_data)
-    np.asarray(train_labels)
-    test_data = np.array(test_data)
-    test_labels = np.array(test_labels)
+
 
     print(len(test_data))
     print(len(test_labels))
@@ -164,6 +247,8 @@ def make_model(train_data, train_labels, test_data, test_labels):
 if __name__ == "__main__":
     word_index, reverse_word_index = file_to_dict("train_tested.xml")
     #print(word_index)
-    #x_d, x_l = file_to_list(word_index, reverse_word_index, "train_tested.xml")
-    #y_d, y_l = file_to_list(word_index, reverse_word_index, "test.xml")
-    #make_model(x_d, x_l, y_d, y_l)
+    #keras_preprocessing()
+    x_d, x_l = file_to_list(word_index, reverse_word_index, "train_tested.xml")
+    y_d, y_l = file_to_list(word_index, reverse_word_index, "test.xml")
+    make_model(x_d, x_l, y_d, y_l)
+
