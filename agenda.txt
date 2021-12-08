@@ -1,0 +1,11 @@
+
+Get book2xml processort.
+
+input: book + n + offset
+output is: positive.xml which is the first n sentences
+
+build test:
+input: postive.xml
+out: full.xml.
+
+Do the same thing but grab from different part of book.
