@@ -84,4 +84,3 @@ history = model.fit(partial_x_train,
 
 results = model.evaluate(test_data, test_labels)
 print('Results: ', results)
-
