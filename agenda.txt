@@ -9,3 +9,12 @@ input: postive.xml
 out: full.xml.
 
 Do the same thing but grab from different part of book.
+
+---------------------------------
+
+Work with data samples to find a 95% accuracy.
+
+
+---------------------------------
+
+Structure and name everything perfect.
