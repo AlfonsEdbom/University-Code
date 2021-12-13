@@ -1,100 +1,10 @@
 import nltk
 from xml.dom import minidom
-import xml.etree.ElementTree as ET
+import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
-import numpy as np
-
-
-
-
-def keras_preprocessing():
-    dom = minidom.parse("train_tested.xml")  # open .xml file
-
-    sentence_list = [i.getAttribute('text') for i
-                     in dom.getElementsByTagName("utterance")]  # only take text for vectorization
-
-    max_features = 10000  # maximum vocab size
-    max_sent_len = len(max(sentence_list, key=len).split())  # gets the length of longest sentence
-    train_text = tf.constant(sentence_list)  # converts list to tensor containing text
-
-    text_vectorizer = layers.TextVectorization(max_tokens=max_features,
-                                               standardize="lower_and_strip_punctuation",
-                                               output_mode="int",
-                                               output_sequence_length=max_sent_len)  # create layer that does (str ->int)
-    text_vectorizer.adapt(train_text)  # vectorize train_text
-
-    # print(f"vocabulary used now: {text_vectorizer.get_vocabulary()}")
-
-    # Create train_dataset
-    dom2 = minidom.parse('train_tested.xml')
-    train_list = [i.getAttribute('text') for i in dom2.getElementsByTagName('utterance')]
-    train_sense = [1 if i.getAttribute('sensical') == 'true' else 0 for i in dom2.getElementsByTagName('utterance')]
-    train_dataset = tf.data.Dataset.from_tensor_slices((train_list, train_sense))
-    train_dataset = train_dataset.shuffle(len(train_dataset))
-
-    # Create test_dataset
-    dom3 = minidom.parse('test.xml')
-    test_list = [i.getAttribute('text') for i in dom3.getElementsByTagName('utterance')]
-    test_sense = [1 if i.getAttribute('sensical') == 'true' else 0 for i in dom3.getElementsByTagName('utterance')]
-    test_cutoff = len(test_list) // 2
-    test_dataset = tf.data.Dataset.from_tensor_slices(
-        (test_list[:test_cutoff], test_sense[:test_cutoff]))  # TODO Shuffle these somehow
-    validation_dataset = tf.data.Dataset.from_tensor_slices((test_list[test_cutoff:], test_sense[test_cutoff:]))
-
-    # Create model
-    embedding_dim = 16
-    model = tf.keras.Sequential()
-    model.add(layers.Embedding(max_features, embedding_dim))
-    model.add(layers.GlobalAveragePooling1D())
-    model.add(layers.Dense(1))
-
-    model.summary()
-
-    model.compile(loss='binary_crossentropy',
-                  optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
-                  metrics=['accuracy'])
-
-    epochs = 10
-    history = model.fit(
-        train_dataset,
-        validation_data=validation_dataset,
-        epochs=epochs)
-
-    """
-    inputs = keras.Input(shape=(None, ), dtype="int64") #what inputs the model will accept
-
-    #WTF is this?!?!?
-    x = layers.Embedding(input_dim=text_vectorizer.vocabulary_size(),
-                         output_dim=16)(inputs) #turns indexes into dense vector of
-    x = layers.GRU(8)(x)
-    outputs = layers.Dense(1)(x)
-
-    #WTF is this?!?!? ends
-
-    model = keras.Model(inputs, outputs)
-
-    dom2 = minidom.parse('train_tested.xml')
-    train_list = [i.getAttribute('text') for i
-                  in dom2.getElementsByTagName('utterance')]
-
-    train_sense = [1 if i.getAttribute('sensical') == 'true' else 0
-                   for i in dom2.getElementsByTagName('utterance')]
-
-    train_dataset = tf.data.Dataset.from_tensor_slices((train_list, train_sense))
-
-    train_dataset = train_dataset.batch(2).map(lambda x, y: (text_vectorizer(x), y))
-    print(''\nTraining model...')
-    model.compile(optimizer='rmsprop", loss="mse')
-    model.fit(train_dataset)
-    #model = tf.keras.models.Sequential()
-    #model.add(tf.keras.Input(shape=(1,), dtype=tf.string))
-    #model.add(text_vectorizer)
-
-
-    #print(f"Encoded text:\n {text_vectorizer(['give me the cities in blahblah']).numpy()}")
-    """
+import xml.etree.ElementTree as ET
 
 
 def file_to_dict(filename):
@@ -179,6 +89,114 @@ def file_to_list(word_index, reverse_word_index, filename):
     return sentence_list, sense_list
 
 
+def get_data(filename):
+    text = []
+    labels = []
+    dom = minidom.parse(filename)
+    for qtag in dom.getElementsByTagName("utterance"):
+        text.append(qtag.getAttribute('text'))
+        if qtag.getAttribute("sensical") == "true":
+            labels.append(1)
+        else:
+            labels.append(0)
+
+    return text, labels
+
+
+def model_preprocessing(train_data, train_labels, test_data, test_labels):
+    #For some reason, some of these does not convert to numpy array when using np.array
+    #print(type(train_data), type(train_labels), type(test_data), type(test_labels))
+    train_data = np.asarray(train_data)
+    train_labels = np.asarray(train_labels)
+    test_data = np.asarray(test_data)
+    test_labels = np.array(test_labels)
+    #print(type(train_data), type(train_labels), type(test_data), type(test_labels))
+
+    #create word to int dict and reverse
+    tokenizer = keras.preprocessing.text.Tokenizer(num_words=10000, oov_token='<00v>') #00v or <UNK> does it matter?
+    tokenizer.fit_on_texts(train_data)
+    word_index = tokenizer.word_index
+    train_sequences = tokenizer.texts_to_sequences(train_data)
+    test_sequences = tokenizer.texts_to_sequences(test_data)
+
+    print(len(word_index)) #why is this 12432 and not 10000?????
+    print('<00v>' in test_sequences) #This is not here, a problem or not?
+
+    print(train_sequences[0])
+    padded_train_data = keras.preprocessing.sequence.pad_sequences(train_sequences, value=0, padding='post', maxlen=25)
+    padded_test_data = keras.preprocessing.sequence.pad_sequences(test_sequences, value=0, padding='post', maxlen=25)
+    print(padded_train_data[0])
+
+    #Create model
+    vocab_size = 10000
+    model = keras.Sequential()
+    model.add(keras.layers.Embedding(vocab_size, 16))
+    model.add(keras.layers.GlobalAveragePooling1D())
+    model.add(keras.layers.Dense(16, activation=tf.nn.relu))
+    model.add(keras.layers.Dense(1, activation=tf.nn.sigmoid))
+
+    model.summary()
+
+    #compile model
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+                  loss='binary_crossentropy',
+                  metrics=['accuracy'])
+
+
+    #Dividing into train and validation data
+    train_values = padded_train_data[:(len(padded_train_data) // 2)]
+    validation_values = padded_train_data[(len(padded_train_data) // 2):]
+
+    train_sensical = train_labels[:(len(train_labels) // 2)]
+    validation_sensical = train_labels[(len(train_data) // 2):]
+
+    #Fit the model
+    history = model.fit(validation_values,
+                        validation_sensical,
+                        epochs=10,
+                        batch_size=512,
+                        validation_data=(train_values, train_sensical),
+                        verbose=1)
+
+    results = model.evaluate(test_data, test_labels)
+
+    print(f'Results: {results}')
+    return results
+
+
+
+
+def model_making(train_data, train_labels, test_data, test_labels, vocab_size):
+    model = keras.Sequential()
+    model.add(keras.layers.Embedding(vocab_size, 16))
+    model.add(keras.layers.GlobalAveragePooling1D())
+    model.add(keras.layers.Dense(16, activation=tf.nn.relu))
+    model.add(keras.layers.Dense(1, activation=tf.nn.sigmoid))
+
+    model.summary()
+
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+                  loss='binary_crossentropy',
+                  metrics=['accuracy'])
+
+    train_values = train_data[:(len(train_data) // 2)]
+    validation_values = train_data[(len(train_data) // 2):]
+
+    train_sensical = train_labels[:(len(train_labels) // 2)]
+    validation_sensical = train_labels[(len(train_data) // 2):]
+
+    history = model.fit(validation_values,
+                        validation_sensical,
+                        epochos=10,
+                        batch_size=512,
+                        validation_data=(train_values, train_sensical),
+                        verbose=1)
+
+    results = model.evaluate(test_data, test_labels)
+
+    print(f'Results: {results}')
+
+
 def make_model(train_data, train_labels, test_data, test_labels):
     # print(len(train_data[0]), len(train_data[10]))
     np.asarray(train_labels)
@@ -193,15 +211,15 @@ def make_model(train_data, train_labels, test_data, test_labels):
     train_data = keras.preprocessing.sequence.pad_sequences(train_data,
                                                             value=word_index['<PAD>'],
                                                             padding='post',
-                                                            maxlen=20)
+                                                            maxlen=25)
     test_data = keras.preprocessing.sequence.pad_sequences(test_data,
                                                            value=word_index['<PAD>'],
                                                            padding='post',
-                                                           maxlen=20)
+                                                           maxlen=25)
 
     print(len(test_data))
     print(len(test_labels))
-    vocab_size = 1000
+    vocab_size = 100000
 
     model = keras.Sequential()
     model.add(keras.layers.Embedding(vocab_size, 16))  # every word get vectorized in 16 dimensions
@@ -216,11 +234,14 @@ def make_model(train_data, train_labels, test_data, test_labels):
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
 
-    x_val = train_data[:100]
-    partial_x_train = train_data[100:]
+    len_train = len(train_data)
+    half_len_train = len_train // 2
+    quarter_len_train = len_train // 4
+    x_val = train_data[:half_len_train]
+    partial_x_train = train_data[half_len_train:]
 
-    y_val = train_labels[:100]
-    partial_y_train = train_labels[100:]
+    y_val = train_labels[:half_len_train]
+    partial_y_train = train_labels[half_len_train:]
 
     np.asarray(x_val)
     np.asarray(partial_y_train)
@@ -234,7 +255,7 @@ def make_model(train_data, train_labels, test_data, test_labels):
 
     history = model.fit(partial_x_train,
                         partial_y_train,
-                        epochs=40,
+                        epochs=10,
                         batch_size=512,
                         validation_data=(x_val, y_val),
                         verbose=1)
@@ -244,11 +265,103 @@ def make_model(train_data, train_labels, test_data, test_labels):
     print(f'Results: {results}')
 
 
-
 if __name__ == "__main__":
-    word_index, reverse_word_index = file_to_dict("train_tested.xml")
+    train_data, train_labels = get_data('train_full.xml')
+    # print(f'{train_data[-1]}, {train_labels[-1]}')
+    test_data, test_labels = get_data('test_full.xml')
+    # print(f'{test_data[-1]}, {test_labels[-1]}')
+    result = model_preprocessing(train_data, train_labels, test_data, test_labels)
+    # word_index, reverse_word_index = file_to_dict("train_full.xml")
     # print(word_index)
     # keras_preprocessing()
-    #x_d, x_l = file_to_list(word_index, reverse_word_index, "train_tested.xml")
-    #y_d, y_l = file_to_list(word_index, reverse_word_index, "test.xml")
-    #make_model(x_d, x_l, y_d, y_l)
+    # x_d, x_l = file_to_list(word_index, reverse_word_index, "train_full.xml")
+    # y_d, y_l = file_to_list(word_index, reverse_word_index, "test_full.xml")
+    # make_model(x_d, x_l, y_d, y_l)
+
+"""
+    Random Stuff from another example
+    def keras_preprocessing():
+    dom = minidom.parse("train_tested.xml")  # open .xml file
+
+    sentence_list = [i.getAttribute('text') for i
+                     in dom.getElementsByTagName("utterance")]  # only take text for vectorization
+
+    max_features = 10000  # maximum vocab size
+    max_sent_len = len(max(sentence_list, key=len).split())  # gets the length of longest sentence
+    train_text = tf.constant(sentence_list)  # converts list to tensor containing text
+
+    text_vectorizer = layers.TextVectorization(max_tokens=max_features,
+                                               standardize="lower_and_strip_punctuation",
+                                               output_mode="int",
+                                               output_sequence_length=max_sent_len)  # create layer that does (str ->int)
+    text_vectorizer.adapt(train_text)  # vectorize train_text
+
+    # print(f"vocabulary used now: {text_vectorizer.get_vocabulary()}")
+
+    # Create train_dataset
+    dom2 = minidom.parse('train_tested.xml')
+    train_list = [i.getAttribute('text') for i in dom2.getElementsByTagName('utterance')]
+    train_sense = [1 if i.getAttribute('sensical') == 'true' else 0 for i in dom2.getElementsByTagName('utterance')]
+    train_dataset = tf.data.Dataset.from_tensor_slices((train_list, train_sense))
+    train_dataset = train_dataset.shuffle(len(train_dataset))
+
+    # Create test_dataset
+    dom3 = minidom.parse('test.xml')
+    test_list = [i.getAttribute('text') for i in dom3.getElementsByTagName('utterance')]
+    test_sense = [1 if i.getAttribute('sensical') == 'true' else 0 for i in dom3.getElementsByTagName('utterance')]
+    test_cutoff = len(test_list) // 2
+    test_dataset = tf.data.Dataset.from_tensor_slices(
+        (test_list[:test_cutoff], test_sense[:test_cutoff]))  # TODO Shuffle these somehow
+    validation_dataset = tf.data.Dataset.from_tensor_slices((test_list[test_cutoff:], test_sense[test_cutoff:]))
+
+    # Create model
+    embedding_dim = 16
+    model = tf.keras.Sequential()
+    model.add(layers.Embedding(max_features, embedding_dim))
+    model.add(layers.GlobalAveragePooling1D())
+    model.add(layers.Dense(1))
+
+    model.summary()
+
+    model.compile(loss='binary_crossentropy',
+                  optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+                  metrics=['accuracy'])
+
+    epochs = 10
+    history = model.fit(
+        train_dataset,
+        validation_data=validation_dataset,
+        epochs=epochs)
+    
+    inputs = keras.Input(shape=(None, ), dtype="int64") #what inputs the model will accept
+
+    #WTF is this?!?!?
+    x = layers.Embedding(input_dim=text_vectorizer.vocabulary_size(),
+                         output_dim=16)(inputs) #turns indexes into dense vector of
+    x = layers.GRU(8)(x)
+    outputs = layers.Dense(1)(x)
+
+    #WTF is this?!?!? ends
+
+    model = keras.Model(inputs, outputs)
+
+    dom2 = minidom.parse('train_tested.xml')
+    train_list = [i.getAttribute('text') for i
+                  in dom2.getElementsByTagName('utterance')]
+
+    train_sense = [1 if i.getAttribute('sensical') == 'true' else 0
+                   for i in dom2.getElementsByTagName('utterance')]
+
+    train_dataset = tf.data.Dataset.from_tensor_slices((train_list, train_sense))
+
+    train_dataset = train_dataset.batch(2).map(lambda x, y: (text_vectorizer(x), y))
+    print(''\nTraining model...')
+    model.compile(optimizer='rmsprop", loss="mse')
+    model.fit(train_dataset)
+    #model = tf.keras.models.Sequential()
+    #model.add(tf.keras.Input(shape=(1,), dtype=tf.string))
+    #model.add(text_vectorizer)
+
+
+    #print(f"Encoded text:\n {text_vectorizer(['give me the cities in blahblah']).numpy()}")
+"""
