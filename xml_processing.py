@@ -15,7 +15,7 @@ def book_to_xml(book, n, fname_in, fname_out, offset=0):
     :return: xml file containing n sentences with start at offset
     """
 
-    book_sentences = nltk.text.Text(book)  # mby not needed?
+    book_sentences = nltk.text.Text(book)
 
     xml_tree = ET.parse(fname_in)
     root = xml_tree.getroot()
@@ -102,5 +102,5 @@ if __name__ == '__main__':
                 fname_in='test.xml', fname_out='test_sensical.xml')
     test_sensical_list = get_data('test_sensical.xml')
     scrambled_test_list = scramble_sentences(test_sensical_list)
-    scrambled_to_xml(scrambled_train_list, fname_in='test_sensical.xml',
+    scrambled_to_xml(scrambled_test_list, fname_in='test_sensical.xml',
                      fname_out='test_full.xml')
