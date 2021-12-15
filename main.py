@@ -7,9 +7,7 @@ from tensorflow.keras import layers
 import xml.etree.ElementTree as ET
 
 
-
-
-def get_data(filename):
+def data_from_xml(filename):
     text = []
     labels = []
     dom = minidom.parse(filename)
@@ -24,48 +22,45 @@ def get_data(filename):
 
 
 def model_preprocessing(train_data, train_labels, test_data, test_labels):
-    #For some reason, these does not convert to numpy array when using np.array
-    #print(type(train_data), type(train_labels), type(test_data), type(test_labels))
+    # print(type(train_data), type(train_labels), type(test_data), type(test_labels))
     train_data = np.asarray(train_data)
     train_labels = np.asarray(train_labels)
     test_data = np.asarray(test_data)
     test_labels = np.array(test_labels)
-    #print(type(train_data), type(train_labels), type(test_data), type(test_labels))
+    # print(type(train_data), type(train_labels), type(test_data), type(test_labels))
 
-    print(test_data[0])
-    print(test_labels[0])
-
+    # shuffles the test data
     indices = np.arange(test_data.shape[0])
     np.random.shuffle(indices)
     test_data = test_data[indices]
     test_labels = test_labels[indices]
 
-    print(test_data[0])
-    print(test_labels[0])
-
-
+    # shuffles the train data
     indices = np.arange(test_data.shape[0])
     np.random.shuffle(indices)
     train_data = test_data[indices]
     train_labels = test_labels[indices]
 
-    #create word to int dict and reverse
-    tokenizer = keras.preprocessing.text.Tokenizer(num_words=10000, oov_token='<00v>') #00v or <UNK> does it matter?
+    # create word to int dict and reverse
+    tokenizer = keras.preprocessing.text.Tokenizer(num_words=10000, oov_token='<OOV>')
     tokenizer.fit_on_texts(train_data)
     word_index = tokenizer.word_index
-    print(word_index)
+
     train_sequences = tokenizer.texts_to_sequences(train_data)
     test_sequences = tokenizer.texts_to_sequences(test_data)
 
-    print(len(word_index)) #why is this 12432 and not 10000?????
-    print('<00v>' in test_sequences) #This is not here, a problem or not?
+    print(len(word_index))  #Q: why is this 17384 and not 10000?
+                            #A: word_index is computed the same way, despite what value we assign to num_words. But it will only use
+                            #   the assigned value to num_words when doing texts_to_sequences
 
-    print(train_sequences[0])
+    print(word_index['<OOV>'])
+    print(1 in test_sequences)  # Q: This is not here, a problem or not (referring to the <OOV>)?
+                                # A: Not a problem, since we're basically using the same book with the same words
+
     padded_train_data = keras.preprocessing.sequence.pad_sequences(train_sequences, value=0, padding='post', maxlen=25)
     padded_test_data = keras.preprocessing.sequence.pad_sequences(test_sequences, value=0, padding='post', maxlen=25)
-    print(padded_train_data[0])
 
-    #Dividing into train and validation data
+    # Dividing into train and validation data
     train_values = padded_train_data #[:(len(padded_train_data) // 2)]
     validation_values = padded_test_data[(len(padded_test_data) // 2):]
 
@@ -75,16 +70,7 @@ def model_preprocessing(train_data, train_labels, test_data, test_labels):
     padded_test_data = padded_test_data[:len(test_data)//2]
     test_labels = test_labels[:len(test_labels)//2]
 
-    print("lengths")
-    print(len(validation_values))
-    print(len(validation_sensical))
-    print(len(train_values))
-    print(len(train_sensical))
-    print(len(padded_test_data))
-    print(len(test_labels))
-
-
-    #Create model
+    # Create model
     vocab_size = 10000
     model = keras.Sequential()
     model.add(keras.layers.Embedding(vocab_size, 16))
@@ -94,14 +80,12 @@ def model_preprocessing(train_data, train_labels, test_data, test_labels):
 
     model.summary()
 
-    #compile model
+    # compile model
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
 
-
-
-    #Fit the model
+    # Fit the model
     history = model.fit(train_values,
                         train_sensical,
                         epochs=50,
@@ -111,29 +95,22 @@ def model_preprocessing(train_data, train_labels, test_data, test_labels):
 
     results = model.evaluate(padded_test_data, test_labels)
 
-    random_sentence = ["Our oral antiviral candidate, if authorized or approved, could have a meaningful impact on the lives of many, as the data further support the efficacy of paxlovid in reducing hospitalization and death and show a substantial decrease in viral load"]
+    random_sentence = ["Our oral antiviral candidate, if authorized or approved, could have a meaningful impact on "
+                       "the lives of many, as the data further support the efficacy of paxlovid in reducing "
+                       "hospitalization and death and show a substantial decrease in viral load"]
     my_array = np.asarray(random_sentence)
     my_sequence = tokenizer.texts_to_sequences(my_array)
     padded_sequence = keras.preprocessing.sequence.pad_sequences(my_sequence, value=0, padding='post', maxlen=25)
 
     print(f"predict stuff: {model.predict(padded_sequence)}")
 
-
-
-    #print(f'Results: {results}')
-
     return results
 
 
-
-
-
-
-
 if __name__ == "__main__":
-    train_data, train_labels = get_data('train_full.xml')
+    train_data, train_labels = data_from_xml('train_full.xml')
     # print(f'{train_data[-1]}, {train_labels[-1]}')
-    test_data, test_labels = get_data('test_full.xml')
+    test_data, test_labels = data_from_xml('test_full.xml')
     # print(f'{test_data[-1]}, {test_labels[-1]}')
     result = model_preprocessing(train_data, train_labels, test_data, test_labels)
     print(f"The result is {result}")
