@@ -12,7 +12,8 @@ def index(request):
 
     return render(request, 'index.html')
 
-
+def test(request):
+    return HttpResponse("<h1> this is a test page! </h1>")
 def upload(request):
     context = {}
     if request.method == 'POST':
