@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>NLU classifier</title>
+</head>
+
+<body>
+    <h1>Using our model to predict scrambled sentences</h1>
+    <div>Please upload a sentence</div>
+    <div class="form">
+        <form method="post" action="/predict/ " enctype="multipart/form-data">
+            { csrf_token }
+            <input name="text" type="text" placeholder="Please enter a sentence"><br>
+            <button type="button", name="save">Submit </button>
+        </form>
+
+    </div>
+</body>
+</html>
