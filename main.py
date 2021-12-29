@@ -104,7 +104,7 @@ def model_preprocessing(train_data, train_labels, test_data, test_labels):
 
     print(f"predict stuff: {model.predict(padded_sequence)}")
 
-    model.save('NLU_model/')
+    model.save('Testpage/Test/NLU_model/')
     return results
 
 

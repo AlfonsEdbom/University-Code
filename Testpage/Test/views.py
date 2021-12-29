@@ -1,10 +1,14 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.template import loader
 from django.core.files.storage import FileSystemStorage
 from .forms import TextForm
-from .predict import predict
 from .models import PredictString
+from .predict import predict
+
+import tensorflow as tf
+from tensorflow import keras
+import numpy as np
 
 
 def index(request):
@@ -12,8 +16,7 @@ def index(request):
 
     return render(request, 'index.html')
 
-def test(request):
-    return HttpResponse("<h1> this is a test page! </h1>")
+
 def upload(request):
     context = {}
     if request.method == 'POST':
@@ -22,6 +25,13 @@ def upload(request):
         name = fs.save(uploaded_file.name, uploaded_file)
         context['url'] = fs.url(name)
     return render(request, 'upload.html', context)
+
+def test(request):
+    test_string = ["test test test test testing if this is still working or if it is not working as it is intedend"]
+    context = {}
+    context["test"] = test_string
+    predict(test_string)
+    return render(request, 'test.html', context)
 
 
 def predict_text(request):
