@@ -17,6 +17,21 @@ def index(request):
     return render(request, 'index.html')
 
 
+def predict_sentence(request):
+    context = {}
+    if request.method == 'POST':
+        form = TextForm(request.POST)  # If a file is uploaded request.FILES is needed also
+        if form.is_valid():
+            t = form.cleaned_data["text"]
+            context["text"] = t
+            prediction = predict(t)
+            context["prediction"] = prediction
+    else:
+        render(request, 'predict.html')
+
+    return render(request, 'predict.html', context)
+
+
 def upload(request):
     context = {}
     if request.method == 'POST':
@@ -26,9 +41,11 @@ def upload(request):
         context['url'] = fs.url(name)
     return render(request, 'upload.html', context)
 
+
 def test(request):
+    #this is not needed right now, still here for testing things
     context = {}
-    if request.method =='POST':
+    if request.method == 'POST':
         form = TextForm(request.POST)
         if form.is_valid():
             t = form.cleaned_data["text"]
@@ -39,34 +56,3 @@ def test(request):
         render(request, 'test.html')
 
     return render(request, 'test.html', context)
-
-def predict_text(request):
-    context = {}
-    if request.method == "POST":
-        form = TextForm(request.POST) #If a file is uploaded request.FILES is needed also
-        #if form.is_valid():
-            #text_string = form.cleaned_data["text"]
-            #t = PredictString(text=text_string)
-            #t.save()
-
-            #result = predict(["This", "is", "a", "temporary", "prediction", "list"]) #TODO: Add the right string here
-            #resp = {'data': "maybe t", 'result': result} #TODO: Figure out what should be here
-            #return render(request, "Test/result.html", resp)
-    else:
-        pass
-
-    return render(request, 'predict.html', context)
-def predict_text_old(request):
-    context = {}
-    if request.method == "POST":
-        form = TextForm(request.POST) #TODO: If a file is uploaded request.FILES is needed also
-        if form.is_valid():
-            text_string = form.cleaned_data["text"]
-            t = PredictString(text=text_string)
-            t.save()
-
-            result = predict(["This", "is", "a", "temporary", "prediction", "list"]) #TODO: Add the right string here
-            resp = {'data': "maybe t", 'result': result} #TODO: Figure out what should be here
-            return render(request, "Test/result.html", resp)
-    else:
-        return render(request, "Test/predict.html")

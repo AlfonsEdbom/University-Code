@@ -6,15 +6,19 @@
 </head>
 
 <body>
-    <h1>Using our model to predict scrambled sentences</h1>
-    <div>Please upload a sentence</div>
+    <h1>NLU-classifier predicting sentences</h1>
     <div class="form">
-        <form method="post" action="/predict/ " enctype="multipart/form-data">
-            { csrf_token }
-            <input name="text" type="text" placeholder="Please enter a sentence"><br>
-            <button type="button", name="save">Submit </button>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input name="text" type="text" placeholder="Please enter a sentence">
+            <button type="button" name="save">Submit </button>
+            <p>This is the sentence being predicted by the model:</p>
+            <p> {{ text }}</p>
         </form>
 
+        {% if prediction %}
+            <p>This is the model prediction {{ prediction }}</p>
+        {% endif %}
     </div>
 </body>
 </html>
