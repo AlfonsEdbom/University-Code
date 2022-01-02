@@ -6,7 +6,7 @@ class UploadFileForm(forms.Form):
 
 
 class TextForm(forms.Form): #TODO: Make sure its working correctly
-    text = forms.CharField(max_length=25)
+    text = forms.CharField(label='text', max_length=200)
 
 
 class UploadTextForm(forms.Form):
