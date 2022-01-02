@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<corpus>
+	<utterance text="Give me the cities in california." sensical="true"/>
+	<utterance text="The reserve police officer radioed in with an alarming report" sensical="true"/>
+	<utterance text="Two people witnessed a fight, possibly involving knives, outside the Rotary Building at a riverfront park in Waukesha" sensical="true"/>
+	<utterance text="Within seconds, several officers said they would head there." sensical="true"/>
+	<utterance text="The dispatcher told them to hurry" sensical="true"/>
+	<utterance text="But when the first patrolman arrived, near the spot where kayaks are rented out in less frigid months, whatever fight might have happened was over" sensical="true"/>
+	<utterance text="About a minute later, panic crackled across the police scanner." sensical="true"/>
+	<utterance text="He wasn't stopping" sensical="true"/>
+	<utterance text="They said he had been fleeing a nearby domestic dispute that may have involved a knife." sensical="true"/>
+	<utterance text="Mr. Brooks, who cried at the defense table in his first court appearance on Tuesday afternoon, was charged with five counts of first-degree intentional homicide." sensical="true"/>
+	<utterance text="california nup nup weeble wobbler" sensical="false"/>
+	<utterance text="Officers to he police was stop told by." sensical="false"/>
+	<utterance text="That brooks was the indigent for client in lawyer little his court, a but said court told." sensical="false"/>
+	<utterance text="Face his green white hearing and of wore for brooks, hung the who a head vest mask, dark most." sensical="false"/>
+	<utterance text="Remained weekend usually downtown what victims waukesha tuesday, their happened still trying calm were some piece hospitalized.," sensical="false"/>
+	<utterance text="The were disputes no before by similar published minutes online the on police in attack discussed scanner feed." sensical="false"/>
+	<utterance text="I guy direction the figured the looking knew for was somebody parade it and was he they from that the because was were heading." sensical="false"/>
+	<utterance text="Neighbor sensed was first his brooks, something wrong approached he and when legate." sensical="false"/>
+	<utterance text="Was whether care i it my guy responsibility he or the to didn’t call not was." sensical="false"/>
+	<utterance text="The maximize and said route through police damage as rampaged prosecutors seemed to officers parade he." sensical="false"/>
+</corpus>
