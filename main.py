@@ -1,11 +1,7 @@
-import nltk
 from xml.dom import minidom
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras import layers
-import xml.etree.ElementTree as ET
-
 
 def data_from_xml(filename):
     text = []
@@ -23,6 +19,7 @@ def data_from_xml(filename):
 
 def model_preprocessing(train_data, train_labels, test_data, test_labels):
     # print(type(train_data), type(train_labels), type(test_data), type(test_labels))
+
     train_data = np.asarray(train_data)
     train_labels = np.asarray(train_labels)
     test_data = np.asarray(test_data)
@@ -49,26 +46,27 @@ def model_preprocessing(train_data, train_labels, test_data, test_labels):
     train_sequences = tokenizer.texts_to_sequences(train_data)
     test_sequences = tokenizer.texts_to_sequences(test_data)
 
-    print(len(word_index))  #Q: why is this 17384 and not 10000?
-                            #A: word_index is computed the same way, despite what value we assign to num_words. But it will only use
-                            #   the assigned value to num_words when doing texts_to_sequences
+    json_tokenizer = tokenizer.to_json()
+    print(len(word_index))  # Q: why is this 17384 and not 10000?
+    # A: word_index is computed the same way, despite what value we assign to num_words. But it will only use
+    #   the assigned value to num_words when doing texts_to_sequences
 
     print(word_index['<OOV>'])
     print(1 in test_sequences)  # Q: This is not here, a problem or not (referring to the <OOV>)?
-                                # A: Not a problem, since we're basically using the same book with the same words
+    # A: Not a problem, since we're basically using the same book with the same words
 
     padded_train_data = keras.preprocessing.sequence.pad_sequences(train_sequences, value=0, padding='post', maxlen=25)
     padded_test_data = keras.preprocessing.sequence.pad_sequences(test_sequences, value=0, padding='post', maxlen=25)
 
     # Dividing into train and validation data
-    train_values = padded_train_data #[:(len(padded_train_data) // 2)]
+    train_values = padded_train_data  # [:(len(padded_train_data) // 2)]
     validation_values = padded_test_data[(len(padded_test_data) // 2):]
 
-    train_sensical = train_labels #[:(len(train_labels) // 2)]
+    train_sensical = train_labels  # [:(len(train_labels) // 2)]
     validation_sensical = test_labels[(len(test_data) // 2):]
 
-    padded_test_data = padded_test_data[:len(test_data)//2]
-    test_labels = test_labels[:len(test_labels)//2]
+    padded_test_data = padded_test_data[:len(test_data) // 2]
+    test_labels = test_labels[:len(test_labels) // 2]
 
     # Create model
     vocab_size = 10000
@@ -104,8 +102,8 @@ def model_preprocessing(train_data, train_labels, test_data, test_labels):
 
     print(f"predict stuff: {model.predict(padded_sequence)}")
 
-    model.save('Testpage/Test/NLU_model/')
-    return results
+    # model.save('Testpage/Test/NLU_model/')
+    return results, json_tokenizer
 
 
 if __name__ == "__main__":
@@ -113,6 +111,13 @@ if __name__ == "__main__":
     # print(f'{train_data[-1]}, {train_labels[-1]}')
     test_data, test_labels = data_from_xml('test_full.xml')
     # print(f'{test_data[-1]}, {test_labels[-1]}')
-    result = model_preprocessing(train_data, train_labels, test_data, test_labels)
+    result, json_string = model_preprocessing(train_data, train_labels, test_data, test_labels)
     print(f"The result is {result}")
 
+    # with open('Testpage/Test/text_tokenizer.json', 'w') as f:
+    #    f.write(json_string)
+
+    # with open('Testpage/Test/text_tokenizer.json', 'r') as f:
+    #    json_string2 = f.read()
+
+    # new_tokenizer = keras.preprocessing.text.tokenizer_from_json(json_string2)
