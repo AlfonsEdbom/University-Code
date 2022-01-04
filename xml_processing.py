@@ -84,23 +84,22 @@ def scrambled_to_xml(scrambled_list, fname_in, fname_out):
 
 
 if __name__ == '__main__':
-    corpus = nltk.corpus.gutenberg.sents('melville-moby_dick.txt')
+    corpus = nltk.corpus.webtext.sents()
     corpus_len = len(corpus)
     corpus_half = corpus_len // 2
 
-
     # Train data of book[0:half]
-    book_to_xml(book=corpus, n=corpus_half, offset=0,
-                fname_in='train.xml', fname_out='train_sensical.xml')
-    train_sensical_list = get_data('train_sensical.xml')
-    scrambled_train_list = scramble_sentences(train_sensical_list)
-    scrambled_to_xml(scrambled_train_list, fname_in='train_sensical.xml',
-                     fname_out='train_full.xml')
+    book_to_xml(book=corpus, n=corpus_len, offset=0,
+                fname_in='empty.xml', fname_out='md.xml')
+    book_list = get_data('md.xml')
+    scrambled_list = scramble_sentences(book_list)
+    scrambled_to_xml(scrambled_list, fname_in='md.xml',
+                     fname_out='md_full.xml')
 
     # Test data of book[half: end]
-    book_to_xml(book=corpus, n=corpus_half, offset=corpus_half,
-                fname_in='test.xml', fname_out='test_sensical.xml')
-    test_sensical_list = get_data('test_sensical.xml')
-    scrambled_test_list = scramble_sentences(test_sensical_list)
-    scrambled_to_xml(scrambled_test_list, fname_in='test_sensical.xml',
-                     fname_out='test_full.xml')
+    # book_to_xml(book=corpus, n=corpus_half, offset=corpus_half,
+    #          fname_in='test.xml', fname_out='test_sensical.xml')
+    # test_sensical_list = get_data('test_sensical.xml')
+    # scrambled_test_list = scramble_sentences(test_sensical_list)
+    # scrambled_to_xml(scrambled_test_list, fname_in='test_sensical.xml',
+    #                 fname_out='test_full.xml')

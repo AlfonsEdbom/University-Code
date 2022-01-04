@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 
+
 def data_from_xml(filename):
     text = []
     labels = []
@@ -17,26 +18,24 @@ def data_from_xml(filename):
     return text, labels
 
 
-def model_preprocessing(train_data, train_labels, test_data, test_labels):
+def model_preprocessing(data, labels):
     # print(type(train_data), type(train_labels), type(test_data), type(test_labels))
 
-    train_data = np.asarray(train_data)
-    train_labels = np.asarray(train_labels)
-    test_data = np.asarray(test_data)
-    test_labels = np.array(test_labels)
+    # shuffle the data and labels
+    np_data = np.asarray(data)
+    np_labels = np.asarray(labels)
+    indices = np.arange(np_data.shape[0])
+    np.random.shuffle(indices)
+    shuffled_data = np_data[indices]
+    shuffled_labels = np_labels[indices]
+
+    cutoff_mark = int(len(data) * 0.8)
+    train_data = np.asarray(shuffled_data[:cutoff_mark])
+    train_labels = np.asarray(shuffled_labels[:cutoff_mark])
+
+    test_data = np.asarray(shuffled_data[cutoff_mark:])
+    test_labels = np.array(shuffled_labels[cutoff_mark:])
     # print(type(train_data), type(train_labels), type(test_data), type(test_labels))
-
-    # shuffles the test data
-    indices = np.arange(test_data.shape[0])
-    np.random.shuffle(indices)
-    test_data = test_data[indices]
-    test_labels = test_labels[indices]
-
-    # shuffles the train data
-    indices = np.arange(test_data.shape[0])
-    np.random.shuffle(indices)
-    train_data = test_data[indices]
-    train_labels = test_labels[indices]
 
     # create word to int dict and reverse
     tokenizer = keras.preprocessing.text.Tokenizer(num_words=10000, oov_token='<OOV>')
@@ -47,26 +46,17 @@ def model_preprocessing(train_data, train_labels, test_data, test_labels):
     test_sequences = tokenizer.texts_to_sequences(test_data)
 
     json_tokenizer = tokenizer.to_json()
-    print(len(word_index))  # Q: why is this 17384 and not 10000?
-    # A: word_index is computed the same way, despite what value we assign to num_words. But it will only use
-    #   the assigned value to num_words when doing texts_to_sequences
-
-    print(word_index['<OOV>'])
-    print(1 in test_sequences)  # Q: This is not here, a problem or not (referring to the <OOV>)?
-    # A: Not a problem, since we're basically using the same book with the same words
+    # print(len(word_index))
 
     padded_train_data = keras.preprocessing.sequence.pad_sequences(train_sequences, value=0, padding='post', maxlen=25)
     padded_test_data = keras.preprocessing.sequence.pad_sequences(test_sequences, value=0, padding='post', maxlen=25)
 
-    # Dividing into train and validation data
-    train_values = padded_train_data  # [:(len(padded_train_data) // 2)]
-    validation_values = padded_test_data[(len(padded_test_data) // 2):]
+    # Dividing into test and validation data
+    validation_data = padded_test_data[(len(padded_test_data) // 2):]
+    validation_labels = test_labels[(len(padded_test_data) // 2):]
 
-    train_sensical = train_labels  # [:(len(train_labels) // 2)]
-    validation_sensical = test_labels[(len(test_data) // 2):]
-
-    padded_test_data = padded_test_data[:len(test_data) // 2]
-    test_labels = test_labels[:len(test_labels) // 2]
+    test_data = padded_test_data[:(len(padded_test_data) // 2)]  # [:(len(train_labels) // 2)]
+    test_labels = test_labels[:(len(padded_test_data) // 2)]
 
     # Create model
     vocab_size = 10000
@@ -84,40 +74,37 @@ def model_preprocessing(train_data, train_labels, test_data, test_labels):
                   metrics=['accuracy'])
 
     # Fit the model
-    history = model.fit(train_values,
-                        train_sensical,
+    history = model.fit(padded_train_data,
+                        train_labels,
                         epochs=50,
                         batch_size=512,
-                        validation_data=(validation_values, validation_sensical),
+                        validation_data=(validation_data, validation_labels),
                         verbose=1)
 
-    results = model.evaluate(padded_test_data, test_labels)
+    results = model.evaluate(test_data, test_labels)
 
-    random_sentence = ["Our oral antiviral candidate, if authorized or approved, could have a meaningful impact on "
-                       "the lives of many, as the data further support the efficacy of paxlovid in reducing "
-                       "hospitalization and death and show a substantial decrease in viral load"]
-    my_array = np.asarray(random_sentence)
-    my_sequence = tokenizer.texts_to_sequences(my_array)
-    padded_sequence = keras.preprocessing.sequence.pad_sequences(my_sequence, value=0, padding='post', maxlen=25)
+    #random_sentence = ["Our oral antiviral candidate, if authorized or approved, could have a meaningful impact on "
+     #                  "the lives of many, as the data further support the efficacy of paxlovid in reducing "
+      #                 "hospitalization and death and show a substantial decrease in viral load"]
+    #my_array = np.asarray(random_sentence)
+    #my_sequence = tokenizer.texts_to_sequences(my_array)
+    #padded_sequence = keras.preprocessing.sequence.pad_sequences(my_sequence, value=0, padding='post', maxlen=25)
 
-    print(f"predict stuff: {model.predict(padded_sequence)}")
+    #print(f"predict stuff: {model.predict(padded_sequence)}")
 
-    # model.save('Testpage/Test/NLU_model/')
+    # model.save('NLU_model/')
     return results, json_tokenizer
 
 
 if __name__ == "__main__":
-    train_data, train_labels = data_from_xml('train_full.xml')
+    data, labels = data_from_xml('md_full.xml')
     # print(f'{train_data[-1]}, {train_labels[-1]}')
-    test_data, test_labels = data_from_xml('test_full.xml')
+    # test_data, test_labels = data_from_xml('test_full.xml')
     # print(f'{test_data[-1]}, {test_labels[-1]}')
-    result, json_string = model_preprocessing(train_data, train_labels, test_data, test_labels)
+    result, json_string = model_preprocessing(data, labels)
     print(f"The result is {result}")
 
     # with open('Testpage/Test/text_tokenizer.json', 'w') as f:
     #    f.write(json_string)
-
-    # with open('Testpage/Test/text_tokenizer.json', 'r') as f:
-    #    json_string2 = f.read()
 
     # new_tokenizer = keras.preprocessing.text.tokenizer_from_json(json_string2)
