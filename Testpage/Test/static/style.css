@@ -1,0 +1,35 @@
+h1{
+font-family: Helvetica, sans-serif;
+font-size: 3vW;
+color: white;
+}
+
+p{
+font-family: Helvetica, sans-serif;
+font-size: 1.5vW;
+}
+
+a{
+font-family: Helvetica, sans-serif;
+color: white;
+}
+
+.allpage{
+    height: 100vh;
+    width:100%;
+    }
+
+.StarHead{
+width:100%;
+height: 30vh;
+}
+
+.text{
+    position: absolute;
+    top: 5%;
+    left: 4%;
+}
+
+.form{
+text-align: center;
+}
