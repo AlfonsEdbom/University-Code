@@ -2,6 +2,49 @@ from xml.dom import minidom
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
+import matplotlib.pyplot as plt
+
+
+def plot_loss(model_data):
+    history_dict = model_data.history
+
+    acc = history_dict['accuracy']
+    val_acc = history_dict['val_accuracy']
+    loss = history_dict['loss']
+    val_loss = history_dict['val_loss']
+    epochs = range(1, len(acc) + 1)
+
+    # "bo" is for "blue dot"
+    plt.plot(epochs, loss, 'bo', label='Training loss')
+    # b is for "solid blue line"
+    plt.plot(epochs, val_loss, 'b', label='Validation loss')
+    plt.title('Training and validation loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+
+    plt.show()
+
+
+def plot_accuracy(model_data):
+    history_dict = model_data.history
+
+    acc = history_dict['accuracy']
+    val_acc = history_dict['val_accuracy']
+    loss = history_dict['loss']
+    val_loss = history_dict['val_loss']
+    epochs = range(1, len(acc) + 1)
+
+    # "bo" is for "blue dot"
+    plt.plot(epochs, acc, 'bo', label='Training acc')
+    # b is for "solid blue line"
+    plt.plot(epochs, val_acc, 'b', label='Validation acc')
+    plt.title('Training and validation accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend(loc='lower right')
+
+    plt.show()
 
 
 def data_from_xml(filename):
@@ -62,8 +105,10 @@ def model_preprocessing(data, labels):
     vocab_size = 10000
     model = keras.Sequential()
     model.add(keras.layers.Embedding(vocab_size, 16))
+    model.add(keras.layers.Dropout(0.2))
     model.add(keras.layers.GlobalAveragePooling1D())
     model.add(keras.layers.Dense(16, activation=tf.nn.relu))
+    model.add(keras.layers.Dropout(0.2))
     model.add(keras.layers.Dense(1, activation=tf.nn.sigmoid))
 
     model.summary()
@@ -93,7 +138,7 @@ def model_preprocessing(data, labels):
     #print(f"predict stuff: {model.predict(padded_sequence)}")
 
     # model.save('NLU_model/')
-    return results, json_tokenizer
+    return results, json_tokenizer, history
 
 
 if __name__ == "__main__":
@@ -101,8 +146,10 @@ if __name__ == "__main__":
     # print(f'{train_data[-1]}, {train_labels[-1]}')
     # test_data, test_labels = data_from_xml('test_full.xml')
     # print(f'{test_data[-1]}, {test_labels[-1]}')
-    result, json_string = model_preprocessing(data, labels)
+    result, json_string, history = model_preprocessing(data, labels)
     print(f"The result is {result}")
+    plot_loss(history)
+    plot_accuracy(history)
 
     # with open('Testpage/Test/text_tokenizer.json', 'w') as f:
     #    f.write(json_string)
