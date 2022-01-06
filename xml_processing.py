@@ -22,6 +22,7 @@ def book_to_xml(book, n, fname_in, fname_out, offset=0):
     for i in book_sentences[offset: offset + n]:
         ET.SubElement(root, 'utterance', text=' '.join(i), sensical='true')
 
+    ET.indent(xml_tree)
     xml_tree.write(fname_out, encoding='UTF-8', xml_declaration=True)
 
 
@@ -80,21 +81,22 @@ def scrambled_to_xml(scrambled_list, fname_in, fname_out):
     for sentence in scrambled_list:
         ET.SubElement(root, 'utterance', text=sentence, sensical='false')
 
+    ET.indent(xml_tree)
     xml_tree.write(fname_out, encoding='UTF-8', xml_declaration=True)
 
 
 if __name__ == '__main__':
-    corpus = nltk.corpus.webtext.sents()
+    corpus = nltk.corpus.gutenberg.sents('melville-moby_dick.txt')
     corpus_len = len(corpus)
     corpus_half = corpus_len // 2
 
     # Train data of book[0:half]
     book_to_xml(book=corpus, n=corpus_len, offset=0,
-                fname_in='empty.xml', fname_out='web.xml')
-    book_list = get_data('web.xml')
+                fname_in='empty.xml', fname_out='md.xml')
+    book_list = get_data('md.xml')
     scrambled_list = scramble_sentences(book_list)
-    scrambled_to_xml(scrambled_list, fname_in='web.xml',
-                     fname_out='web_full.xml')
+    scrambled_to_xml(scrambled_list, fname_in='md.xml',
+                     fname_out='md_full.xml')
 
     # Test data of book[half: end]
     # book_to_xml(book=corpus, n=corpus_half, offset=corpus_half,
