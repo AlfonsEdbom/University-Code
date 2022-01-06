@@ -112,10 +112,10 @@ def create_model(train_data, train_labels, test_data, test_labels, validation_da
     vocab_size = 10000
     model = keras.Sequential()
     model.add(keras.layers.Embedding(vocab_size, 25))
-    model.add(keras.layers.Dropout(0.2))
+    model.add(keras.layers.Dropout(0.5))
     model.add(keras.layers.GlobalAveragePooling1D())
     model.add(keras.layers.Dense(25, activation=tf.nn.relu))
-    model.add(keras.layers.Dropout(0.2))
+    model.add(keras.layers.Dropout(0.5))
     model.add(keras.layers.Dense(1, activation=tf.nn.sigmoid))
 
     model.summary()
@@ -155,8 +155,8 @@ if __name__ == "__main__":
     # print(f'{train_data[-1]}, {train_labels[-1]}')
     # test_data, test_labels = data_from_xml('test_full.xml')
     # print(f'{test_data[-1]}, {test_labels[-1]}')
-    train_data, train_labels, test_data, test_labels, validation_data, validation_labels = model_preprocessing(data, labels)
-    result, history = create_model(train_data,train_labels, test_data, test_labels, validation_data, validation_labels)
+    train_d, train_l, test_d, test_l, validation_d, validation_l = model_preprocessing(data, labels)
+    result, history = create_model(train_d, train_l, test_d, test_l, validation_d, validation_l)
     print(f"The result is {result}")
 
     plot_loss(history)
