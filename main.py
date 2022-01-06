@@ -62,47 +62,54 @@ def data_from_xml(filename):
 
 
 def model_preprocessing(data, labels):
-
-    # shuffle the data and labels
+    # make data into np arrays
     np_data = np.asarray(data)
     np_labels = np.asarray(labels)
+
+    # shuffle labels and data
     indices = np.arange(np_data.shape[0])
     np.random.shuffle(indices)
     shuffled_data = np_data[indices]
     shuffled_labels = np_labels[indices]
 
-    #separate data into train and test data/labels
-    cutoff_mark = int(len(data) * 0.8)
-    train_data = np.asarray(shuffled_data[:cutoff_mark])
-    train_labels = np.asarray(shuffled_labels[:cutoff_mark])
+    # separate data into train/test/validation data/labels
+    train_cutoff = int(len(data) * 0.8)  # how much
+    test_cutoff = int(len(data) * 0.9)
 
-    test_data = np.asarray(shuffled_data[cutoff_mark:])
-    test_labels = np.array(shuffled_labels[cutoff_mark:])
+    train_data = np.asarray(shuffled_data[0: train_cutoff])  # from 0 to train_cutoff
+    train_labels = np.asarray(shuffled_labels[0: train_cutoff])
+
+    test_data = np.asarray(shuffled_data[train_cutoff: test_cutoff])  # from train_cutoff to test_cutoff
+    test_labels = np.asarray(shuffled_labels[train_cutoff: test_cutoff])
+
+    validation_data = np.asarray(shuffled_data[test_cutoff: -1])  # from test_cutoff to end
+    validation_labels = np.asarray(shuffled_labels[test_cutoff: -1])
 
     # create word to int dict and reverse
-    tokenizer = keras.preprocessing.text.Tokenizer(num_words=15000, oov_token='<OOV>')
+    tokenizer = keras.preprocessing.text.Tokenizer(num_words=10000, oov_token='<OOV>')
     tokenizer.fit_on_texts(train_data)
     word_index = tokenizer.word_index
+    json_tokenizer = tokenizer.to_json()  # needed to export tokenizer
 
-    #make sents to sequence of ints
+    # converts str to int
     train_sequences = tokenizer.texts_to_sequences(train_data)
     test_sequences = tokenizer.texts_to_sequences(test_data)
+    validation_sequences = tokenizer.texts_to_sequences(validation_data)
 
-    #json string to export
-    json_tokenizer = tokenizer.to_json()
+    # pad to same length
+    sent_len = 25
+    padded_train_data = keras.preprocessing.sequence.pad_sequences(train_sequences, value=0, padding='post',
+                                                                   maxlen=sent_len)
+    padded_test_data = keras.preprocessing.sequence.pad_sequences(test_sequences, value=0, padding='post',
+                                                                  maxlen=sent_len)
+    padded_validation_data = keras.preprocessing.sequence.pad_sequences(validation_sequences, value=0, padding='post',
+                                                                        maxlen=sent_len)
 
-    padded_train_data = keras.preprocessing.sequence.pad_sequences(train_sequences, value=0, padding='post', maxlen=25)
-    padded_test_data = keras.preprocessing.sequence.pad_sequences(test_sequences, value=0, padding='post', maxlen=25)
+    return padded_train_data, train_labels, padded_test_data, test_labels, padded_validation_data, validation_labels
 
-    # Dividing into test and validation data
-    validation_data = padded_train_data[(len(padded_train_data) // 2):]
-    validation_labels = train_labels[(len(padded_train_data) // 2):]
 
-    train_data = padded_train_data[:(len(padded_train_data) // 2)]  # [:(len(train_labels) // 2)]
-    train_labels = train_labels[:(len(padded_train_data) // 2)]
-
-    # Create model
-    vocab_size = 15000
+def create_model(train_data, train_labels, test_data, test_labels, validation_data, validation_labels):
+    vocab_size = 10000
     model = keras.Sequential()
     model.add(keras.layers.Embedding(vocab_size, 25))
     model.add(keras.layers.Dropout(0.2))
@@ -126,19 +133,21 @@ def model_preprocessing(data, labels):
                         validation_data=(validation_data, validation_labels),
                         verbose=1)
 
-    results = model.evaluate(padded_test_data, test_labels)
+    results = model.evaluate(test_data, test_labels)
 
-    #random_sentence = ["Our oral antiviral candidate, if authorized or approved, could have a meaningful impact on "
-     #                  "the lives of many, as the data further support the efficacy of paxlovid in reducing "
-      #                 "hospitalization and death and show a substantial decrease in viral load"]
-    #my_array = np.asarray(random_sentence)
-    #my_sequence = tokenizer.texts_to_sequences(my_array)
-    #padded_sequence = keras.preprocessing.sequence.pad_sequences(my_sequence, value=0, padding='post', maxlen=25)
+    # model.save('NLU_model/') #needed to export model
 
-    #print(f"predict stuff: {model.predict(padded_sequence)}")
+    # random_sentence = ["Our oral antiviral candidate, if authorized or approved, could have a meaningful impact on "
+    #                  "the lives of many, as the data further support the efficacy of paxlovid in reducing "
+    #                 "hospitalization and death and show a substantial decrease in viral load"]
+    # my_array = np.asarray(random_sentence)
+    # my_sequence = tokenizer.texts_to_sequences(my_array)
+    # padded_sequence = keras.preprocessing.sequence.pad_sequences(my_sequence, value=0, padding='post', maxlen=25)
 
-    # model.save('NLU_model/')
-    return results, json_tokenizer, history
+    # print(f"predict stuff: {model.predict(padded_sequence)}")
+
+
+    return results, history
 
 
 if __name__ == "__main__":
@@ -146,8 +155,10 @@ if __name__ == "__main__":
     # print(f'{train_data[-1]}, {train_labels[-1]}')
     # test_data, test_labels = data_from_xml('test_full.xml')
     # print(f'{test_data[-1]}, {test_labels[-1]}')
-    result, json_string, history = model_preprocessing(data, labels)
+    train_data, train_labels, test_data, test_labels, validation_data, validation_labels = model_preprocessing(data, labels)
+    result, history = create_model(train_data,train_labels, test_data, test_labels, validation_data, validation_labels)
     print(f"The result is {result}")
+
     plot_loss(history)
     plot_accuracy(history)
 
