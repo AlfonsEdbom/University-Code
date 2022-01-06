@@ -62,7 +62,6 @@ def data_from_xml(filename):
 
 
 def model_preprocessing(data, labels):
-    # print(type(train_data), type(train_labels), type(test_data), type(test_labels))
 
     # shuffle the data and labels
     np_data = np.asarray(data)
@@ -72,42 +71,43 @@ def model_preprocessing(data, labels):
     shuffled_data = np_data[indices]
     shuffled_labels = np_labels[indices]
 
+    #separate data into train and test data/labels
     cutoff_mark = int(len(data) * 0.8)
     train_data = np.asarray(shuffled_data[:cutoff_mark])
     train_labels = np.asarray(shuffled_labels[:cutoff_mark])
 
     test_data = np.asarray(shuffled_data[cutoff_mark:])
     test_labels = np.array(shuffled_labels[cutoff_mark:])
-    # print(type(train_data), type(train_labels), type(test_data), type(test_labels))
 
     # create word to int dict and reverse
-    tokenizer = keras.preprocessing.text.Tokenizer(num_words=10000, oov_token='<OOV>')
+    tokenizer = keras.preprocessing.text.Tokenizer(num_words=15000, oov_token='<OOV>')
     tokenizer.fit_on_texts(train_data)
     word_index = tokenizer.word_index
 
+    #make sents to sequence of ints
     train_sequences = tokenizer.texts_to_sequences(train_data)
     test_sequences = tokenizer.texts_to_sequences(test_data)
 
+    #json string to export
     json_tokenizer = tokenizer.to_json()
-    # print(len(word_index))
 
     padded_train_data = keras.preprocessing.sequence.pad_sequences(train_sequences, value=0, padding='post', maxlen=25)
     padded_test_data = keras.preprocessing.sequence.pad_sequences(test_sequences, value=0, padding='post', maxlen=25)
 
     # Dividing into test and validation data
-    validation_data = padded_test_data[(len(padded_test_data) // 2):]
-    validation_labels = test_labels[(len(padded_test_data) // 2):]
+    validation_data = padded_train_data[(len(padded_train_data) // 2):]
+    validation_labels = train_labels[(len(padded_train_data) // 2):]
 
-    test_data = padded_test_data[:(len(padded_test_data) // 2)]  # [:(len(train_labels) // 2)]
-    test_labels = test_labels[:(len(padded_test_data) // 2)]
+    train_data = padded_train_data[:(len(padded_train_data) // 2)]  # [:(len(train_labels) // 2)]
+    train_labels = train_labels[:(len(padded_train_data) // 2)]
 
     # Create model
-    vocab_size = 10000
+    vocab_size = 15000
     model = keras.Sequential()
-    model.add(keras.layers.Embedding(vocab_size, 16))
+    model.add(keras.layers.Embedding(vocab_size, 25))
     model.add(keras.layers.Dropout(0.2))
     model.add(keras.layers.GlobalAveragePooling1D())
-    model.add(keras.layers.Dense(16, activation=tf.nn.relu))
+    model.add(keras.layers.Dense(25, activation=tf.nn.relu))
     model.add(keras.layers.Dropout(0.2))
     model.add(keras.layers.Dense(1, activation=tf.nn.sigmoid))
 
@@ -119,14 +119,14 @@ def model_preprocessing(data, labels):
                   metrics=['accuracy'])
 
     # Fit the model
-    history = model.fit(padded_train_data,
+    history = model.fit(train_data,
                         train_labels,
-                        epochs=50,
+                        epochs=25,
                         batch_size=512,
                         validation_data=(validation_data, validation_labels),
                         verbose=1)
 
-    results = model.evaluate(test_data, test_labels)
+    results = model.evaluate(padded_test_data, test_labels)
 
     #random_sentence = ["Our oral antiviral candidate, if authorized or approved, could have a meaningful impact on "
      #                  "the lives of many, as the data further support the efficacy of paxlovid in reducing "
@@ -142,7 +142,7 @@ def model_preprocessing(data, labels):
 
 
 if __name__ == "__main__":
-    data, labels = data_from_xml('md_full.xml')
+    data, labels = data_from_xml('web_full.xml')
     # print(f'{train_data[-1]}, {train_labels[-1]}')
     # test_data, test_labels = data_from_xml('test_full.xml')
     # print(f'{test_data[-1]}, {test_labels[-1]}')
