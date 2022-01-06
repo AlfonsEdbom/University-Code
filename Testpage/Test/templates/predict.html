@@ -22,11 +22,12 @@
             {% csrf_token %}
             <input name="text" type="text" placeholder="Please enter a sentence">
             <button type="submit"> Submit</button>
-            <button type="reset"> clear</button>
-            <p>The model is making a prediction of the sentence: {{ text }}</p>
+            <button onClick="window.location.href=window.location.href">Clear Page</button>
         </form>
 
         {% if prediction %}
+            <p>The model is making a prediction of the sentence: {{ text }}</p>
+
             {% if prediction > 0.6 %}
                 <p>The model thinks this is a sensical sentence</p>
             {% elif prediction > 0.4 %}
