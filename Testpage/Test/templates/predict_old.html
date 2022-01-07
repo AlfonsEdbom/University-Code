@@ -1,8 +1,0 @@
-{%  block content %}
-    <h2> Test your text </h2>
-    <form method="post" action="/test/">
-        {% csrf_token %}
-        {{form}}
-        <button type="submit", name="upload">Test this text</button>
-    </form>
-{% endblock %}

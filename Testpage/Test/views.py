@@ -42,17 +42,3 @@ def upload(request):
     return render(request, 'upload.html', context)
 
 
-def test(request):
-    #this is not needed right now, still here for testing things
-    context = {}
-    if request.method == 'POST':
-        form = TextForm(request.POST)
-        if form.is_valid():
-            t = form.cleaned_data["text"]
-            context["text"] = t
-            prediction = predict(t)
-            context["prediction"] = prediction
-    else:
-        render(request, 'test.html')
-
-    return render(request, 'test.html', context)

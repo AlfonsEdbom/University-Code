@@ -21,6 +21,7 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <input name="text" type="text" placeholder="Please enter a sentence">
+            <br />
             <button type="submit"> Submit</button>
             <button onClick="window.location.href=window.location.href">Clear Page</button>
         </form>
