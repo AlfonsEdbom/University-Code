@@ -5,7 +5,6 @@ from . import views
 
 
 urlpatterns = [
-    path('test', views.test, name='test'),
     path('predict', views.predict_sentence, name='predict'),
     path('upload', views.upload, name='upload'), #TODO: Potentially not needed if not uploading train/test data
     path('', views.index, name='index'),
