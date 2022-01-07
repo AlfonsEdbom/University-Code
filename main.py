@@ -135,7 +135,7 @@ def create_model(train_data, train_labels, test_data, test_labels, validation_da
 
     results = model.evaluate(test_data, test_labels)
 
-    # model.save('NLU_model/') #needed to export model
+    #model.save('NLU_model/') #needed to export model
 
     # random_sentence = ["Our oral antiviral candidate, if authorized or approved, could have a meaningful impact on "
     #                  "the lives of many, as the data further support the efficacy of paxlovid in reducing "
@@ -151,7 +151,7 @@ def create_model(train_data, train_labels, test_data, test_labels, validation_da
 
 
 if __name__ == "__main__":
-    data, labels = data_from_xml('web_full.xml')
+    data, labels = data_from_xml('md_full.xml')
     # print(f'{train_data[-1]}, {train_labels[-1]}')
     # test_data, test_labels = data_from_xml('test_full.xml')
     # print(f'{test_data[-1]}, {test_labels[-1]}')
