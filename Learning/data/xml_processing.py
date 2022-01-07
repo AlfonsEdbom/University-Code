@@ -1,5 +1,5 @@
 import random
-import xml.etree.ElementTree as ET
+from Learning import xml as ET
 import nltk
 
 
