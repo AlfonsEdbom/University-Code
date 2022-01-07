@@ -1,8 +1,9 @@
 Testpage => Webpage
-
-move fuction out or model-build to plots and xml
-
-While staying with Django conventions, try to simplify if possible.
-
 Test => Classifier
 Make entry line for sentence bigger.
+While staying with Django conventions, try to simplify if possible.
+
+move fuction out or model-build to plots and xml ---> Done
+
+
+

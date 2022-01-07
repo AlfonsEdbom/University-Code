@@ -1,5 +1,5 @@
 import random
-from Learning import xml as ET
+from Learning import xml_data as ET
 import nltk
 
 
