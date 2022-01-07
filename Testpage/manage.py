@@ -3,6 +3,7 @@
 import os
 import sys
 
+# python3 manage.py runserver
 
 def main():
     """Run administrative tasks."""
