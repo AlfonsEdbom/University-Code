@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+        {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <meta charset="utf-8">
+    <title>NLU classifier</title>
+</head>
+
+<body>
+    <div class="allpage">
+        <div class="StarHead">
+                {% load static %}
+                <img class="background" src="{% static 'Stars.png' %}" width="100%" />
+            <div class="text">
+                <h1>NLU-classifier predicting sentences</h1>
+                <a href="/">Home </a>
+            </div>
+        </div>
+    <div class="form">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input name="text" type="text" placeholder="Please enter a sentence">
+            <br />
+            <button type="submit"> Submit</button>
+            <button onClick="window.location.href=window.location.href">Clear Page</button>
+        </form>
+
+        {% if prediction %}
+            <p>The model is making a prediction of the sentence: {{ text }}</p>
+
+            {% if prediction > 0.6 %}
+                <p>The model thinks this is a sensical sentence</p>
+            {% elif prediction > 0.4 %}
+                <p>The model is unsure if this is a sensical sentence</p>
+            {% else %}
+                <p>The model thinks this isn't a sensical sentence</p>
+            {% endif %}
+            <p>The accuracy of the prediction is: {{ prediction }}</p>
+
+        {% endif %}
+
+
+    </div>
+    </div>
+</body>
+</html>

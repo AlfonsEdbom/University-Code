@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}">
+    <meta charset="UTF-8">
+    <title>NLU Classifier</title>
+</head>
+<body>
+    <div class="allpage">
+        {% load static %}
+        <img class="background" src="{% static 'MainBackground.jpg' %}" height="100%" />
+        <div class="header">
+              <h1>NLU Classifier</h1>
+        </div>
+        <div class="links">
+            <ul class="linkList">
+               <li><a href="/predict">Our model</a></li>
+               <li><a href="/upload">Upload file</a></li>
+            </ul>
+
+        </div>
+        <div class="rest">
+           <p>A 7.5 hp project by Alfons Edbom Devall, Johan Lehto, Lovisa Edström <br> Supervised by Micheal Minock, Umeå university </p>
+        </div>
+    </div>
+</body>
+</html>
