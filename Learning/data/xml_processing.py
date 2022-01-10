@@ -1,5 +1,5 @@
 import random
-from Learning import xml_data as ET
+import xml.etree.ElementTree as ET
 import nltk
 
 
@@ -86,17 +86,17 @@ def scrambled_to_xml(scrambled_list, fname_in, fname_out):
 
 
 if __name__ == '__main__':
-    corpus = nltk.corpus.gutenberg.sents('melville-moby_dick.txt')
+    corpus = nltk.corpus.brown.sents()
     corpus_len = len(corpus)
     corpus_half = corpus_len // 2
 
-    # Train data of book[0:half]
+    # Train data of corpus[0:half]
     book_to_xml(book=corpus, n=corpus_len, offset=0,
-                fname_in='empty.xml', fname_out='md.xml')
-    book_list = get_data('md.xml')
+                fname_in='empty.xml', fname_out='brown.xml')
+    book_list = get_data('brown.xml')
     scrambled_list = scramble_sentences(book_list)
-    scrambled_to_xml(scrambled_list, fname_in='md.xml',
-                     fname_out='md_full.xml')
+    scrambled_to_xml(scrambled_list, fname_in='brown.xml',
+                     fname_out='brown_full.xml')
 
     # Test data of book[half: end]
     # book_to_xml(book=corpus, n=corpus_half, offset=corpus_half,
