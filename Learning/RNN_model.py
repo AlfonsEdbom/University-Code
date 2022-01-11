@@ -1,6 +1,5 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow import keras
 import os
 
 from plots import plot_loss, plot_accuracy
@@ -35,8 +34,6 @@ def model_preprocessing(data, labels):
     VOCAB_SIZE = 3000
     encoder = tf.keras.layers.TextVectorization(max_tokens=VOCAB_SIZE)
     encoder.adapt(train_data)
-    vocab = np.array(encoder.get_vocabulary())
-    vocab[:20]
 
     return train_data, train_labels, test_data, test_labels, validation_data, validation_labels, encoder
 
@@ -54,7 +51,7 @@ def create_RNN_model(train_data, train_labels, test_data, test_labels, validatio
         tf.keras.layers.Dropout(0.5),
         tf.keras.layers.Dense(1, activation='sigmoid')])
 
-    model.summary()
+    #model.summary()
 
     # compile model
     model.compile(loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
@@ -62,7 +59,6 @@ def create_RNN_model(train_data, train_labels, test_data, test_labels, validatio
                   metrics=['accuracy'])
 
     # Fit the model
-
     history = model.fit(train_data,
                         train_labels,
                         epochs=14,
@@ -72,7 +68,12 @@ def create_RNN_model(train_data, train_labels, test_data, test_labels, validatio
 
     results = model.evaluate(test_data, test_labels)
 
-    tf.keras.models.save_model(model, 'NLU_RNN_model/') #needed to export model
+    #Export the model to Webpage\Classifier
+    repository_dir = os.path.dirname(os.path.dirname(__file__))
+    model_save_path = 'Webpage\Classifier\RNN_model'
+    web_dir = os.path.join(repository_dir, model_save_path)
+
+    tf.keras.models.save_model(model, web_dir)
 
     return results, history
 
@@ -85,10 +86,10 @@ if __name__ == "__main__":
     data, labels = get_data(data_path)
     train_d, train_l, test_d, test_l, validation_d, validation_l, encoder = model_preprocessing(data, labels)
     result, history = create_RNN_model(train_d, train_l, test_d, test_l, validation_d, validation_l, encoder)
-    print(f"The result is {result}")
 
+    #results
+    print(f"The model prediction accuracy is: {result[0]}")
+
+    #plots training
     plot_loss(history)
     plot_accuracy(history)
-
-    # with open('Testpage/Test/text_tokenizer.json', 'w') as f:
-    #    f.write(json_string)

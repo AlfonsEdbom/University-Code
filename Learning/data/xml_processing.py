@@ -92,7 +92,7 @@ if __name__ == '__main__':
 
     # Train data of corpus[0:half]
     book_to_xml(book=corpus, n=corpus_len, offset=0,
-                fname_in='empty.xml', fname_out='brown.xml')
+                fname_in='base.xml', fname_out='brown.xml')
     book_list = get_data('brown.xml')
     scrambled_list = scramble_sentences(book_list)
     scrambled_to_xml(scrambled_list, fname_in='brown.xml',
