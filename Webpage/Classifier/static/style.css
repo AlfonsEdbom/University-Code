@@ -2,6 +2,7 @@ h1{
 font-family: Helvetica, sans-serif;
 font-size: 3vW;
 color: white;
+line-height: 0.7;
 }
 
 p{
@@ -12,6 +13,7 @@ font-size: 1.5vW;
 a{
 font-family: Helvetica, sans-serif;
 color: white;
+font-size: 1.5vW;
 }
 
 .allpage{
@@ -52,6 +54,7 @@ input[type=button], input[type=submit], input[type=reset] {
   margin: 4px 2px;
   cursor: pointer;
 }
+
 .button1{
 padding: 10px 25px;
   text-align: center;
