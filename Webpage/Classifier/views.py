@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.template import loader
 from django.core.files.storage import FileSystemStorage
 from .forms import TextForm
-#from .predict import predict
 import os
 import tensorflow as tf
 
