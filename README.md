@@ -15,9 +15,7 @@ Install the packages in the requirements.txt file using pip or any other preferr
 
 Under the "data" folder in the "Learning" repository we have different data sets for training and the main file to generate these.
 * brown_full.xml
-* empty.xml
-* moby_dick_full.xml
-* web_full.xml
+* base.xml
 * xml_processing.py
 
 Xml files ending with _full is the complete corpus with sensical and non-sensical sentences.
