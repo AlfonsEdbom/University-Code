@@ -1,6 +1,5 @@
 # NLUClassifier
-## The project
-
+##The project
 We have used tensorflow2 and Keras to create a machine learning model, and we have trained it on the NLTK Brown corpus. 
 The purpose of the model is to somewhat accurately determine if a sentence is gibberish or if it actually makes sense.
 We also created a simple website using Django, which allows you to enter a sentence to see if it is sensical or not.
@@ -34,5 +33,13 @@ the loss and accuracy during the training process. RNN_model.py is the file cont
 contains data preprocessing such as shuffling the data and dividing it into datasets used for training, validation and testing.
 This is the file you run in order to train the model.
 
+### Running the webpage
+
+To use the webpage, change directory to Webpage, and then enter 
+"python manage.py runserver" This will start a development server. 
+The webpage is built in a django framework. 
+If there is a problem with entering a sentense and getting a prediction on the webpage, 
+try to run RNN_model.py to create a new model, 
+this usually solves the problem.  
 
 
