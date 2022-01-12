@@ -51,8 +51,6 @@ def create_RNN_model(train_data, train_labels, test_data, test_labels, validatio
         tf.keras.layers.Dropout(0.5),
         tf.keras.layers.Dense(1, activation='sigmoid')])
 
-    #model.summary()
-
     # compile model
     model.compile(loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
                   optimizer=tf.keras.optimizers.Adam(1e-4),
@@ -68,7 +66,7 @@ def create_RNN_model(train_data, train_labels, test_data, test_labels, validatio
 
     results = model.evaluate(test_data, test_labels)
 
-    #Export the model to Webpage\Classifier
+    # Export the model to Webpage\Classifier
     repository_dir = os.path.dirname(os.path.dirname(__file__))
     model_save_path = 'Webpage\Classifier\RNN_model'
     web_dir = os.path.join(repository_dir, model_save_path)
@@ -87,9 +85,9 @@ if __name__ == "__main__":
     train_d, train_l, test_d, test_l, validation_d, validation_l, encoder = model_preprocessing(data, labels)
     result, history = create_RNN_model(train_d, train_l, test_d, test_l, validation_d, validation_l, encoder)
 
-    #results
-    print(f"The model prediction accuracy is: {result[0]}")
+    # results
+    print(f"The model prediction accuracy is: {result[1]}")
 
-    #plots training
+    # plots training
     plot_loss(history)
     plot_accuracy(history)
