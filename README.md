@@ -1,12 +1,16 @@
 # NLUClassifier
 ##The project
+
 We have used tensorflow2 and Keras to create a machine learning model, and we have trained it on the NLTK Brown corpus. 
 The purpose of the model is to somewhat accurately determine if a sentence is gibberish or if it actually makes sense.
 We also created a simple website using Django, which allows you to enter a sentence to see if it is sensical or not.
 ##How to use
+
 ###Installation
+
 Install the packages in the requirements.txt file using pip or any other preferred way.
 ###Data preprocessing
+
 Under the "data" folder in the "Learning" repository we have different data sets for training and the main file to generate these.
 * brown_full.xml
 * empty.xml
