@@ -1,6 +1,4 @@
 from django.shortcuts import render
-from django.template import loader
-from django.core.files.storage import FileSystemStorage
 from .forms import TextForm
 import os
 import tensorflow as tf
@@ -13,10 +11,9 @@ model_path = os.path.join(current_dir, model_dir)
 
 my_model = tf.keras.models.load_model(model_path)
 
+
 # Create your views here.
 def index(request):
-    #template = loader.get_template('index.html')
-
     return render(request, 'index.html')
 
 
@@ -24,7 +21,7 @@ def predict_sentence(request):
     global my_model
     context = {}
     if request.method == 'POST':
-        form = TextForm(request.POST)  # If a file is uploaded request.FILES is needed also
+        form = TextForm(request.POST)
         if form.is_valid():
             t = form.cleaned_data["text"]
             context["text"] = t
@@ -35,4 +32,3 @@ def predict_sentence(request):
         render(request, 'predict.html')
 
     return render(request, 'predict.html', context)
-
