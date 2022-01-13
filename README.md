@@ -1,6 +1,6 @@
 # NLUClassifier
-##The project
-We have used tensorflow2 and Keras to create a machine learning model, and we have trained it on the NLTK Brown corpus. 
+## The project
+We have used TensorFlow 2, together with Keras' API, to create a machine learning model, and we have trained it on the NLTK Brown corpus. 
 The purpose of the model is to somewhat accurately determine if a sentence is gibberish or if it actually makes sense.
 We also created a simple website using Django, which allows you to enter a sentence to see if it is sensical or not.
 
@@ -18,7 +18,7 @@ Under the "data" folder in the "Learning" repository we have different data sets
 * xml_processing.py
 
 Xml files ending with _full is the complete corpus with sensical and non-sensical sentences.
-Empty.xml is used in xml_processing.py to generate new datasets. 
+Base.xml is an empty xml file that is used in xml_processing.py to generate new datasets. 
 Xml_processing.py is the main file used to download corpora form NLTK, store them as xml files that can be used to train the machine learning model.
 
 ### Training the model
