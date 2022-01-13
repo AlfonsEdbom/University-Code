@@ -1,5 +1,5 @@
 # NLUClassifier
-##The project
+## The project
 We have used tensorflow2 and Keras to create a machine learning model, and we have trained it on the NLTK Brown corpus. 
 The purpose of the model is to somewhat accurately determine if a sentence is gibberish or if it actually makes sense.
 We also created a simple website using Django, which allows you to enter a sentence to see if it is sensical or not.
