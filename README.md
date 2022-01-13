@@ -18,7 +18,7 @@ Under the "data" folder in the "Learning" repository we have different data sets
 * xml_processing.py
 
 Xml files ending with _full is the complete corpus with sensical and non-sensical sentences.
-Empty.xml is used in xml_processing.py to generate new datasets. 
+Base.xml is an empty xml file that is used in xml_processing.py to generate new datasets. 
 Xml_processing.py is the main file used to download corpora form NLTK, store them as xml files that can be used to train the machine learning model.
 
 ### Training the model
