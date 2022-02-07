@@ -1,4 +1,4 @@
-# Statistics_in_Genetics_exercises
+# Statistics in Genetics spring 2020 Exercises
 
 ## Exercises 1-3
 Contains the R code used to solve the exercises in chapter 1-3
