@@ -1,0 +1,9 @@
+Create a database using psycopg2 / Create a database in pgAdmin4
+    Shoud contain at least 3 tables and be working
+
+
+Connect to database using psycopg2 (Make sure queries can be written to it)
+    Be able to Create/Read/Update/Delete via psycopg2
+
+Implement CRUD to website
+
