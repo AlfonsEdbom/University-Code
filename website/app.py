@@ -4,6 +4,8 @@ app = Flask(__name__)
 
 # Define a model
 # Not strictly needed, but simplifies this example.
+
+
 class Snack:
     def __init__(self, name, amount, price):
         self.name = name
