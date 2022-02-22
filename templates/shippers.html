@@ -1,23 +1,23 @@
 {% extends "base.html" %}
 
 {% block title %}
-Display
+Placeholder
 {% endblock %}
 
 {% block content %}
 <h2>Display contents of the categories table</h2>
     <table style="width:50%">
         <thead>
-            <th>category_id</th>
-            <th>category_name</th>
-            <th>description</th>
+            <th>shipper_id</th>
+            <th>company_name</th>
+            <th>phone</th>
         </thead>
         <tbody>
-            {% for category in categories%}
+            {% for shipper in shippers%}
             <tr>
-                <td>{{category[0]}}</td>
-                <td>{{category[1]}}</td>
-                <td>{{category[2]}}</td>
+                <td>{{shipper[0]}}</td>
+                <td>{{shipper[1]}}</td>
+                <td>{{shipper[2]}}</td>
             </tr>
             {% endfor %}
         </tbody>

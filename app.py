@@ -15,9 +15,9 @@ def connectToDB():
 def home():
     return render_template("index.html")
 
-# display categories
-@app.route("/tables", methods=["GET"])
-def display_tables():
+# display categories table etc
+@app.route("/categories", methods=["GET", "POST"])
+def categories():
     conn = connectToDB()
     dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
@@ -28,11 +28,35 @@ def display_tables():
     results = dict_cur.fetchall()
     conn.close()
     dict_cur.close() 
-    return render_template("display.html", categories=results)
+    return render_template("categories.html", categories=results)
 
-@app.route("/add")
-def add_tuple():
-    pass
+@app.route("/shippers", methods=["GET", "POST"])
+def shippers():
+    conn = connectToDB()
+    dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    try:
+        dict_cur.execute('SELECT * FROM shippers')
+    except:
+        print('could not execute query')
+    results = dict_cur.fetchall()
+    conn.close()
+    dict_cur.close() 
+    return render_template("shippers.html", shippers=results)
+
+@app.route("/us_states", methods=["GET", "POST"])
+def us_states():
+    conn = connectToDB()
+    dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    try:
+        dict_cur.execute('SELECT * FROM us_states')
+    except:
+        print('could not execute query')
+    results = dict_cur.fetchall()
+    conn.close()
+    dict_cur.close() 
+    return render_template("us_states.html", us_states=results)
 
 if __name__ == "__main__":
     app.run(debug=True)
