@@ -1,6 +1,10 @@
 Create a database using psycopg2 / Create a database in pgAdmin4
     Shoud contain at least 3 tables and be working
 
+    - Added 3 tables (People, Snacks, Snacks_at_home)
+    - Added a Trigger: ON UPDATE/INSERT for amount in Snacks_at_home to check that it is > 0
+    - Added NOT NULL, PRIMARY KEY, FOREIGN KEY constraints
+    - Have not added any CONSTRAINT statements
 
 Connect to database using psycopg2 (Make sure queries can be written to it)
     Be able to Create/Read/Update/Delete via psycopg2
