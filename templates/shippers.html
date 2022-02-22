@@ -22,5 +22,17 @@ Placeholder
             {% endfor %}
         </tbody>
     </table>    
+    <h4>Add/Update shippers:</h4>
+    <form method="POST" action="/shippers/add">
+        <label>shipper_id:</label>
+        <input type="number" name="shipper_id">
     
+        <label>company_name:</label>
+        <input type="text" name="company_name">
+    
+        <label>phone:</label>
+        <input type="text" name="phone">
+    
+        <button>Add/Update</button>
+      </form> 
 {% endblock %}

@@ -21,6 +21,22 @@ Placeholder
             </tr>
             {% endfor %}
         </tbody>
-    </table>    
+    </table>
+    <h4>Add/Update categories:</h4>
+    <form method="POST">
+        <label>category_id:</label>
+        <input type="number" name="category_id">
+    
+        <label>category_name:</label>
+        <input type="text" name="category_name">
+    
+        <label>description:</label>
+        <input type="text" name="description">
+
+        <label>picture:</label>
+        <input type="text" name="picture">
+    
+        <button>Add/Update</button>
+      </form>    
     
 {% endblock %}
