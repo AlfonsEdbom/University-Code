@@ -1,31 +1,24 @@
-# Sample Python base for lab 2
+# Lab 2 - Python
 
-This is an example CRUD application using Python and Flask. The example
-stores and loads data from a global Python list, in your example this list
-should be replaced with calls to your database (for example by using 
-`psycopg2`).
+This is a CRUD application using the Python package Flask as the web backend, the database backend used was PostgreSQL and teh database connector used was psycopg2. 
 
 ## Setup
-This example requires `pip` and Python 3. If you get an error
-similar to "Could not find module pip", you need to install `pip` before
+Make sure you have `pip` installed before
 proceeding: [Pip installation](https://pip.pypa.io/en/stable/installing/).
 
-Download the entire [`python_example`](../python_example/) directory to your
-computer. Following this guide over SSH will **not** work as you will most
-likely not have access to the remote machine through your browser.
+Download the this git repository to your computer locally. 
 
-## Install Flask
-From within this sample directory, run the command:
+## Installing Dependencies
+From this directory, run the command:
 ```bash
 python3 -m pip install -r requirements.txt
 ```
-If successful, this should install Flask. The next step is to start the Flask
-web-server. This can be done with the following command: 
+If successful, the following command should start the Flask web-server: 
 ```bash
 flask run
 ```
 
-If all went well, you should now be able to test the sample snack application by
+If all went well, you should now be able to test the application by
 visiting [http://localhost:5000/](http://localhost:5000/) 
 (or the URL output by Flask).
 
@@ -40,7 +33,7 @@ and then restart your terminal. If the problem persists, check the output of the
 
 ## Application structure
 
-The application contains a couple of files, briefly described below.
+The application contains a couple of directories and files, briefly described below.
 
 * `app.py` Contains the actual application, with the routes that the user can
   visit, as well as the logic.
