@@ -23,6 +23,14 @@ Placeholder
             </tr>
             {% endfor %}
         </tbody>
-    </table>    
+    </table>
+</form>
+<h4>Which state region?:</h4>
+<form method="POST" action="/us_states/query">
+    <label>sstate_region:</label>
+    <input type="text" name="state_region">
+  
+    <button>look-up</button>
+</form>     
     
 {% endblock %}

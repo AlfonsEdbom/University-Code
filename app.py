@@ -45,7 +45,7 @@ def all_tables():
 
 
 # display categories table etc
-@app.route("/categories", methods=["GET", "POST"])
+@app.route("/categories")
 def categories():
     conn = None
     try:
@@ -63,7 +63,7 @@ def categories():
     return render_template("categories.html", categories=results)
 
 
-@app.route("/shippers", methods=["GET", "POST"])
+@app.route("/shippers")
 def shippers():
     conn = None
     try:
@@ -80,7 +80,7 @@ def shippers():
     return render_template("shippers.html", shippers=results)
 
 
-@app.route("/us_states", methods=["GET", "POST"])
+@app.route("/us_states")
 def us_states():
     conn = None
     try:
@@ -196,6 +196,38 @@ def delete_shipper():
             conn.close()
 
     return redirect("/shippers")
+
+#####################################
+####### look at state regions #######
+#####################################
+
+@app.route("/us_states/query", methods=['POST'])
+def query_us_states():
+    conn = None
+    try:
+        conn = connectToDB()
+        dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        state_region = request.form['state_region']
+        print(state_region)
+        if state_region == ('all') or state_region == ('All'):
+            print(1)
+            dict_cur.execute("SELECT * FROM us_states")
+            results = dict_cur.fetchall()
+            dict_cur.close()
+        else:
+            dict_cur.execute("SELECT * FROM us_states WHERE state_region = %s", (state_region,))
+            results = dict_cur.fetchall()
+            dict_cur.close()
+            print(2)
+    except:
+        print('could not execute query')
+    finally:
+        if conn is not None:
+            conn.close()
+            print(3)
+    return render_template("us_states.html", us_states=results)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
