@@ -211,7 +211,6 @@ def query_us_states():
         state_region = request.form['state_region']
         print(state_region)
         if state_region == ('all') or state_region == ('All'):
-            print(1)
             dict_cur.execute("SELECT * FROM us_states")
             results = dict_cur.fetchall()
             dict_cur.close()
@@ -219,13 +218,12 @@ def query_us_states():
             dict_cur.execute("SELECT * FROM us_states WHERE state_region = %s", (state_region,))
             results = dict_cur.fetchall()
             dict_cur.close()
-            print(2)
     except:
         print('could not execute query')
     finally:
         if conn is not None:
             conn.close()
-            print(3)
+            
     return render_template("us_states.html", us_states=results)
 
 
