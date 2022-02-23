@@ -4,6 +4,7 @@ import psycopg2.extras
 
 app = Flask(__name__)
 
+# function for connecting to db
 def connectToDB():
     connectionString = 'dbname=northwind user=postgres port=5432 host=localhost'
     try:
@@ -11,60 +12,94 @@ def connectToDB():
     except:
         print("Can't connect to database")
 
+# first page, "home page"
 @app.route("/")
 def home():
     return render_template("index.html")
+
+#########################################################
+####### display pages for all or individual pages #######
+#########################################################
+
+# display all tables in db etc
+@app.route("/all_tables")
+def all_tables():
+    conn = None
+    try:
+        conn = connectToDB()
+        dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        dict_cur.execute('SELECT * FROM categories')
+        results = dict_cur.fetchall()
+        dict_cur.execute('SELECT * FROM shippers')
+        results1 = dict_cur.fetchall()
+        dict_cur.execute('SELECT * FROM us_states')
+        results2 = dict_cur.fetchall()
+        dict_cur.close()
+    except:
+        print('could not execute query')
+    finally:
+        if conn is not None:
+            conn.close()
+    #results = dict_cur.fetchall()
+    return render_template("all_tables.html", categories=results, shippers=results1, us_states=results2)
 
 
 # display categories table etc
 @app.route("/categories", methods=["GET", "POST"])
 def categories():
-    conn = connectToDB()
-    dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-
+    conn = None
     try:
+        conn = connectToDB()
+        dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         dict_cur.execute('SELECT * FROM categories')
         results = dict_cur.fetchall()
-        dict_cur.execute('SELECT * FROM shippers')
-        results1 = dict_cur.fetchall()
+        dict_cur.close()
     except:
         print('could not execute query')
     #results = dict_cur.fetchall()
-    conn.close()
-    dict_cur.close() 
-    return render_template("categories.html", categories=results, shippers=results1)
+    finally:
+        if conn is not None:
+            conn.close()
+    return render_template("categories.html", categories=results)
 
 
 @app.route("/shippers", methods=["GET", "POST"])
 def shippers():
-    conn = connectToDB()
-    dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-
+    conn = None
     try:
+        conn = connectToDB()
+        dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         dict_cur.execute('SELECT * FROM shippers')
+        results = dict_cur.fetchall()
+        dict_cur.close()
     except:
         print('could not execute query')
-    results = dict_cur.fetchall()
-    conn.close()
-    dict_cur.close() 
+    finally:
+        if conn is not None:
+            conn.close()
     return render_template("shippers.html", shippers=results)
 
 
 @app.route("/us_states", methods=["GET", "POST"])
 def us_states():
-    conn = connectToDB()
-    dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-
+    conn = None
     try:
+        conn = connectToDB()
+        dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         dict_cur.execute('SELECT * FROM us_states')
+        results = dict_cur.fetchall()
+        dict_cur.close() 
     except:
         print('could not execute query')
-    results = dict_cur.fetchall()
-    conn.close()
-    dict_cur.close() 
+    finally:
+        if conn is not None:
+            conn.close()
     return render_template("us_states.html", us_states=results)
 
-# insert into categories
+###########################################
+####### functions for adding tuples #######
+###########################################
+
 @app.route("/cateogries/add", methods=["POST"])
 def add_category():
     conn = connectToDB()
@@ -84,7 +119,6 @@ def add_category():
     print('123')
     return redirect(url_for("/categories"))
 
-# insert into shippers
 @app.route("/shippers/add", methods=["POST"])
 def add_shipper():
     conn = None
@@ -98,6 +132,60 @@ def add_shipper():
 
         dict_cur.execute("INSERT INTO shippers (shipper_id, company_name, phone) VALUES (%s, %s, %s)",
         (shipper_id, company_name, phone))
+
+        conn.commit()
+        dict_cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return redirect("/shippers")
+
+###########################################
+####### functions for adding tuples #######
+###########################################
+
+@app.route("/shippers/update", methods=["POST"])
+def update_shipper():
+    conn = None
+    try:
+        conn = connectToDB()
+        dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        shipper_id = int(request.form['shipper_id'])
+        company_name = request.form['company_name']
+        phone = request.form['phone']
+
+        dict_cur.execute("UPDATE shippers SET company_name = %s, phone = %s WHERE shipper_id = %s", 
+        (company_name, phone, shipper_id))
+
+        conn.commit()
+        dict_cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return redirect("/shippers")
+
+#############################################
+####### functions for deleting tuples #######
+#############################################
+
+@app.route("/shippers/delete", methods=["POST"])
+def delete_shipper():
+    conn = None
+    try:
+        conn = connectToDB()
+        dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        shipper_id = request.form['shipper_id']
+
+        dict_cur.execute("DELETE FROM shippers WHERE shipper_id = %s", 
+        (shipper_id))
 
         conn.commit()
         dict_cur.close()

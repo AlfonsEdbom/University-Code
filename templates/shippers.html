@@ -22,7 +22,7 @@ Placeholder
             {% endfor %}
         </tbody>
     </table>    
-    <h4>Add/Update shippers:</h4>
+    <h4>Add to shippers:</h4>
     <form method="POST" action="/shippers/add">
         <label>shipper_id:</label>
         <input type="number" name="shipper_id">
@@ -33,6 +33,26 @@ Placeholder
         <label>phone:</label>
         <input type="text" name="phone">
     
-        <button>Add/Update</button>
-      </form> 
+        <button>Add</button>
+      </form>
+    <h4>Update shippers:</h4>
+    <form method="POST" action="/shippers/update">
+        <label>shipper_id:</label>
+        <input type="number" name="shipper_id">
+      
+        <label>company_name:</label>
+        <input type="text" name="company_name">
+      
+        <label>phone:</label>
+        <input type="text" name="phone">
+      
+        <button>Update</button>
+    </form>
+    <h4>Delete shippers tuple:</h4>
+    <form method="POST" action="/shippers/delete">
+        <label>shipper_id:</label>
+        <input type="number" name="shipper_id">
+      
+        <button>Delete</button>
+    </form> 
 {% endblock %}
