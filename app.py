@@ -24,12 +24,15 @@ def categories():
 
     try:
         dict_cur.execute('SELECT * FROM categories')
+        results = dict_cur.fetchall()
+        dict_cur.execute('SELECT * FROM shippers')
+        results1 = dict_cur.fetchall()
     except:
         print('could not execute query')
-    results = dict_cur.fetchall()
+    #results = dict_cur.fetchall()
     conn.close()
     dict_cur.close() 
-    return render_template("categories.html", categories=results)
+    return render_template("categories.html", categories=results, shippers=results1)
 
 
 @app.route("/shippers", methods=["GET", "POST"])
@@ -62,7 +65,7 @@ def us_states():
     return render_template("us_states.html", us_states=results)
 
 # insert into categories
-@app.route("/cateogries", methods=["POST"])
+@app.route("/cateogries/add", methods=["POST"])
 def add_category():
     conn = connectToDB()
     dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -84,20 +87,26 @@ def add_category():
 # insert into shippers
 @app.route("/shippers/add", methods=["POST"])
 def add_shipper():
-    conn = connectToDB()
-    dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    conn = None
+    try:
+        conn = connectToDB()
+        dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    shipper_id = int(request.form['shipper_id'])
-    company_name = request.form['company_name']
-    phone = request.form['phone']
+        shipper_id = int(request.form['shipper_id'])
+        company_name = request.form['company_name']
+        phone = request.form['phone']
 
-    dict_cur.execute("INSERT INTO shippers (shipper_id, company_name, phone) VALUES (%s, %s, %s)",
-    (shipper_id, company_name, phone))
-        
-    conn.commit()
-    conn.close()
-    dict_cur.close()
-    print('123')
+        dict_cur.execute("INSERT INTO shippers (shipper_id, company_name, phone) VALUES (%s, %s, %s)",
+        (shipper_id, company_name, phone))
+
+        conn.commit()
+        dict_cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
     return redirect("/shippers")
 
 if __name__ == "__main__":
