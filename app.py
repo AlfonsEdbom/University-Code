@@ -116,7 +116,7 @@ def add_category():
     conn.commit()
     conn.close()
     dict_cur.close()
-    print('123')
+
     return redirect(url_for("/categories"))
 
 @app.route("/shippers/add", methods=["POST"])
@@ -185,7 +185,7 @@ def delete_shipper():
         shipper_id = request.form['shipper_id']
 
         dict_cur.execute("DELETE FROM shippers WHERE shipper_id = %s", 
-        (shipper_id))
+        (shipper_id,))
 
         conn.commit()
         dict_cur.close()
