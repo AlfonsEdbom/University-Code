@@ -100,17 +100,17 @@ def snacks_at_home():
 ####### functions for adding tuples #######
 ###########################################
 
-@app.route("/cateogries/add", methods=["POST"])
+@app.route("/people/add", methods=["POST"])
 def add_category():
     conn = connectToDB()
     dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    category_id = int(request.form['category_id'])
-    category_name = request.form['category_name']
-    description = request.form['description']
-    picture = request.form['picture']
+    category_id = int(request.form['person_id'])
+    category_name = request.form['fname']
+    description = request.form['lname']
+    picture = request.form['email']
 
-    dict_cur.execute("INSERT INTO categories (category_id, category_name, description) VALUES (%s, %s, %s)",
+    dict_cur.execute("INSERT INTO people (person_id, fname, lname, email) VALUES (%s, %s, %s)",
     (category_id, category_name, description))
         
     conn.commit()
