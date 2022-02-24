@@ -71,7 +71,7 @@ CREATE OR REPLACE FUNCTION check_cost() RETURNS trigger
             RAISE EXCEPTION 'The cost of an item cannot be negative'
         END IF;
 
-        RETURN OLD;
+        RETURN NEW;
         END;$$;
 --
 -- Name: check_amount(); Type: FUNCTION; Schema: public
@@ -86,7 +86,7 @@ CREATE OR REPLACE FUNCTION check_amount() RETURNS trigger
         
         END IF;
         
-        RETURN OLDO;
+        RETURN NEW;
         END;$$;
 
 
