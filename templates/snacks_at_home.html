@@ -48,5 +48,15 @@ Placeholder
   
     <button>Update</button>
 </form>    
-    
+</form>
+<h4>Delete a snack for a person:</h4>
+<form method="POST" action="/snacks_at_home/delete">
+    <label>person:</label>
+    <input type="number" name="person">
+
+    <label>snack to delete:</label>
+    <input type="number" name="snack">
+  
+    <button>Delete</button>
+</form>    
 {% endblock %}

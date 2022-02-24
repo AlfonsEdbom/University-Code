@@ -207,9 +207,9 @@ def update_snacks():
         conn = connectToDB()
         dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-        snack_id = int(request.form['shipper_id'])
-        snack_name = request.form['company_name']
-        cost = request.form['phone']
+        snack_id = int(request.form['snack_id'])
+        snack_name = request.form['snack_name']
+        cost = float(request.form['cost'])
 
         dict_cur.execute("UPDATE snacks SET snack_name = %s, cost = %s WHERE snack_id = %s", 
         (snack_name, cost, snack_id))
@@ -275,9 +275,54 @@ def delete_people():
 
     return redirect("/people")
 
-#####################################
-####### look at state regions #######
-#####################################
+@app.route("/snacks/delete", methods=["POST"])
+def delete_snacks():
+    conn = None
+    try:
+        conn = connectToDB()
+        dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        snack_id = request.form['snack_id']
+
+        dict_cur.execute("DELETE FROM snacks WHERE snack_id = %s", 
+        (snack_id,))
+
+        conn.commit()
+        dict_cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return redirect("/snacks")
+
+@app.route("/snacks_at_home/delete", methods=["POST"])
+def delete_snacks_at_home():
+    conn = None
+    try:
+        conn = connectToDB()
+        dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        person = request.form['person']
+        snack = request.form['snack']
+
+        dict_cur.execute("DELETE FROM snacks_at_home WHERE person = %s AND snack = %s", 
+        (person, snack))
+
+        conn.commit()
+        dict_cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return redirect("/snacks_at_home")
+
+#########################################
+####### look up a person's snacks #######
+#########################################
 
 @app.route("/people/query", methods=['POST'])
 def query_people():
