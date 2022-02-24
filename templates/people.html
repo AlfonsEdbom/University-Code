@@ -5,7 +5,7 @@ Placeholder
 {% endblock %}
 
 {% block content %}
-<h2>Display contents of the poeple table</h2>
+<h2>Display contents of the people table</h2>
     <table style="width:50%">
         <thead>
             <th>person_id</th>
@@ -60,6 +60,13 @@ Placeholder
           <input type="number" name="person_id">
         
           <button>Delete</button>
-      </form>     
+      </form>
+      <h4>Look up snacks?:</h4>
+      <form method="POST" action="/people/query">
+          <label>person_id:</label>
+          <input type="number" name="person_id">
+        
+          <button>look-up</button>
+      </form>      
     
 {% endblock %}

@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # function for connecting to db
 def connectToDB():
-    connectionString = 'dbname=lab2 user=postgres port=5432 host=localhost'
+    connectionString = 'dbname=snacks user=postgres port=5432 host=localhost'
     try:
         return psycopg2.connect(connectionString)
     except:
@@ -236,8 +236,8 @@ def update_snacks_at_home():
         snack = request.form['snack']
         amount = request.form['amount']
 
-        dict_cur.execute("UPDATE snacks_at_home SET snack = %s, amount = %s WHERE person = %s", 
-        (snack, amount, person))
+        dict_cur.execute("UPDATE snacks_at_home SET amount = %s WHERE person = %s AND snack = %s", 
+        (amount, person, snack))
 
         conn.commit()
         dict_cur.close()
@@ -253,17 +253,17 @@ def update_snacks_at_home():
 ####### functions for deleting tuples #######
 #############################################
 
-@app.route("/shippers/delete", methods=["POST"])
-def delete_shipper():
+@app.route("/people/delete", methods=["POST"])
+def delete_people():
     conn = None
     try:
         conn = connectToDB()
         dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-        shipper_id = request.form['shipper_id']
+        person_id = request.form['person_id']
 
-        dict_cur.execute("DELETE FROM shippers WHERE shipper_id = %s", 
-        (shipper_id,))
+        dict_cur.execute("DELETE FROM people WHERE person_id = %s", 
+        (person_id,))
 
         conn.commit()
         dict_cur.close()
@@ -273,36 +273,32 @@ def delete_shipper():
         if conn is not None:
             conn.close()
 
-    return redirect("/shippers")
+    return redirect("/people")
 
 #####################################
 ####### look at state regions #######
 #####################################
 
-@app.route("/us_states/query", methods=['POST'])
-def query_us_states():
+@app.route("/people/query", methods=['POST'])
+def query_people():
     conn = None
     try:
         conn = connectToDB()
         dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-        state_region = request.form['state_region']
-        print(state_region)
-        if state_region == ('all') or state_region == ('All'):
-            dict_cur.execute("SELECT * FROM us_states")
-            results = dict_cur.fetchall()
-            dict_cur.close()
-        else:
-            dict_cur.execute("SELECT * FROM us_states WHERE state_region = %s", (state_region,))
-            results = dict_cur.fetchall()
-            dict_cur.close()
+        person_id = request.form['person_id']
+
+        dict_cur.execute("""SELECT fname, lname, snack_name, amount FROM people INNER JOIN snacks_at_home ON person_id = person
+                            JOIN snacks ON snack_id = snack WHERE person_id = %s""", (person_id,))
+        results = dict_cur.fetchall()
+        dict_cur.close()
     except:
         print('could not execute query')
     finally:
         if conn is not None:
             conn.close()
             
-    return render_template("us_states.html", us_states=results)
+    return render_template("display_snacks.html", people=results)
 
 
 if __name__ == "__main__":
