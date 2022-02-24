@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # function for connecting to db
 def connectToDB():
-    connectionString = 'dbname=northwind user=postgres port=5432 host=localhost'
+    connectionString = 'dbname=lab2 user=postgres port=5432 host=localhost'
     try:
         return psycopg2.connect(connectionString)
     except:
@@ -28,11 +28,11 @@ def all_tables():
     try:
         conn = connectToDB()
         dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        dict_cur.execute('SELECT * FROM categories')
+        dict_cur.execute('SELECT * FROM people')
         results = dict_cur.fetchall()
-        dict_cur.execute('SELECT * FROM shippers')
+        dict_cur.execute('SELECT * FROM snacks')
         results1 = dict_cur.fetchall()
-        dict_cur.execute('SELECT * FROM us_states')
+        dict_cur.execute('SELECT * FROM snacks_at_home')
         results2 = dict_cur.fetchall()
         dict_cur.close()
     except:
@@ -41,17 +41,17 @@ def all_tables():
         if conn is not None:
             conn.close()
     #results = dict_cur.fetchall()
-    return render_template("all_tables.html", categories=results, shippers=results1, us_states=results2)
+    return render_template("all_tables.html", people=results, snacks=results1, snacks_at_home=results2)
 
 
 # display categories table etc
-@app.route("/categories")
-def categories():
+@app.route("/people")
+def people():
     conn = None
     try:
         conn = connectToDB()
         dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        dict_cur.execute('SELECT * FROM categories')
+        dict_cur.execute('SELECT * FROM people')
         results = dict_cur.fetchall()
         dict_cur.close()
     except:
@@ -60,16 +60,16 @@ def categories():
     finally:
         if conn is not None:
             conn.close()
-    return render_template("categories.html", categories=results)
+    return render_template("people.html", people=results)
 
 
-@app.route("/shippers")
-def shippers():
+@app.route("/snacks")
+def snacks():
     conn = None
     try:
         conn = connectToDB()
         dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        dict_cur.execute('SELECT * FROM shippers')
+        dict_cur.execute('SELECT * FROM snacks')
         results = dict_cur.fetchall()
         dict_cur.close()
     except:
@@ -77,16 +77,16 @@ def shippers():
     finally:
         if conn is not None:
             conn.close()
-    return render_template("shippers.html", shippers=results)
+    return render_template("snacks.html", snacks=results)
 
 
-@app.route("/us_states")
-def us_states():
+@app.route("/snacks_at_home")
+def snacks_at_home():
     conn = None
     try:
         conn = connectToDB()
         dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        dict_cur.execute('SELECT * FROM us_states')
+        dict_cur.execute('SELECT * FROM snacks_at_home')
         results = dict_cur.fetchall()
         dict_cur.close() 
     except:
@@ -94,7 +94,7 @@ def us_states():
     finally:
         if conn is not None:
             conn.close()
-    return render_template("us_states.html", us_states=results)
+    return render_template("snacks_at_home.html", snacks_at_home=results)
 
 ###########################################
 ####### functions for adding tuples #######

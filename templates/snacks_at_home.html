@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}
+Placeholder
+{% endblock %}
+
+{% block content %}
+<h2>Display contents of the snacks_at_home table</h2>
+<table style="width:50%">
+    <thead>
+        <th>person</th>
+        <th>snack</th>
+        <th>amount</th>
+    </thead>
+    <tbody>
+        {% for snacks in snacks_at_home%}
+        <tr>
+            <td>{{snacks[0]}}</td>
+            <td>{{snacks[1]}}</td>
+            <td>{{snacks[2]}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<h4>Which snack at home?:</h4>
+<form method="POST" action="/snacks_at_home/query">
+    <label>snacks_at_home:</label>
+    <input type="text" name="snacks_at_home">
+  
+    <button>look-up</button>
+</form>     
+    
+{% endblock %}
