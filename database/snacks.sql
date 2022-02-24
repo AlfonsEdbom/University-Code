@@ -19,14 +19,14 @@ SET default_with_oids = false;
 ---
 ---  Drop database if already exists one with same name
 --- 
-DROP DATABASE IF EXISTS lab2;
+DROP DATABASE IF EXISTS snacks;
 
 --
 -- Create Database and Enter it
 --
 
-CREATE DATABASE lab2 WITH ENCODING = 'UTF8';
-\connect lab2
+CREATE DATABASE snacks WITH ENCODING = 'UTF8';
+\connect snacks
 
 --
 -- Random stuff from PgAdmin4 dump AGAIN???????????
