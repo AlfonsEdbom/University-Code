@@ -101,37 +101,41 @@ def snacks_at_home():
 ###########################################
 
 @app.route("/people/add", methods=["POST"])
-def add_category():
-    conn = connectToDB()
-    dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+def add_people():
+    conn = None
+    try:
+        conn = connectToDB()
+        dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    category_id = int(request.form['person_id'])
-    category_name = request.form['fname']
-    description = request.form['lname']
-    picture = request.form['email']
+        fname = request.form['fname']
+        lname = request.form['lname']
+        email = request.form['email']
 
-    dict_cur.execute("INSERT INTO people (person_id, fname, lname, email) VALUES (%s, %s, %s)",
-    (category_id, category_name, description))
+        dict_cur.execute("INSERT INTO people (fname, lname, email) VALUES (%s, %s, %s)",
+        (fname, lname, email))
         
-    conn.commit()
-    conn.close()
-    dict_cur.close()
+        conn.commit()
+        dict_cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
 
-    return redirect(url_for("/categories"))
+    return redirect("/people")
 
-@app.route("/shippers/add", methods=["POST"])
-def add_shipper():
+@app.route("/snacks/add", methods=["POST"])
+def add_snacks():
     conn = None
     try:
         conn = connectToDB()
         dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-        shipper_id = int(request.form['shipper_id'])
-        company_name = request.form['company_name']
-        phone = request.form['phone']
+        snack_name = request.form['snack_name']
+        cost = request.form['cost']
 
-        dict_cur.execute("INSERT INTO shippers (shipper_id, company_name, phone) VALUES (%s, %s, %s)",
-        (shipper_id, company_name, phone))
+        dict_cur.execute("INSERT INTO snacks (snack_name, cost) VALUES (%s, %s)",
+        (snack_name, cost))
 
         conn.commit()
         dict_cur.close()
@@ -141,25 +145,21 @@ def add_shipper():
         if conn is not None:
             conn.close()
 
-    return redirect("/shippers")
+    return redirect("/snacks")
 
-###########################################
-####### functions for adding tuples #######
-###########################################
-
-@app.route("/shippers/update", methods=["POST"])
-def update_shipper():
+@app.route("/snacks_at_home/add", methods=["POST"])
+def add_snacks_at_home():
     conn = None
     try:
         conn = connectToDB()
         dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-        shipper_id = int(request.form['shipper_id'])
-        company_name = request.form['company_name']
-        phone = request.form['phone']
+        person = int(request.form['person'])
+        snack = int(request.form['snack'])
+        amount = int(request.form['amount'])
 
-        dict_cur.execute("UPDATE shippers SET company_name = %s, phone = %s WHERE shipper_id = %s", 
-        (company_name, phone, shipper_id))
+        dict_cur.execute("INSERT INTO snacks_at_home (person, snack, amount) VALUES (%s, %s, %s)",
+        (person, snack, amount))
 
         conn.commit()
         dict_cur.close()
@@ -169,8 +169,86 @@ def update_shipper():
         if conn is not None:
             conn.close()
 
-    return redirect("/shippers")
+    return redirect("/snacks_at_home")
 
+#############################################
+####### functions for updating tuples #######
+#############################################
+
+@app.route("/people/update", methods=["POST"])
+def update_people():
+    conn = None
+    try:
+        conn = connectToDB()
+        dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        person_id = int(request.form['person_id'])
+        fname = request.form['fname']
+        lname = request.form['lname']
+        email = request.form['email']
+
+        dict_cur.execute("UPDATE people SET fname = %s, lname = %s, email = %s WHERE person_id = %s", 
+        (fname, lname, email, person_id))
+
+        conn.commit()
+        dict_cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return redirect("/people")
+
+@app.route("/snacks/update", methods=["POST"])
+def update_snacks():
+    conn = None
+    try:
+        conn = connectToDB()
+        dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        snack_id = int(request.form['shipper_id'])
+        snack_name = request.form['company_name']
+        cost = request.form['phone']
+
+        dict_cur.execute("UPDATE snacks SET snack_name = %s, cost = %s WHERE snack_id = %s", 
+        (snack_name, cost, snack_id))
+
+        conn.commit()
+        dict_cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return redirect("/snacks")
+
+
+@app.route("/snacks_at_home/update", methods=["POST"])
+def update_snacks_at_home():
+    conn = None
+    try:
+        conn = connectToDB()
+        dict_cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        person = int(request.form['person'])
+        snack = request.form['snack']
+        amount = request.form['amount']
+
+        dict_cur.execute("UPDATE snacks_at_home SET snack = %s, amount = %s WHERE person = %s", 
+        (snack, amount, person))
+
+        conn.commit()
+        dict_cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return redirect("/snacks_at_home")
+    
 #############################################
 ####### functions for deleting tuples #######
 #############################################

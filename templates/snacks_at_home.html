@@ -22,6 +22,32 @@ Placeholder
         {% endfor %}
     </tbody>
 </table>
+<h4>Add to snacks_at_home:</h4>
+<form method="POST" action="/snacks_at_home/add">
+    <label>person:</label>
+    <input type="number" name="person">
+
+    <label>snack:</label>
+    <input type="number" name="snack">
+
+    <label>amount:</label>
+    <input type="number" name="amount">
+
+    <button>Add</button>
+</form>
+<h4>Update snacks:</h4>
+<form method="POST" action="/snacks_at_home/update">
+    <label>person:</label>
+    <input type="number" name="person">
+  
+    <label>snack:</label>
+    <input type="text" name="snack">
+  
+    <label>amount:</label>
+    <input type="text" name="amount">
+  
+    <button>Update</button>
+</form>
 <h4>Which snack at home?:</h4>
 <form method="POST" action="/snacks_at_home/query">
     <label>snacks_at_home:</label>

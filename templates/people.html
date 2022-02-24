@@ -19,16 +19,14 @@ Placeholder
                 <td>{{poeple[0]}}</td>
                 <td>{{poeple[1]}}</td>
                 <td>{{poeple[2]}}</td>
-                <td>{{poeple[2]}}</td>
+                <td>{{poeple[3]}}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     <h4>Add to people:</h4>
     <form method="POST" action="/people/add">
-        <label>person_id:</label>
-        <input type="number" name="person_id">
-    
+
         <label>fname:</label>
         <input type="text" name="fname">
     
@@ -39,6 +37,29 @@ Placeholder
         <input type="text" name="email">
     
         <button>Add/Update</button>
-      </form>    
+      </form>
+      <h4>Update a people tuple:</h4>
+      <form method="POST" action="/people/update">
+          <label>person_id:</label>
+          <input type="number" name="person_id">
+        
+          <label>fname:</label>
+          <input type="text" name="fname">
+        
+          <label>lname:</label>
+          <input type="text" name="lname">
+
+          <label>email:</label>
+          <input type="text" name="email">
+        
+          <button>Update</button>
+      </form>
+      <h4>Delete someone:</h4>
+      <form method="POST" action="/people/delete">
+          <label>person_id:</label>
+          <input type="number" name="person_id">
+        
+          <button>Delete</button>
+      </form>     
     
 {% endblock %}
