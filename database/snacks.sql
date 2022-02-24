@@ -68,7 +68,7 @@ CREATE OR REPLACE FUNCTION check_cost() RETURNS trigger
     AS $$
         BEGIN
         IF NEW.cost < 0 THEN
-            RAISE EXCEPTION 'The cost of an item cannot be negative'
+            RAISE EXCEPTION 'The cost of an item cannot be negative';
         END IF;
 
         RETURN NEW;
