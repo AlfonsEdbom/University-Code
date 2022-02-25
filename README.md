@@ -34,31 +34,23 @@ After the command is done make that a database called `snacks` exists in the lis
 \l
 ```
 
-### Error: `flask: command not found`
-If you still cannot run Flask after the installation, you might have to
-add your local bin folder to the PATH. To do this, you can run:
-```bash
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-```
-and then restart your terminal. If the problem persists, check the output of the
-`python3 -m pip install -r requirements.txt` command for additional information.
-
 ## Application structure
 
 The application contains a couple of directories and files, briefly described below.
 
-* `app.py` Contains the actual application, with the routes that the user can
+* `database` Contains files that has to do with the setup of database
+  * `snacks.sql` Contains the instructions for how to build the database, it also adds some starting tuples to each table 
+* `website` Contains files that has to do with the actual web application
+  * `app.py` Contains the actual application, with the routes that the user can
   visit, as well as the logic.
-* `templates/` Contains templates that flask can render.
+  * `templates/` Contains templates that flask can render.
     * `templates/base.html` Contains the base template that all other templates
-    can
-      be derived from.
+    can be derived from.
     * `templates/index.html` The first page that the user sees when opening the
     application.
-    * `templates/snacks.html` The snack interface. The interface shows all
-    available snacks, as well as controls that allows a user to add or remove
-    snacks.
+    * `XXX.html` Contains the html that is rendered for the other pages
 
 ## Links
 * [Flask quickstart](https://flask.palletsprojects.com/en/2.0.x/quickstart/)
 * [Psycopg2 documentation](https://www.psycopg.org/docs/)
+* [Postgresql documentation](https://www.postgresql.org/docs/)
