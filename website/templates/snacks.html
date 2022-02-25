@@ -1,45 +1,56 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block header %}
-
+{% block title %}
+Snacks
 {% endblock %}
 
 {% block content %}
-  <h4>Current snacks:</h4>
-  <table>
+<h2>Display contents of the snack table</h2>
+<table style="width:50%">
     <thead>
-      <th>Snack name</th>
-      <th>Amount</th>
-      <th>price</th>
+        <th>snack_id</th>
+        <th>snack_name</th>
+        <th>cost</th>
     </thead>
     <tbody>
-      {% for snack in snacks %}
+        {% for snack in snacks%}
         <tr>
-          <td>{{snack.name}}</td>
-          <td>{{snack.amount}}</td>
-          <td>{{snack.price}}</td>
+            <td>{{snack[0]}}</td>
+            <td>{{snack[1]}}</td>
+            <td>{{snack[2]}}</td>
         </tr>
-      {% endfor %} 
+        {% endfor %}
     </tbody>
-  </table>
-  <h4>Add/Update a snack:</h4>
-  <form method="POST">
-    <label>Snack name:</label>
-    <input type="text" name="snack_name">
+</table> 
+    <h4>Add to snacks:</h4>
+    <form method="POST" action="/snacks/add">
 
-    <label>Amount:</label>
-    <input type="number" name="amount">
-
-    <label>Price:</label>
-    <input type="number" name="price">
-
-    <button>Add/Update</button>
-  </form>
-  <h4>Remove a snack:</h4>
-  <form method="POST" action="/snacks/delete">
-    <label>Snack to eat:</label>
-    <input type="text" name="snack_name">
-
-    <button>Del-eat!</button>
-  </form>
+        <label>snack_name:</label>
+        <input type="text" name="snack_name">
+    
+        <label>cost:</label>
+        <input type="text" name="cost">
+    
+        <button>Add</button>
+    </form>
+    <h4>Update snacks:</h4>
+    <form method="POST" action="/snacks/update">
+        <label>snack_id:</label>
+        <input type="number" name="snack_id">
+      
+        <label>snack_name:</label>
+        <input type="text" name="snack_name">
+      
+        <label>cost:</label>
+        <input type="text" name="cost">
+      
+        <button>Update</button>
+    </form>
+    <h4>Delete a snacks tuple:</h4>
+    <form method="POST" action="/snacks/delete">
+        <label>snack_id:</label>
+        <input type="number" name="snack_id">
+      
+        <button>Delete</button>
+    </form> 
 {% endblock %}
