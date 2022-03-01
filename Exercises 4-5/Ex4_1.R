@@ -43,5 +43,3 @@ simHMM(HMM_4state, 100)
 #Train HMM to find optimal parameter settings
 obs <- unlist(getSequence(virus_seq))
 HMM_4new <- baumWelch(HMM_4state, obs, 10, delta=1E-9)
-
-mo
