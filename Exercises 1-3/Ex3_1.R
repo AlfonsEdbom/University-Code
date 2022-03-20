@@ -2,6 +2,7 @@ require(pacman)  # Gives a confirmation message.
 pacman::p_load(pacman, seqinr, here, Biostrings, universalmotif)
 library(universalmotif)
 
+
 #Get the file paths to sequences
 fly_file <- here("sequences", "X79493.fasta")
 human_file <- here("sequences", "AY707088.fasta")

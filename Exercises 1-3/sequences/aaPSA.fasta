@@ -1,0 +1,41 @@
+########################################
+# Program: Biostrings (version 2.62.0), a Bioconductor package
+# Rundate: Sun Mar 20 16:43:20 2022
+########################################
+#=======================================
+#
+# Aligned_sequences: 2
+# 1: AAP41546.1 Q50-type retinal homeobox [Bos taurus]
+# 2: AAH07284.1 RAX2 protein [Homo sapiens]
+# Matrix: NA
+# Gap_penalty: 4.0
+# Extend_penalty: 1.0
+#
+# Length: 184
+# Identity:     168/184 (91.3%)
+# Similarity:    NA/184 (NA%)
+# Gaps:           0/184 (0.0%)
+# Score: 1117
+#
+#
+#=======================================
+
+AAP41546.1 Q50-type retinal homeobox [Bos taurus]   1 MFLSPGEGPAAEGGGPGPGEEAPKKKHRRNRTTFTTYQLHQLERAFEASH     50
+                                                      |||||||||| |||| ||||||||||||||||||||||||||||||||||
+AAH07284.1 RAX2 protein [Homo sapiens]              1 MFLSPGEGPATEGGGLGPGEEAPKKKHRRNRTTFTTYQLHQLERAFEASH     50
+
+AAP41546.1 Q50-type retinal homeobox [Bos taurus]  51 YPDVYSREELAAKVHLPEVRVQVWFQNRRAKWRRQERLESGSGAVAAPRL    100
+                                                      ||||||||||||||||||||||||||||||||||||||||||||||||||
+AAH07284.1 RAX2 protein [Homo sapiens]             51 YPDVYSREELAAKVHLPEVRVQVWFQNRRAKWRRQERLESGSGAVAAPRL    100
+
+AAP41546.1 Q50-type retinal homeobox [Bos taurus] 101 PEVPALPFARPPTMPLSLEPWLGPGPPAVPALPRLLGSGPGLQGSFGPHA    150
+                                                      || ||||||||| | | ||||||||||||| |||||| ||||| ||||||
+AAH07284.1 RAX2 protein [Homo sapiens]            101 PEAPALPFARPPAMSLPLEPWLGPGPPAVPGLPRLLGPGPGLQASFGPHA    150
+
+AAP41546.1 Q50-type retinal homeobox [Bos taurus] 151 FSPAFMDGFTLEEGSLRLLAKEHVQALDRAWPSA    184
+                                                      | | | ||| ||| ||||||||| |||||||| |
+AAH07284.1 RAX2 protein [Homo sapiens]            151 FAPTFADGFALEEASLRLLAKEHAQALDRAWPPA    184
+
+
+#---------------------------------------
+#---------------------------------------
