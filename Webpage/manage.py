@@ -3,7 +3,7 @@
 import os
 import sys
 
-
+# python3 manage.py runserver
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webpage.settings')
