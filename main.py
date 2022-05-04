@@ -10,11 +10,12 @@ def main():
     with open("config.json", "r") as c:
         config = json.load(c)
 
-    test = Fasta_DNA(config["filename"])
-    test2 = Fasta_DNA(config["filename2"])
+    print(config)
+    P2_genome = Fasta_DNA(config["files"]["P2"])
 
-    print(test.get_forward_strand())
-    print(test2.get_forward_strand())
+
+    print(P2_genome.get_forward_strand())
+
 
 
 if __name__ == '__main__':
