@@ -1,0 +1,80 @@
+Find unique primers for viral genome
+
+Specification:
+Input:
+        Genome sequence in Fasta format
+
+Output:
+        Unique pair of PCR primers (f and r)
+        Priming interval (300 to 1500 nt)
+
+Features:
+        Flexible input
+        User friendly (GUI)
+        Fast and accurate
+        (Scalable to larger genomes)
+
+
+Identify "unique primers"
+    Analyze differences in Annealing Temperature
+    Find similar primers and calculate binding temp. compare to perfect fit. Want at least deltaT 10 deg
+        A, T = 2 deg
+        C, G = 4 deg
+
+Selection criteria for "unique":
+    Minimum Annealing temp. OR length of PCR primer
+    Minimum allowed deltaT
+
+
+Possible approaches:
+    1.
+        Idea:
+            Go through the genome and identify all primers
+            Store "unique" primers somewhere, remove if they are found
+
+        Algorithm:
+            read genome(f, r)
+            for each "primer" in genome:
+                add "primer" to Trie
+
+                if "primer" not in Trie:
+                    add "primer" to UniqueList
+                else:
+                    remove "primer" from UniqueList
+
+            for each "primer" in UniqueList:
+                Calculate dT
+                if "primer".dT < min:
+                    remove "primer" from UniqueList
+                else:
+                    keep "primer"
+
+        Notes on algorithm:
+            How to decide what "primer is?"
+            Use UniqueList or something else???
+                Use Set, other Trie or something else to store?
+            How to label if "primer" is from f or r?
+            How to calculate dT?
+
+
+
+    2.
+        Idea:
+            Identify all possible primers that satisfy "unique"
+            For each primer, see if they match only once in the genome.
+
+        Algorithm:
+            Calculate all primers that exists
+            For each "primer":
+                add to Trie
+
+            For each primer in Trie:
+                if primer is found once:
+                    Add primer to UniqueList
+                elif primer is not found:
+                    remove from trie
+                else: #more than once
+                    nothing????
+
+
+
