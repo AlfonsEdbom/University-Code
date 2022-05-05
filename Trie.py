@@ -16,7 +16,7 @@ class TrieNode:
 class Trie:
     """Trie object storing TrieNodes"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.root = TrieNode("")
 
     def insert(self, word: str) -> None:
@@ -53,7 +53,7 @@ class Trie:
         for child in node.children.values():
             self.dfs(child, prefix + node.char)
 
-    def query(self, x: str):
+    def query(self, x: str) -> list[tuple]:
         """Finds all words that starts with prefix (x)"""
 
         # Create new empty list each time function is called
