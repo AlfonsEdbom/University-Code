@@ -53,7 +53,7 @@ class Trie:
         for child in node.children.values():
             self.dfs(child, prefix + node.char)
 
-    def query(self, x: str) -> list[tuple]:
+    def query(self, x: str) -> list[tuple[str, int]]:
         """Finds all words that starts with prefix (x)"""
 
         # Create new empty list each time function is called
@@ -72,4 +72,6 @@ class Trie:
 
         # return all words starting with prefix (x), ordered by least number of occurrence
         return sorted(self.output, key=lambda x: x[1])
+
+
 

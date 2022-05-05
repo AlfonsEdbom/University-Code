@@ -7,6 +7,7 @@ import logging
 
 from Fasta_DNA import Fasta_DNA
 from Trie import Trie
+from Filters import Filters
 
 
 def get_config(config_file: str) -> dict:
@@ -24,15 +25,14 @@ def get_logger(log_file: str):
 
     file_handler = logging.FileHandler(log_file, mode="w")
     file_handler.setFormatter(formatter)
-    file_handler.setLevel(logging.DEBUG)
+    file_handler.setLevel(logging.INFO)
 
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
-    stream_handler.setLevel(logging.INFO)
+    stream_handler.setLevel(logging.DEBUG)
 
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
-
 
     return logger
 
@@ -41,12 +41,10 @@ def main():
     config = get_config("config.json")
     logger = get_logger("log.log")
 
-    print(config)
     t = Trie()
     P2_genome = Fasta_DNA(config["files"]["P2"])
 
-    P2_f = P2_genome.get_forward_strand()
-    P2_rev = P2_genome.get_reverse_strand()
+    P2_sequences = [P2_genome.get_forward_strand(), P2_genome.get_reverse_strand()]
 
 
     PRIMER_LENGTH = config["settings"]["length"]
@@ -59,10 +57,9 @@ def main():
 
         t.insert(primer)
 
-    stuff = t.query("")
-    logger.info(len(stuff))
-    [logger.debug(f"{i[0]}, {i[1]}") for i in stuff]
-
+    test = t.query("")
+    for i in test:
+        logger.info(f"{i[0]}, {i[1]}")
 
 
 if __name__ == '__main__':
