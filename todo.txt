@@ -1,5 +1,3 @@
-Find unique primers for viral genome
-
 Specification:
 Input:
         Genome sequence in Fasta format
@@ -56,25 +54,6 @@ Possible approaches:
             How to label if "primer" is from f or r?
             How to calculate dT?
 
-
-
-    2.
-        Idea:
-            Identify all possible primers that satisfy "unique"
-            For each primer, see if they match only once in the genome.
-
-        Algorithm:
-            Calculate all primers that exists
-            For each "primer":
-                add to Trie
-
-            For each primer in Trie:
-                if primer is found once:
-                    Add primer to UniqueList
-                elif primer is not found:
-                    remove from trie
-                else: #more than once
-                    nothing????
 
 
 
