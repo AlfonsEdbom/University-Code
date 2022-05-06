@@ -4,9 +4,9 @@
     "SARS": "SARS-CoV-2-isolate-Wuhan-Hu-1-complete-genome.fasta",
     "T4": "NC_000866-Enterobact-phage-T4-complete-genome.fasta"},
   "settings": {
-    "length": 15,
-    "GC_max": 80,
-    "GC_min": 20
+    "length": 20,
+    "GC_max": 0.8,
+    "GC_min": 0.3
   }
 
 }
