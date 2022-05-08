@@ -13,6 +13,26 @@ def calc_anneal_temp(sequence: str) -> float:
     return anneal_temp
 
 
+def annealing_temp(sequence, min_T, max_T):
+    """Only keep primers /w appropriate Anneal_temp """
+    seq_temp = calc_anneal_temp(sequence)
+
+    if min_T < seq_temp < max_T:
+        return sequence
+    else:
+        return False
+
+
+def GC_clamp(sequence):
+    """Removes primers that do not have a GC clamp"""
+    end = sequence[-2:]
+
+    if end in ["A", "T"]:
+        return False
+    else:
+        return sequence
+
+
 def remove_GCC(sequence: str, min_GC: float, max_GC: float) -> str:
     """Calculates the GC content of the input string"""
     num_G = sequence.count("G")
@@ -23,9 +43,9 @@ def remove_GCC(sequence: str, min_GC: float, max_GC: float) -> str:
     num_GC = num_G + num_C
     num_AT = num_A + num_T
 
-    GCC = num_GC / (num_GC+num_AT)
+    GCC = num_GC / (num_GC + num_AT)
 
-    if not(min_GC < GCC < max_GC):
+    if not (min_GC < GCC < max_GC):
         sequence = re.sub("[A-Z]", "-", sequence)
 
     return sequence
@@ -40,16 +60,6 @@ class Filters:
         """Removes portions of genome that have too much/little GC-content"""
         pass
 
-    def annealing_temp(self, max_T, min_T):
-        """Only keep primers /w appropriate Anneal_temp """
-        pass
-
-    def GC_clamp(self):
-        """Removes primers that do not have a GC clamp"""
-        pass
-
     def GC_end(self):
         """Only keep primers /w appopriate GC content in the end"""
         # 3 out 5 last are GC
-
-

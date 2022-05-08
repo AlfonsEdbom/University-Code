@@ -7,7 +7,7 @@ import logging
 
 from Fasta_DNA import Fasta_DNA
 from Trie import Trie
-from Filters import Filters, remove_GCC
+from Filters import Filters, remove_GCC, annealing_temp, GC_clamp
 
 
 def get_config(config_file: str) -> dict:
@@ -52,6 +52,7 @@ def main():
     GC_MIN = config["settings"]["GC_min"]
 
     P2_flist = [P2_f[i:i+PRIMER_LENGTH] for i in range(0, len(P2_f), PRIMER_LENGTH)]
+    P2_revlist = [P2_rev[i:i+PRIMER_LENGTH] for i in range(0, len(P2_rev), PRIMER_LENGTH)]
 
 
     for i, primer in enumerate(P2_flist):
@@ -59,20 +60,28 @@ def main():
 
         P2_flist[i] = primer
 
-        #logger.info(primer)
+    for i, primer in enumerate(P2_revlist):
+        primer = remove_GCC(primer, GC_MIN, GC_MAX)
+
+        P2_revlist[i] = primer
 
 
     P2_f = "".join(P2_flist)
+    P2_rev = "".join(P2_revlist)
+
 
     for i in range(len(P2_f) - PRIMER_LENGTH-1):
         primer = P2_f[i: i + PRIMER_LENGTH]
         if not ("-" in primer):
-            t.insert(primer)
-
+            if GC_clamp(primer):
+                if annealing_temp(primer, 55, 65):
+                    t.insert(primer)
     for i in range(len(P2_rev) - PRIMER_LENGTH-1):
-        primer = P2_rev[i:i + PRIMER_LENGTH]
-        if not("-" in primer):
-            t.insert(primer)
+        primer = P2_rev[i: i + PRIMER_LENGTH]
+        if not ("-" in primer):
+            if GC_clamp(primer):
+                if annealing_temp(primer, 55, 65):
+                    t.insert(primer)
 
     test = t.query("")
     for i in test:
