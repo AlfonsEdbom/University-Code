@@ -7,8 +7,8 @@ import logging
 
 from Fasta_DNA import Fasta_DNA
 from Trie import Trie
-from Filters import Filters, remove_GCC, annealing_temp, GC_clamp
-
+from Filters import Filters
+from Filter_Primers import Filter_Primers
 
 def get_config(config_file: str) -> dict:
     with open(config_file, "r") as c:
@@ -41,52 +41,42 @@ def main():
     config = get_config("config.json")
     logger = get_logger("log.log")
 
-    t = Trie()
     P2_genome = Fasta_DNA(config["files"]["P2"])
 
-    P2_f = P2_genome.get_forward_strand()
-    P2_rev = P2_genome.get_reverse_strand()
-
-    PRIMER_LENGTH = config["settings"]["length"]
-    GC_MAX = config["settings"]["GC_max"]
-    GC_MIN = config["settings"]["GC_min"]
-
-    P2_flist = [P2_f[i:i+PRIMER_LENGTH] for i in range(0, len(P2_f), PRIMER_LENGTH)]
-    P2_revlist = [P2_rev[i:i+PRIMER_LENGTH] for i in range(0, len(P2_rev), PRIMER_LENGTH)]
+    primer_length = config["settings"]["length"]
+    GC_min = config["settings"]["GC_min"]
+    GC_max = config["settings"]["GC_max"]
+    T_min = config["settings"]["T_min"]
+    T_max = config["settings"]["T_max"]
 
 
-    for i, primer in enumerate(P2_flist):
-        primer = remove_GCC(primer, GC_MIN, GC_MAX)
+    filter = Filter_Primers(P2_genome, Filters())
 
-        P2_flist[i] = primer
+    filter.filter_GC_content(primer_length, GC_min, GC_max)
+    t = filter.apply_filters(primer_length, T_min, T_max)
 
-    for i, primer in enumerate(P2_revlist):
-        primer = remove_GCC(primer, GC_MIN, GC_MAX)
-
-        P2_revlist[i] = primer
-
-
-    P2_f = "".join(P2_flist)
-    P2_rev = "".join(P2_revlist)
-
-
-    for i in range(len(P2_f) - PRIMER_LENGTH-1):
-        primer = P2_f[i: i + PRIMER_LENGTH]
-        if not ("-" in primer):
-            if GC_clamp(primer):
-                if annealing_temp(primer, 55, 65):
-                    t.insert(primer)
-    for i in range(len(P2_rev) - PRIMER_LENGTH-1):
-        primer = P2_rev[i: i + PRIMER_LENGTH]
-        if not ("-" in primer):
-            if GC_clamp(primer):
-                if annealing_temp(primer, 55, 65):
-                    t.insert(primer)
 
     test = t.query("")
     for i in test:
         logger.info(f"{i[0]}, {i[1]}")
     print(len(test))
+
+    """
+    for i in range(len(P2_f) - primer_length-1):
+        primer = P2_f[i: i + primer_length]
+        if not ("-" in primer):
+            if GC_clamp(primer):
+                if annealing_temp(primer, 55, 65):
+                    t.insert(primer)
+    for i in range(len(P2_rev) - primer_length-1):
+        primer = P2_rev[i: i + primer_length]
+        if not ("-" in primer):
+            if GC_clamp(primer):
+                if annealing_temp(primer, 55, 65):
+                    t.insert(primer)
+    """
+
+
 
 if __name__ == '__main__':
     main()

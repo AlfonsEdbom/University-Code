@@ -5,8 +5,10 @@
     "T4": "NC_000866-Enterobact-phage-T4-complete-genome.fasta"},
   "settings": {
     "length": 20,
+    "GC_min": 0.3,
     "GC_max": 0.8,
-    "GC_min": 0.3
+    "T_min": 55,
+    "T_max": 65
   }
 
 }
