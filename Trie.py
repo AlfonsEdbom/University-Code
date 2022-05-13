@@ -1,4 +1,5 @@
 # Inspired from https://albertauyeung.github.io/2020/06/15/python-trie.html/
+# Hamming distance from https://github.com/volpato30/hamming-d-search/blob/master/trie.py
 
 
 class TrieNode:
@@ -37,7 +38,7 @@ class Trie:
         node.is_end = True
         node.counter += 1
 
-    def dfs(self, node: TrieNode, prefix: str):
+    def _dfs(self, node: TrieNode, prefix: str):
         """Depth-first traversal of Trie
 
         Args:
@@ -45,7 +46,7 @@ class Trie:
             - prefix: current prefix, stores word while traversing
         """
 
-        #The end of a word has been reached
+        # The end of a word has been reached
         # Add word and counter to output list
         if node.is_end:
             self.output.append((prefix + node.char, node.counter))
@@ -73,5 +74,40 @@ class Trie:
         # return all words starting with prefix (x), ordered by least number of occurrence
         return sorted(self.output, key=lambda x: x[1])
 
+    def search_hamming_dist(self, query_seq: str, d:int):
+        result = []
+        current_index = 0
+        current_cost = 0
+
+        node = self.root
+
+        for child in node.children:
+            self._search_recursive(node.children[child], child, query_seq, current_index, current_cost, d, result)
+
+        print(result, current_index, current_cost)
+
+    def _search_recursive(self, current_node: TrieNode, base: str, query_seq: str,
+                          current_index: int, current_cost: int, d, result):
+        if not (base == query_seq[current_index]):
+            current_cost += 1
+        if current_cost > d:
+            return
+        current_index += 1
+
+        # stopping criteria
+        if current_node.is_end:
+            result.append(1) # TODO: Fix to add proper word or something interesting. Maybe add prefix to parameters
+            return
+
+        for base in current_node.children:
+            self._search_recursive(current_node.children[base], base, query_seq, current_index, current_cost, d, result)
 
 
+
+t = Trie()
+t.insert("hey")
+t.insert("hiy")
+t.insert("yoo")
+
+print(t.root.char)
+t.search_hamming_dist("joy", 5)

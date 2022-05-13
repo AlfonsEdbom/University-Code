@@ -14,7 +14,7 @@ Features:
 
 
 Identify "unique primers"
-    Analyze differences in Annealing Temperature
+    Analyze difference in Annealing Temperature, compared to "most similar sequence"
     Find similar primers and calculate binding temp. compare to perfect fit. Want at least deltaT 10 deg
         A, T = 2 deg
         C, G = 4 deg
