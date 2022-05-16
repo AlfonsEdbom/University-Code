@@ -52,7 +52,7 @@ class Trie:
             self.output.append((prefix + node.char, node.counter))
 
         for child in node.children.values():
-            self.dfs(child, prefix + node.char)
+            self._dfs(child, prefix + node.char)
 
     def query(self, x: str) -> list[tuple[str, int]]:
         """Finds all words that starts with prefix (x)"""
@@ -69,7 +69,7 @@ class Trie:
             else:
                 return []
         # Do depth first search, starting at last node in prefix (x)
-        self.dfs(node, x[:-1])
+        self._dfs(node, x[:-1])
 
         # return all words starting with prefix (x), ordered by least number of occurrence
         return sorted(self.output, key=lambda x: x[1])
@@ -82,32 +82,28 @@ class Trie:
         node = self.root
 
         for child in node.children:
-            self._search_recursive(node.children[child], child, query_seq, current_index, current_cost, d, result)
+            self._search_recursive(node.children[child], child, query_seq, current_index, current_cost, d, child, result)
 
         print(result, current_index, current_cost)
+        return result
 
     def _search_recursive(self, current_node: TrieNode, base: str, query_seq: str,
-                          current_index: int, current_cost: int, d, result):
+                          current_index: int, current_cost: int, max_dist: int, prefix:str, result: list[str]):
         if not (base == query_seq[current_index]):
             current_cost += 1
-        if current_cost > d:
+        if current_cost > max_dist:
             return
         current_index += 1
 
         # stopping criteria
         if current_node.is_end:
-            result.append(1) # TODO: Fix to add proper word or something interesting. Maybe add prefix to parameters
+            result.append(prefix)
             return
 
         for base in current_node.children:
-            self._search_recursive(current_node.children[base], base, query_seq, current_index, current_cost, d, result)
+            self._search_recursive(current_node.children[base], base, query_seq,
+                                   current_index, current_cost, max_dist, prefix + base, result)
 
 
 
-t = Trie()
-t.insert("hey")
-t.insert("hiy")
-t.insert("yoo")
 
-print(t.root.char)
-t.search_hamming_dist("joy", 5)

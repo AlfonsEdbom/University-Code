@@ -4,7 +4,7 @@ from Trie import Trie
 
 
 class Filter_Primers:
-    def __init__(self, genome: Fasta_DNA, filters: Filters):
+    def __init__(self, genome: Fasta_DNA):
         self.forward = genome.get_forward_strand()
         self.reverse = genome.get_reverse_strand()
         self.filters = Filters()
