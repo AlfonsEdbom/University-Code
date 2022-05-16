@@ -5,10 +5,14 @@ Input: Genome sequence of a virus
 import json
 import logging
 
+import time
+from datetime import timedelta
+
 from Fasta_DNA import Fasta_DNA
 from Trie import Trie
 from Filters import Filters
 from Filter_Primers import Filter_Primers
+
 
 def get_config(config_file: str) -> dict:
     with open(config_file, "r") as c:
@@ -38,6 +42,8 @@ def get_logger(log_file: str):
 
 
 def main():
+    start_time = time.monotonic()
+
     config = get_config("config.json")
     logger = get_logger("log.log")
 
@@ -49,17 +55,26 @@ def main():
     T_min = config["settings"]["T_min"]
     T_max = config["settings"]["T_max"]
 
+    t = P2_genome.build_primer_Trie(primer_length)
 
-    filter = Filter_Primers(P2_genome, Filters())
+    remove_primers = Filter_Primers(P2_genome)
 
-    filter.filter_GC_content(primer_length, GC_min, GC_max)
-    t = filter.apply_filters(primer_length, T_min, T_max)
+    remove_primers.filter_GC_content(primer_length, GC_min, GC_max)
+    candidate_primers = remove_primers.apply_filters(primer_length, T_min, T_max)
+    similar_primers = remove_primers.remove_similar(t, 6)
 
 
-    test = t.query("")
-    for i in test:
-        logger.info(f"{i[0]}, {i[1]}")
-    print(len(test))
+    print(len(candidate_primers))
+    print(len(similar_primers))
+
+
+    print(f"The program took {timedelta(seconds=time.monotonic() - start_time)} to execute)")
+
+
+
+if __name__ == '__main__':
+    main()
+
 
     """
     for i in range(len(P2_f) - primer_length-1):
@@ -75,8 +90,3 @@ def main():
                 if annealing_temp(primer, 55, 65):
                     t.insert(primer)
     """
-
-
-
-if __name__ == '__main__':
-    main()
