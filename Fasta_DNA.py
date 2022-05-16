@@ -1,5 +1,7 @@
 from os import path
 
+from Trie import Trie
+
 class Fasta_DNA:
     forward_strand: str
     reverse_strand: str
@@ -44,3 +46,19 @@ class Fasta_DNA:
 
     def get_reverse_strand(self):
         return self.reverse_strand
+
+    def build_primer_Trie(self, primer_length: int):
+
+        t = Trie()
+        forward_list = [self.forward_strand[i:i + primer_length]
+                        for i in range(0, len(self.forward_strand)-primer_length+1)]
+        reverse_list = [self.reverse_strand[i:i + primer_length]
+                        for i in range(0, len(self.reverse_strand)-primer_length+1)]
+
+        for i in forward_list:
+            t.insert(i)
+
+        for i in reverse_list:
+            t.insert(i)
+
+        return t
