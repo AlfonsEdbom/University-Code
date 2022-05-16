@@ -54,6 +54,7 @@ def main():
     GC_max = config["settings"]["GC_max"]
     T_min = config["settings"]["T_min"]
     T_max = config["settings"]["T_max"]
+    deltaT = config["settings"]["deltaT"]
 
     t = P2_genome.build_primer_Trie(primer_length)
 
@@ -61,7 +62,7 @@ def main():
 
     remove_primers.filter_GC_content(primer_length, GC_min, GC_max)
     candidate_primers = remove_primers.apply_filters(primer_length, T_min, T_max)
-    similar_primers = remove_primers.remove_similar(t, 6)
+    similar_primers = remove_primers.remove_similar(t, deltaT)
 
 
     print(len(candidate_primers))

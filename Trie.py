@@ -103,8 +103,12 @@ class Trie:
         if result:
             return
         # Checks query_seq against current base
+        # Note that query seq needs to be checked (not base) to get correct deltaT
         if not (base == query_seq[current_index]):
-            current_cost += 1
+            if query_seq[current_index] in ["A", "T"]:
+                current_cost += 2
+            if query_seq[current_index] in ["C", "G"]:
+                current_cost += 4
 
         # If too many mismatches found, terminate this branch
         if current_cost > max_dist:
