@@ -43,12 +43,13 @@ class Filters:
 
     def GC_clamp(self, sequence):
         """Removes primers that do not have a GC clamp"""
-        end = sequence[-2:]
+        end2 = sequence[-2]
+        end1 = sequence[-1]
 
-        if end in ["A", "T"]:
+        if end1 in ["A", "T"] or end2 in ["A", "T"]:
             return False
         else:
-            return sequence
+            return True
 
     def GC_end(self):
         """Only keep primers /w appropriate GC content in the end"""

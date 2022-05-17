@@ -56,21 +56,31 @@ def main():
     T_max = config["settings"]["T_max"]
     deltaT = config["settings"]["deltaT"]
 
-    t = P2_genome.build_primer_Trie(primer_length)
+    t = P2_genome.build_primer_Trie(primer_length) # Build the genome trie
     logger.debug(f"Primer Trie built! {timedelta(seconds=time.monotonic() - start_time)}")
 
-    remove_primers = Filter_Primers(P2_genome)
+    remove_primers = Filter_Primers(P2_genome) # initiate filter object
+    logger.debug(remove_primers.forward)
+    logger.debug(remove_primers.reverse)
 
-    remove_primers.filter_GC_content(primer_length, GC_min, GC_max)
+    remove_primers.filter_GC_content(primer_length, GC_min, GC_max) # remove windows with too high GC-content
+    logger.debug(remove_primers.forward)
+    logger.debug(remove_primers.reverse)
     logger.debug(f"GC content filter has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
-    candidate_primers, candidate_indices = remove_primers.apply_filters(primer_length, T_min, T_max)
-    logger.debug(f"The rest of the filters has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
-    similar_primers, similar_indices = remove_primers.remove_similar(t, deltaT)
-    logger.debug(f"deltaT filter has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
 
-    remove_primers.get_primer_pairs(1)
-    logger.debug(len(candidate_primers))
-    logger.debug(len(similar_primers))
+    remove_primers.apply_filters(primer_length, T_min, T_max)  # Apply the rest of the filteres
+    logger.debug(f"The rest of the filters has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
+    print(remove_primers.forward_primers)
+    print(remove_primers.reverse_primers)
+
+    remove_primers.remove_similar(t, deltaT)  # Remove primers with too low deltaT
+    print(remove_primers.forward_primers)
+    print(remove_primers.reverse_primers)
+    #logger.debug(f"deltaT filter has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
+
+    #remove_primers.get_primer_pairs(1)
+    #logger.debug(len(candidate_primers))
+    #logger.debug(len(similar_primers))
 
 
     print(f"The program took {timedelta(seconds=time.monotonic() - start_time)} to execute)")

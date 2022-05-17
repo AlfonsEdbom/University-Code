@@ -14,8 +14,8 @@ class Filter_Primers:
         self.forward = genome.get_forward_strand()  # forward strand of DNA
         self.reverse = genome.get_reverse_strand()  # reverse strand of DNA
         self.filters = Filters()  # Filter object, with contains the logics for the filters
-        self.candidate_primers = []  # List of primers deemed to candidate PCR-primers
-        self.candidate_primers_index = []
+        self.forward_primers = []  # List of primers deemed to candidate forward PCR-primers
+        self.reverse_primers = []  # List of primers deemed to be candidate reverse PCR-primers
 
     def filter_GC_content(self, primer_length: int, GC_min: float, GC_max: float) -> None:
         """
@@ -52,43 +52,42 @@ class Filter_Primers:
             if not ("-" in primer):
                 if self.filters.GC_clamp(primer):
                     if self.filters.annealing_temp(primer, min_T, max_T):
-                        self.candidate_primers.append(primer)
-                        self.candidate_primers_index.append((i, i+primer_length))
+                        tmplist = [primer, (i, i + primer_length)]
+                        self.forward_primers.append(tmplist)
 
         for i in range(len(self.reverse) - primer_length + 1):
             primer = self.reverse[i:i + primer_length]
             if not ("-" in primer):
                 if self.filters.GC_clamp(primer):
                     if self.filters.annealing_temp(primer, min_T, max_T):
-                        self.candidate_primers.append(primer)
-                        self.candidate_primers_index.append((-i, -(i+primer_length)))
-
-        return self.candidate_primers, self.candidate_primers_index
+                        tmplist = [primer, (-i, -(i + primer_length))]
+                        self.reverse_primers.append(tmplist)
 
     def remove_similar(self, trie: Trie, max_mismatches: int):
         """
         Removes primers from self.candidate_primers that have too binding temp.
 
         """
-        tmp_primers = []
-        tmp_indices = []
 
-        for i in range(len(self.candidate_primers)):
-            similar_list = trie.search_hamming_dist(self.candidate_primers[i], max_mismatches)
+        tmp_forward = []
+        for primer in self.forward_primers:
+            sequence = primer[0]
+            similar_list = trie.search_hamming_dist(sequence, max_mismatches)
             if not similar_list:
-                tmp_primers.append(self.candidate_primers[i])
-                tmp_indices.append(self.candidate_primers_index[i])
+                tmp_forward.append(primer)
 
-        self.candidate_primers = tmp_primers
-        self.candidate_primers_index = tmp_indices
+        tmp_reverse = []
+        for primer in self.reverse_primers:
+            sequence = primer[0]
+            similar_list = trie.search_hamming_dist(sequence, max_mismatches)
+            if not similar_list:
+                tmp_reverse.append(primer)
 
-        return self.candidate_primers, self.candidate_primers_index
+        self.forward_primers = tmp_forward
+        self.reverse_primers = tmp_reverse
 
     def get_primer_pairs(self, primer_length):
-        for p, i in zip(self.candidate_primers, self.candidate_primers_index):
-            print(p)
-            print(i)
-
-
-
-
+        #for p, i in zip(self.candidate_primers, self.candidate_primers_index):
+         #   print(p)
+          #  print(i)
+        pass
