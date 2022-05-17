@@ -2,7 +2,8 @@
   "files": {
     "P2": "Enterobacteria-phage-P2-NC_001895-complete-genome.fasta",
     "SARS": "SARS-CoV-2-isolate-Wuhan-Hu-1-complete-genome.fasta",
-    "T4": "NC_000866-Enterobact-phage-T4-complete-genome.fasta"},
+    "T4": "NC_000866-Enterobact-phage-T4-complete-genome.fasta",
+    "test": "test.fasta"},
   "settings": {
     "length": 20,
     "GC_min": 0.3,

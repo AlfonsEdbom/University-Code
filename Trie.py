@@ -89,11 +89,13 @@ class Trie:
 
         for child in node.children:
             if not result:
-                self._search_recursive(node.children[child], child, query_seq, current_index, current_cost, max_dist, child,result)
+                self._search_recursive(node.children[child], child, query_seq, current_index, current_cost, max_dist,
+                                       child, result)
 
         return result
 
-    def _search_recursive(self, current_node: TrieNode, base: str, query_seq: str,current_index: int, current_cost: int, max_dist: int, prefix: str, result: list[str]):
+    def _search_recursive(self, current_node: TrieNode, base: str, query_seq: str, current_index: int,
+                          current_cost: int, max_dist: int, prefix: str, result: list[str]):
         """
         Recursive search function that checks if the current index of the
         query sequence matches current node in the trie.
@@ -122,25 +124,8 @@ class Trie:
                 result.append(prefix)
             else:
                 return
-        
+
         # Recursive search for all children
         for base in current_node.children:
-            self._search_recursive(current_node.children[base], base, query_seq, current_index, current_cost,max_dist, prefix + base, result)
-
-
-if __name__ == '__main__':
-    testTrie = Trie()
-    testTrie.insert("yoo")
-    testTrie.insert("aoo")
-    testTrie.insert("hey")
-    testTrie.insert("yeo")
-    testTrie.insert("yoy")
-    testTrie.insert("hiy")
-
-
-
-    print(testTrie.root.char)
-    test = testTrie.search_hamming_dist("yoc", 1)
-
-    if test:
-        print(test)
+            self._search_recursive(current_node.children[base], base, query_seq, current_index, current_cost, max_dist,
+                                   prefix + base, result)

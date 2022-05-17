@@ -15,6 +15,7 @@ class Filter_Primers:
         self.reverse = genome.get_reverse_strand()  # reverse strand of DNA
         self.filters = Filters()  # Filter object, with contains the logics for the filters
         self.candidate_primers = []  # List of primers deemed to candidate PCR-primers
+        self.candidate_primers_index = []
 
     def filter_GC_content(self, primer_length: int, GC_min: float, GC_max: float) -> None:
         """
@@ -40,7 +41,7 @@ class Filter_Primers:
         self.forward = "".join(forward_list)
         self.reverse = "".join(reverse_list)
 
-    def apply_filters(self, primer_length: int, min_T: float, max_T: float) -> list[str]:
+    def apply_filters(self, primer_length: int, min_T: float, max_T: float):
         """
         Applies the filters found in Filters.py to all primers found in the genome
         Saves them in the list of candidate PCR-primers
@@ -52,6 +53,7 @@ class Filter_Primers:
                 if self.filters.GC_clamp(primer):
                     if self.filters.annealing_temp(primer, min_T, max_T):
                         self.candidate_primers.append(primer)
+                        self.candidate_primers_index.append((i, i+primer_length))
 
         for i in range(len(self.reverse) - primer_length + 1):
             primer = self.reverse[i:i + primer_length]
@@ -59,19 +61,34 @@ class Filter_Primers:
                 if self.filters.GC_clamp(primer):
                     if self.filters.annealing_temp(primer, min_T, max_T):
                         self.candidate_primers.append(primer)
+                        self.candidate_primers_index.append((-i, -(i+primer_length)))
 
-        return self.candidate_primers
+        return self.candidate_primers, self.candidate_primers_index
 
-    def remove_similar(self, trie: Trie, max_mismatches: int) -> list[str]:
-        tmplist = []
+    def remove_similar(self, trie: Trie, max_mismatches: int):
+        """
+        Removes primers from self.candidate_primers that have too binding temp.
 
-        for i in self.candidate_primers:
-            similar_list = trie.search_hamming_dist(i, max_mismatches)
+        """
+        tmp_primers = []
+        tmp_indices = []
+
+        for i in range(len(self.candidate_primers)):
+            similar_list = trie.search_hamming_dist(self.candidate_primers[i], max_mismatches)
             if not similar_list:
-                tmplist.append(i)
+                tmp_primers.append(self.candidate_primers[i])
+                tmp_indices.append(self.candidate_primers_index[i])
 
-        self.candidate_primers = tmplist
+        self.candidate_primers = tmp_primers
+        self.candidate_primers_index = tmp_indices
 
-        return self.candidate_primers
+        return self.candidate_primers, self.candidate_primers_index
+
+    def get_primer_pairs(self, primer_length):
+        for p, i in zip(self.candidate_primers, self.candidate_primers_index):
+            print(p)
+            print(i)
+
+
 
 

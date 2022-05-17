@@ -47,7 +47,7 @@ def main():
     config = get_config("config.json")
     logger = get_logger("log.log")
 
-    P2_genome = Fasta_DNA(config["files"]["P2"])
+    P2_genome = Fasta_DNA(config["files"]["test"])
 
     primer_length = config["settings"]["length"]
     GC_min = config["settings"]["GC_min"]
@@ -57,16 +57,20 @@ def main():
     deltaT = config["settings"]["deltaT"]
 
     t = P2_genome.build_primer_Trie(primer_length)
+    logger.debug(f"Primer Trie built! {timedelta(seconds=time.monotonic() - start_time)}")
 
     remove_primers = Filter_Primers(P2_genome)
 
     remove_primers.filter_GC_content(primer_length, GC_min, GC_max)
-    candidate_primers = remove_primers.apply_filters(primer_length, T_min, T_max)
-    similar_primers = remove_primers.remove_similar(t, deltaT)
+    logger.debug(f"GC content filter has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
+    candidate_primers, candidate_indices = remove_primers.apply_filters(primer_length, T_min, T_max)
+    logger.debug(f"The rest of the filters has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
+    similar_primers, similar_indices = remove_primers.remove_similar(t, deltaT)
+    logger.debug(f"deltaT filter has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
 
-
-    print(len(candidate_primers))
-    print(len(similar_primers))
+    remove_primers.get_primer_pairs(1)
+    logger.debug(len(candidate_primers))
+    logger.debug(len(similar_primers))
 
 
     print(f"The program took {timedelta(seconds=time.monotonic() - start_time)} to execute)")
@@ -75,19 +79,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-    """
-    for i in range(len(P2_f) - primer_length-1):
-        primer = P2_f[i: i + primer_length]
-        if not ("-" in primer):
-            if GC_clamp(primer):
-                if annealing_temp(primer, 55, 65):
-                    t.insert(primer)
-    for i in range(len(P2_rev) - primer_length-1):
-        primer = P2_rev[i: i + primer_length]
-        if not ("-" in primer):
-            if GC_clamp(primer):
-                if annealing_temp(primer, 55, 65):
-                    t.insert(primer)
-    """
