@@ -8,8 +8,8 @@
     "length": 20,
     "GC_min": 0.3,
     "GC_max": 0.8,
-    "T_min": 55,
-    "T_max": 65,
+    "T_min": 58,
+    "T_max": 62,
     "deltaT": 15
   }
 

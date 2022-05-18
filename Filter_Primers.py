@@ -86,8 +86,16 @@ class Filter_Primers:
         self.forward_primers = tmp_forward
         self.reverse_primers = tmp_reverse
 
-    def get_primer_pairs(self, primer_length):
-        #for p, i in zip(self.candidate_primers, self.candidate_primers_index):
-         #   print(p)
-          #  print(i)
-        pass
+    def get_primer_pairs(self, min_dist, max_dist):
+        primer_pairs = []
+        for forward in self.forward_primers:
+            for reverse in self.reverse_primers:
+                forward_pos = forward[1][1]
+                reverse_pos = len(self.reverse) + reverse[1][1]  # reformat to be in forward position
+
+                distance = reverse_pos - forward_pos
+
+                if min_dist < distance < max_dist:
+                    primer_pairs.append((forward[0], reverse[0], distance))
+
+        return primer_pairs

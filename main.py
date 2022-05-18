@@ -60,25 +60,22 @@ def main():
     logger.debug(f"Primer Trie built! {timedelta(seconds=time.monotonic() - start_time)}")
 
     remove_primers = Filter_Primers(P2_genome) # initiate filter object
-    logger.debug(remove_primers.forward)
-    logger.debug(remove_primers.reverse)
 
     remove_primers.filter_GC_content(primer_length, GC_min, GC_max) # remove windows with too high GC-content
-    logger.debug(remove_primers.forward)
-    logger.debug(remove_primers.reverse)
     logger.debug(f"GC content filter has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
 
     remove_primers.apply_filters(primer_length, T_min, T_max)  # Apply the rest of the filteres
     logger.debug(f"The rest of the filters has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
-    print(remove_primers.forward_primers)
-    print(remove_primers.reverse_primers)
+    print(len(remove_primers.forward_primers))
+    print(len(remove_primers.reverse_primers))
 
     remove_primers.remove_similar(t, deltaT)  # Remove primers with too low deltaT
-    print(remove_primers.forward_primers)
-    print(remove_primers.reverse_primers)
-    #logger.debug(f"deltaT filter has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
+    print(len(remove_primers.forward_primers))
+    print(len(remove_primers.reverse_primers))
+    logger.debug(f"deltaT filter has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
 
-    #remove_primers.get_primer_pairs(1)
+    primer_pairs =remove_primers.get_primer_pairs(300, 1500)
+    logger.debug(primer_pairs)
     #logger.debug(len(candidate_primers))
     #logger.debug(len(similar_primers))
 
