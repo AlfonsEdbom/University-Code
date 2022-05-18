@@ -3,28 +3,37 @@
 
 
 class TrieNode:
-    """Node objects in Trie"""
+    """
+    Node objects that is stored in the Trie
+    Stores its children in a dictionary
+    """
 
     def __init__(self, char: str) -> None:
         self.char = char
-        self.is_end = False
-        self.counter = 0  # Counts number of times inserted, maybe want to change to something else?
+        self.is_end = False  # Set to true only at the final character of a word/sequence
+        self.counter = 0  # Number of times a sequence has been added to the trie
         self.children = {}
-        # Want to store anything else?
-        # Want to insert some check on char?
 
 
 class Trie:
-    """Trie object storing TrieNodes"""
+    """
+    Trie object storing TrieNodes
+    Starts with empty root TrieNode, children of each node can be found
+    Methods starting with a '_' are private functions and should not be used outside the class
+    """
 
     def __init__(self) -> None:
-        self.root = TrieNode("")
+        self.root = TrieNode("")  # Root node
 
     def insert(self, word: str) -> None:
-        node = self.root
+        """
+        Inserts a word/sequence into the Trie
+        """
+
+        node = self.root  # Start at the root
 
         # Check if there is a child containing the character
-        # If not, create new child with character
+        # If not, create new child with the character
         for char in word:
             if char in node.children:
                 node = node.children[char]
@@ -38,12 +47,12 @@ class Trie:
         node.is_end = True
         node.counter += 1
 
-    def _dfs(self, node: TrieNode, prefix: str):
-        """Depth-first traversal of Trie
+    def _depth_first_search(self, node: TrieNode, prefix: str):
+        """
+        Depth-first traversal of Trie
 
-        Args:
-            - node: Node to start at
-            - prefix: current prefix, stores word while traversing
+        Node: Current node in the Trie
+        Prefix: Current path taken through the trie, stores word
         """
 
         # The end of a word has been reached
@@ -51,33 +60,39 @@ class Trie:
         if node.is_end:
             self.output.append((prefix + node.char, node.counter))
 
+        # Start a new depth first search for each of the children
         for child in node.children.values():
-            self._dfs(child, prefix + node.char)
+            self._depth_first_search(child, prefix + node.char)
 
-    def query(self, x: str) -> list[tuple[str, int]]:
-        """Finds all words that starts with prefix (x)"""
+    def query(self, prefix: str) -> list[tuple[str, int]]:
+        """
+        Finds all words that starts with the prefix
+        Returns a list containing of words and the number of times they have been inserted
+        """
 
         # Create new empty list each time function is called
         self.output = []
 
+        # start at the root of the trie
         node = self.root
 
         # Checks that the word actually exists in the trie
-        for char in x:
+        for char in prefix:
             if char in node.children:
                 node = node.children[char]
             else:
                 return []
-        # Do depth first search, starting at last node in prefix (x)
-        self._dfs(node, x[:-1])
 
-        # return all words starting with prefix (x), ordered by least number of occurrence
-        return sorted(self.output, key=lambda x: x[1])
+        # Do depth first search, starting at last node in prefix (x)
+        self._depth_first_search(node, prefix[:-1])
+
+        # return all words starting with prefix (x), ordered by most number of occurrence
+        return sorted(self.output, key=lambda x: x[1], reverse=True)
 
     def search_hamming_dist(self, query_seq: str, max_dist: int):
         """
-        Returns True if query_sequence have a hamming distance less than max_dist
-        Stops if one sequence that is not identical to the query sequence is found
+        Returns a sequence if a it has a hamming distance higher than max_dist compared with query_sequence
+        Stops if a sequence that is not identical to the query sequence is found
         """
         result = []  #
         current_index = 0
@@ -86,7 +101,6 @@ class Trie:
         node = self.root  # Gets the root node
 
         # Searches each of the children to the current node recursively
-
         for child in node.children:
             if not result:
                 self._search_recursive(node.children[child], child, query_seq, current_index, current_cost, max_dist,

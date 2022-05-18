@@ -1,6 +1,5 @@
 from Filters import Filters
 from Fasta_DNA import Fasta_DNA
-
 from Trie import Trie
 
 

@@ -42,26 +42,31 @@ def get_logger(log_file: str):
 
 
 def main():
-    start_time = time.monotonic()
+    start_time = time.monotonic()  # Start timer for program
 
+    # Load config settings from config.json and initiate logger
     config = get_config("config.json")
     logger = get_logger("log.log")
-
-    P2_genome = Fasta_DNA(config["files"]["test"])
-
+    
+    # Set settings from config file to variables
     primer_length = config["settings"]["length"]
     GC_min = config["settings"]["GC_min"]
     GC_max = config["settings"]["GC_max"]
     T_min = config["settings"]["T_min"]
     T_max = config["settings"]["T_max"]
     deltaT = config["settings"]["deltaT"]
+    
+    # Create DNA-object containing DNA in Fasta file
+    genome_DNA = Fasta_DNA(config["files"]["P2"])
 
-    t = P2_genome.build_primer_Trie(primer_length) # Build the genome trie
-    logger.debug(f"Primer Trie built! {timedelta(seconds=time.monotonic() - start_time)}")
+    # Build a trie containing all primers of specific length (f and r)
+    t = genome_DNA.build_primer_Trie(primer_length)
+    logger.debug(f"The Trie contains {len(t.query(''))} primers!")
+    logger.debug(f"Primer Trie built successfully: {timedelta(seconds=time.monotonic() - start_time)}")
 
-    remove_primers = Filter_Primers(P2_genome) # initiate filter object
+    remove_primers = Filter_Primers(genome_DNA)  # initiate filter object
 
-    remove_primers.filter_GC_content(primer_length, GC_min, GC_max) # remove windows with too high GC-content
+    remove_primers.filter_GC_content(primer_length, GC_min, GC_max)  # remove windows with too high GC-content
     logger.debug(f"GC content filter has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
 
     remove_primers.apply_filters(primer_length, T_min, T_max)  # Apply the rest of the filteres
@@ -74,14 +79,12 @@ def main():
     print(len(remove_primers.reverse_primers))
     logger.debug(f"deltaT filter has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
 
-    primer_pairs =remove_primers.get_primer_pairs(300, 1500)
+    primer_pairs = remove_primers.get_primer_pairs(300, 1500)
     logger.debug(primer_pairs)
-    #logger.debug(len(candidate_primers))
-    #logger.debug(len(similar_primers))
-
+    # logger.debug(len(candidate_primers))
+    # logger.debug(len(similar_primers))
 
     print(f"The program took {timedelta(seconds=time.monotonic() - start_time)} to execute)")
-
 
 
 if __name__ == '__main__':

@@ -3,18 +3,22 @@ from os import path
 from Trie import Trie
 
 class Fasta_DNA:
-    forward_strand: str
-    reverse_strand: str
+    """"
+    Reads Fasta file and stores the forward and reverse strands of the genome sequence
+    """
 
-    def __init__(self, fasta_file) -> None:
+    def __init__(self, fasta_file: str) -> None:
         self.forward_strand = self.read_fasta(fasta_file)
         self.reverse_strand = self.calculate_reverse_DNA(self.forward_strand)
 
     def read_fasta(self, file_name: str) -> str:
-        # Reads the fasta file
-        sequence_dir = path.join(path.dirname(__file__), "sequences")
+        """
+        Reads a Fasta file located inside the folder sequences
+        Returns a string with forward strand
+        """
+        sequence_dir = path.join(path.dirname(__file__), "sequences") #file needs to be in sequences folder
         file_path = path.join(sequence_dir, file_name)
-        with open(file_path, 'r') as f:
+        with open(file_path, 'r') as f: # Read the file
             content = f.readlines()
 
         # Create string of DNA
@@ -25,6 +29,10 @@ class Fasta_DNA:
         return self.forward_strand
 
     def calculate_reverse_DNA(self, DNA_string: str) -> str:
+        """
+        Calculates the complimentary strand of a DNA sequence
+        Returns the string in the 5'-3' direction
+        """
         # Loop over DNA string from behind to create complimentary strand
         reversed_DNA = []
         for i in reversed(DNA_string):  # Match with correct opposing base
@@ -37,28 +45,33 @@ class Fasta_DNA:
             elif i == "C":
                 reversed_DNA.append("G")
 
-        self.reverse_strand = "".join(reversed_DNA)
+        self.reverse_strand = "".join(reversed_DNA) #Convert to string
 
         return self.reverse_strand
 
     def get_forward_strand(self):
+        """Returns the forward strand of the genome in the 5'-3' direction"""
         return self.forward_strand
 
     def get_reverse_strand(self):
+        """Returns the reverse strand of the genome in the 5'-3' direction"""
         return self.reverse_strand
 
     def build_primer_Trie(self, primer_length: int):
-
+        """
+        Split the genome into all possible primers of a specific length
+        Returns a trie containing all primers found at least once in the genome
+        """
         t = Trie()
+        #Creates lists containing all primers found in forward and reverse strand
         forward_list = [self.forward_strand[i:i + primer_length]
                         for i in range(0, len(self.forward_strand)-primer_length+1)]
         reverse_list = [self.reverse_strand[i:i + primer_length]
                         for i in range(0, len(self.reverse_strand)-primer_length+1)]
 
-        for i in forward_list:
-            t.insert(i)
-
-        for i in reverse_list:
-            t.insert(i)
+        # Loops over both lists and add to trie
+        for forward_primer, reverse_primer in zip(forward_list, reverse_list):
+            t.insert(forward_primer)
+            t.insert(reverse_primer)
 
         return t
