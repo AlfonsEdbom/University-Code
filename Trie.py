@@ -89,9 +89,9 @@ class Trie:
         # return all words starting with prefix (x), ordered by most number of occurrence
         return sorted(self.output, key=lambda x: x[1], reverse=True)
 
-    def search_hamming_dist(self, query_seq: str, max_dist: int):
+    def search_hamming_dist(self, query_seq: str, max_dT: int):
         """
-        Returns a sequence if a it has a hamming distance higher than max_dist compared with query_sequence
+        Returns a sequence if a it has a deltaT higher than max_dist compared with query_sequence
         Stops if a sequence that is not identical to the query sequence is found
         """
         result = []  #
@@ -103,13 +103,13 @@ class Trie:
         # Searches each of the children to the current node recursively
         for child in node.children:
             if not result:
-                self._search_recursive(node.children[child], child, query_seq, current_index, current_cost, max_dist,
+                self._search_recursive(node.children[child], child, query_seq, current_index, current_cost, max_dT,
                                        child, result)
 
         return result
 
     def _search_recursive(self, current_node: TrieNode, base: str, query_seq: str, current_index: int,
-                          current_cost: int, max_dist: int, prefix: str, result: list[str]):
+                          current_cost: int, max_dT: int, prefix: str, result: list[str]):
         """
         Recursive search function that checks if the current index of the
         query sequence matches current node in the trie.
@@ -126,8 +126,8 @@ class Trie:
             if query_seq[current_index] in ["C", "G"]:
                 current_cost += 4
 
-        # If too many mismatches found, terminate this branch
-        if current_cost > max_dist:
+        # If too high cost, terminate this branch
+        if current_cost > max_dT:
             return
 
         current_index += 1  # Go to next base
@@ -141,5 +141,5 @@ class Trie:
 
         # Recursive search for all children
         for base in current_node.children:
-            self._search_recursive(current_node.children[base], base, query_seq, current_index, current_cost, max_dist,
+            self._search_recursive(current_node.children[base], base, query_seq, current_index, current_cost, max_dT,
                                    prefix + base, result)
