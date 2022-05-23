@@ -42,7 +42,8 @@ def write_pp_to_file(file_name: str, primer_pairs) -> None:
     with open(file_name, "w") as of:
         of.write("Primer pairs: Forward primer, Reverse primer, Contig length \n")
         for primer_pair in primer_pairs:
-            of.write(f"{primer_pair[0].sequence}, {primer_pair[1].sequence}, {primer_pair[2]}\n")
+            of.write(f"{primer_pair[0].sequence}, {primer_pair[1].sequence}, "
+                     f"{primer_pair[2]} ({primer_pair[0].start}-{primer_pair[0].start+primer_pair[2]})\n")
 
 
 def main():
@@ -83,9 +84,9 @@ def main():
     #print(len(candidate_primers.forward_primers))
     #print(len(candidate_primers.reverse_primers))
     logger.debug(f"deltaT filter has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
-
+    logger.debug(f"forward_strand: {candidate_primers.forward}")
     primer_pairs = candidate_primers.get_primer_pairs(300, 1500)
-    candidate_primers.filter_primer_pairs(primer_pairs, GC_min, GC_max)
+    primer_pairs = candidate_primers.filter_primer_pairs(primer_pairs, GC_min, GC_max)
 
     logger.debug(primer_pairs)
     logger.debug(len(primer_pairs))

@@ -58,7 +58,6 @@ class Candidate_Primers:
         self.forward = "".join(forward_list)
         self.reverse = "".join(reverse_list)
 
-
     def apply_filters(self, primer_length: int, min_T: int, max_T: int):
         """
         Applies the filters found in Filters.py to all primers found in the genome
@@ -72,7 +71,7 @@ class Candidate_Primers:
                     if self.filters.annealing_temp(cur_primer, min_T, max_T):
                         if self.filters.GC_end(cur_primer):
                             if self.filters.self_dimerisation(cur_primer, 10):
-                                primer = Primer(cur_primer, i, i+primer_length)
+                                primer = Primer(cur_primer, i, i + primer_length)
                                 self.forward_primers.append(primer)
 
         for i in range(len(self.reverse) - primer_length + 1):
@@ -82,7 +81,7 @@ class Candidate_Primers:
                     if self.filters.annealing_temp(cur_primer, min_T, max_T):
                         if self.filters.GC_end(cur_primer):
                             if self.filters.self_dimerisation(cur_primer, 10):
-                                primer = Primer(cur_primer, -i, -(i+primer_length))
+                                primer = Primer(cur_primer, -i, -(i + primer_length))
                                 self.reverse_primers.append(primer)
 
     def remove_similar(self, trie: Trie, max_mismatches: int):
@@ -144,16 +143,9 @@ class Candidate_Primers:
 
                 GCC = num_GC / (num_GC + num_AT)
 
-                if (min_GC/100) < GCC < (max_GC/100):
+                if (min_GC / 100) < GCC < (max_GC / 100):
                     tmp_primers.append(primer_pair)
 
         primer_pairs = tmp_primers
 
-        return primer_pairs
-
-
-
-
-
-
-
+        return sorted(primer_pairs, key=lambda x: x[2], reverse= True)
