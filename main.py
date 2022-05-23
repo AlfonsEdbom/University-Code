@@ -43,7 +43,7 @@ def write_pp_to_file(file_name: str, primer_pairs) -> None:
         of.write("Primer pairs: Forward primer, Reverse primer, Contig length \n")
         for primer_pair in primer_pairs:
             of.write(f"{primer_pair[0].sequence}, {primer_pair[1].sequence}, "
-                     f"{primer_pair[2]} ({primer_pair[0].start}-{primer_pair[0].start+primer_pair[2]})\n")
+                     f"{primer_pair[2]} ({primer_pair[0].start}-{29903+primer_pair[1].start})\n")
 
 
 def main():
@@ -76,9 +76,10 @@ def main():
     logger.debug(f"GC content filter has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
 
     candidate_primers.apply_filters(primer_length, T_min, T_max)  # Apply the rest of the filteres
+    candidate_primers.remove_non_unique(t)
     logger.debug(f"The rest of the filters has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
-    print(len(candidate_primers.forward_primers))
-    print(len(candidate_primers.reverse_primers))
+    #print(len(candidate_primers.forward_primers))
+    #print(len(candidate_primers.reverse_primers))
 
     candidate_primers.remove_similar(t, deltaT)  # Remove primers with too low deltaT
     #print(len(candidate_primers.forward_primers))

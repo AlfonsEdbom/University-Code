@@ -1,6 +1,7 @@
 import re
 
-def is_complimentary(base1: str, base2: str) -> tuple[bool, int] :
+
+def is_complimentary(base1: str, base2: str) -> tuple[bool, int]:
     """
     Returns True if base1 and base2 are complimentary to each other
     and the annealing temperature gain from the match
@@ -9,12 +10,13 @@ def is_complimentary(base1: str, base2: str) -> tuple[bool, int] :
         return True, 2
     elif base1 == "T" and base2 == "A":
         return True, 2
-    elif base1 =="G" and base2 == "C":
+    elif base1 == "G" and base2 == "C":
         return True, 4
     elif base1 == "C" and base2 == "G":
         return True, 4
     else:
         return False, 0
+
 
 def calc_anneal_temp(sequence: str) -> int:
     """
@@ -52,7 +54,7 @@ class Filters:
 
         GCC = num_GC / (num_GC + num_AT)
 
-        if not (min_GC/100) < GCC < (max_GC/100):
+        if not (min_GC / 100) < GCC < (max_GC / 100):
             sequence = re.sub("[A-Z]", "-", sequence)
 
         return sequence
@@ -100,39 +102,40 @@ class Filters:
         else:
             return True
 
-    def self_dimerisation(self, sequence: str, max_temp: int=10) -> bool:
+    def self_dimerisation(self, sequence: str, max_temp: int = 10) -> bool:
         """
         Returns False if the sequence can dimerize with itself
         Otherwise True is returned
         """
 
-        reverse = sequence[::-1] # Create copy of sequence to test dimerize
-        for i in range(len(sequence)): # start at beginning of sequence
+        reverse = sequence[::-1]  # Create copy of sequence to test dimerize
+        for i in range(len(sequence)):  # start at beginning of sequence
             temperature = 0  # Reset the temperature each loop in the original strand
-            for j in range(len(reverse)): # go through every position of second sequence on first
-                match, cost = is_complimentary(sequence[i], reverse[j]) #check if first and second match
-                if match: # if they match
+            for j in range(len(reverse)):  # go through every position of second sequence on first
+                match, cost = is_complimentary(sequence[i], reverse[j])  # check if first and second match
+                if match:  # if they match
                     # temporary index variables
                     tmp_i = i
                     tmp_j = j
 
-                    temperature += cost # increase temp depending on which bases match
-                    while match: # Go forward on each strand to check if continue matching
-                        if tmp_i == len(sequence)-1 or tmp_j == len(reverse)-1: #break if the end of a sequnece is reached
+                    temperature += cost  # increase temp depending on which bases match
+                    while match:  # Go forward on each strand to check if continue matching
+                        if tmp_i == len(sequence) - 1 or tmp_j == len(
+                                reverse) - 1:  # break if the end of a sequnece is reached
                             break
                         tmp_i += 1
                         tmp_j += 1
-                        match, cost = is_complimentary(sequence[tmp_i], reverse[tmp_j]) #check if they match
-                        if match: #increase temperature if they match
+                        match, cost = is_complimentary(sequence[tmp_i], reverse[tmp_j])  # check if they match
+                        if match:  # increase temperature if they match
                             temperature += cost
-                        else: #if they dont match, reset temperature and exit while loop
+                        else:  # if they dont match, reset temperature and exit while loop
                             temperature = 0
 
-                        if temperature > max_temp: # If bind above max_temp, it can self-dimerize
-                            return False # Dont use this primer
-                else: #if dont match, reset the temperature and go to next in second loop
+                        if temperature > max_temp:  # If bind above max_temp, it can self-dimerize
+                            return False  # Dont use this primer
+                else:  # if dont match, reset the temperature and go to next in second loop
                     temperature = 0
-        return True # returns if entire sequence goes through without getting over max_temp
+        return True  # returns if entire sequence goes through without getting over max_temp
 
     def inter_dimerisation(self, sequence1: str, sequence2: str, max_temp: int = 10):
         reverse_second = sequence2[::-1]  # Create copy of sequence to test dimerize
@@ -147,7 +150,8 @@ class Filters:
 
                     temperature += cost  # increase temp depending on which bases match
                     while match:  # Go forward on each strand to check if continue matching
-                        if tmp_i == len(sequence1) - 1 or tmp_j == len(sequence2) - 1:  # break if the end of a sequnece is reached
+                        if tmp_i == len(sequence1) - 1 or tmp_j == len(
+                                sequence2) - 1:  # break if the end of a sequnece is reached
                             break
                         tmp_i += 1
                         tmp_j += 1
@@ -162,4 +166,3 @@ class Filters:
                 else:  # if dont match, reset the temperature and go to next in second loop
                     temperature = 0
         return True  # returns if entire sequence goes through without getting over ma
-

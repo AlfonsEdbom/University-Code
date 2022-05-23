@@ -2,6 +2,7 @@ from os import path
 
 from Trie import Trie
 
+
 class Fasta_DNA:
     """"
     Reads Fasta file and stores the forward and reverse strands of the genome sequence
@@ -16,9 +17,9 @@ class Fasta_DNA:
         Reads a Fasta file located inside the folder sequences
         Returns a string with forward strand
         """
-        sequence_dir = path.join(path.dirname(__file__), "sequences") #file needs to be in sequences folder
+        sequence_dir = path.join(path.dirname(__file__), "sequences")  # file needs to be in sequences folder
         file_path = path.join(sequence_dir, file_name)
-        with open(file_path, 'r') as f: # Read the file
+        with open(file_path, 'r') as f:  # Read the file
             content = f.readlines()
 
         # Create string of DNA
@@ -45,7 +46,7 @@ class Fasta_DNA:
             elif i == "C":
                 reversed_DNA.append("G")
 
-        self.reverse_strand = "".join(reversed_DNA) #Convert to string
+        self.reverse_strand = "".join(reversed_DNA)  # Convert to string
 
         return self.reverse_strand
 
@@ -63,11 +64,11 @@ class Fasta_DNA:
         Returns a trie containing all primers found at least once in the genome
         """
         t = Trie()
-        #Creates lists containing all primers found in forward and reverse strand
+        # Creates lists containing all primers found in forward and reverse strand
         forward_list = [self.forward_strand[i:i + primer_length]
-                        for i in range(0, len(self.forward_strand)-primer_length+1)]
+                        for i in range(0, len(self.forward_strand) - primer_length + 1)]
         reverse_list = [self.reverse_strand[i:i + primer_length]
-                        for i in range(0, len(self.reverse_strand)-primer_length+1)]
+                        for i in range(0, len(self.reverse_strand) - primer_length + 1)]
 
         # Loops over both lists and add to trie
         for forward_primer, reverse_primer in zip(forward_list, reverse_list):

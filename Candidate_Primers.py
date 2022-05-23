@@ -58,7 +58,7 @@ class Candidate_Primers:
         self.forward = "".join(forward_list)
         self.reverse = "".join(reverse_list)
 
-    def apply_filters(self, primer_length: int, min_T: int, max_T: int):
+    def apply_filters(self, primer_length: int, min_T: int, max_T: int, is_circular: bool = True):
         """
         Applies the filters found in Filters.py to all primers found in the genome
         Saves them in the list of candidate PCR-primers
@@ -84,6 +84,53 @@ class Candidate_Primers:
                                 primer = Primer(cur_primer, -i, -(i + primer_length))
                                 self.reverse_primers.append(primer)
 
+        if is_circular:  # If circular, add the end in front of the beginning
+            # Start with forward strand
+            for i in range(1, primer_length):
+                end_part = self.forward[len(self.forward) - i:] # Gets the i last bases in the sequence
+                start_part = self.forward[:primer_length - i]  # Gets the rest of bases in primer from the beginning
+                cur_primer = end_part + start_part  # combine end and start into string
+                if not ("-" in cur_primer): # check all filters
+                    if self.filters.GC_clamp(cur_primer):
+                        if self.filters.annealing_temp(cur_primer, min_T, max_T):
+                            if self.filters.GC_end(cur_primer):
+                                if self.filters.self_dimerisation(cur_primer, 10):
+                                    primer = Primer(cur_primer, len(self.forward) - i, primer_length - i) # indices ranging from the end over to beginning e.g. (999-18)
+                                    self.forward_primers.append(primer)
+            # Reverse strand
+            for i in range(1, primer_length):
+                end_part = self.reverse[len(self.reverse) - i:]
+                start_part = self.reverse[:primer_length - i]
+                cur_primer = end_part + start_part
+                if not ("-" in cur_primer):
+                    if self.filters.GC_clamp(cur_primer):
+                        if self.filters.annealing_temp(cur_primer, min_T, max_T):
+                            if self.filters.GC_end(cur_primer):
+                                if self.filters.self_dimerisation(cur_primer, 10):
+                                    primer = Primer(cur_primer, -len(self.reverse) - i, -primer_length - i) # indicies ranging from the end over to the beginning, but negative e.g. ((-999)-(-18))
+                                    self.reverse_primers.append(primer)
+
+    def remove_non_unique(self, trie: Trie):
+        all_primers = trie.query("")
+
+        non_unique_primers = []
+        for primer in all_primers:
+            if primer[1] > 1:
+                non_unique_primers.append(primer[0])
+
+        tmp_flist = []
+        for forward_primer in self.forward_primers:
+            if forward_primer.sequence not in non_unique_primers:
+                tmp_flist.append(forward_primer)
+
+        tmp_revlist = []
+        for reverse_primer in self.reverse_primers:
+            if reverse_primer.sequence not in non_unique_primers:
+                tmp_revlist.append(reverse_primer)
+
+        self.forward_primers = tmp_flist
+        self.reverse_primers = tmp_revlist
+
     def remove_similar(self, trie: Trie, max_mismatches: int):
         """
         Removes primers from self.candidate_primers that have too binding temp.
@@ -107,7 +154,7 @@ class Candidate_Primers:
         self.forward_primers = tmp_forward
         self.reverse_primers = tmp_reverse
 
-    def get_primer_pairs(self, min_dist, max_dist):
+    def get_primer_pairs(self, min_dist: int, max_dist: int, is_circular: bool = True):
         primer_pairs = []
         for forward_primer in self.forward_primers:
             for reverse_primer in self.reverse_primers:
@@ -118,6 +165,13 @@ class Candidate_Primers:
 
                 if min_dist < distance < max_dist:
                     primer_pairs.append((forward_primer, reverse_primer, distance))
+
+                if is_circular:
+
+                    overlapping_dist = len(self.forward) + distance
+
+                    if min_dist < overlapping_dist < max_dist:
+                         primer_pairs.append((forward_primer, reverse_primer, overlapping_dist))
 
         return primer_pairs
 
@@ -148,4 +202,4 @@ class Candidate_Primers:
 
         primer_pairs = tmp_primers
 
-        return sorted(primer_pairs, key=lambda x: x[2], reverse= True)
+        return sorted(primer_pairs, key=lambda x: x[2], reverse=True)

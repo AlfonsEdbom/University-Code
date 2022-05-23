@@ -1,59 +1,22 @@
-Specification:
-Input:
-        Genome sequence in Fasta format
-
-Output:
-        Unique pair of PCR primers (f and r)
-        Priming interval (300 to 1500 nt)
-
-Features:
-        Flexible input
-        User friendly (GUI)
-        Fast and accurate
-        (Scalable to larger genomes)
+Needs to be done:
+    Add low complexity check for primers (low complexity between primers?)
+    Update dimerisation methods to use recursion +/ hamming distance function
 
 
-Identify "unique primers"
-    Analyze difference in Annealing Temperature, compared to "most similar sequence"
-    Find similar primers and calculate binding temp. compare to perfect fit. Want at least deltaT 10 deg
-        A, T = 2 deg
-        C, G = 4 deg
+Things that could be done:
+    FastaDNA:
+        Generate the forward and the reverse strand in just one loop
+            Reverse, just add opposing base and biold from the back instead
 
-Selection criteria for "unique":
-    Minimum Annealing temp. OR length of PCR primer
-    Minimum allowed deltaT
+        Could ignore the reverse strand
 
+    Trie
+        Could change result in hamming distance to bool instead of list
 
-Possible approaches:
-    1.
-        Idea:
-            Go through the genome and identify all primers
-            Store "unique" primers somewhere, remove if they are found
-
-        Algorithm:
-            read genome(f, r)
-            for each "primer" in genome:
-                add "primer" to Trie
-
-                if "primer" not in Trie:
-                    add "primer" to UniqueList
-                else:
-                    remove "primer" from UniqueList
-
-            for each "primer" in UniqueList:
-                Calculate dT
-                if "primer".dT < min:
-                    remove "primer" from UniqueList
-                else:
-                    keep "primer"
-
-        Notes on algorithm:
-            How to decide what "primer is?"
-            Use UniqueList or something else???
-                Use Set, other Trie or something else to store?
-            How to label if "primer" is from f or r?
-            How to calculate dT?
-
+    Candidate_Primers:
+        First goes through entire genome to remove GCC, then again to apply filters
+        apply_Filters goes through both forward and reverse strand, does not look very good
+        Implement a way of applying just a few filters without going through entire genome multiple times
 
 
 
