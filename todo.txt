@@ -1,8 +1,3 @@
-Needs to be done:
-    Add low complexity check for primers (low complexity between primers?)
-    Update dimerisation methods to use recursion +/ hamming distance function
-
-
 Things that could be done:
     FastaDNA:
         Generate the forward and the reverse strand in just one loop

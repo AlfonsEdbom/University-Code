@@ -1,3 +1,5 @@
+import re
+
 from Fasta_DNA import Fasta_DNA
 from Trie import Trie
 from Filters import Filters, calc_anneal_temp
@@ -87,15 +89,16 @@ class Candidate_Primers:
         if is_circular:  # If circular, add the end in front of the beginning
             # Start with forward strand
             for i in range(1, primer_length):
-                end_part = self.forward[len(self.forward) - i:] # Gets the i last bases in the sequence
+                end_part = self.forward[len(self.forward) - i:]  # Gets the i last bases in the sequence
                 start_part = self.forward[:primer_length - i]  # Gets the rest of bases in primer from the beginning
                 cur_primer = end_part + start_part  # combine end and start into string
-                if not ("-" in cur_primer): # check all filters
+                if not ("-" in cur_primer):  # check all filters
                     if self.filters.GC_clamp(cur_primer):
                         if self.filters.annealing_temp(cur_primer, min_T, max_T):
                             if self.filters.GC_end(cur_primer):
                                 if self.filters.self_dimerisation(cur_primer, 10):
-                                    primer = Primer(cur_primer, len(self.forward) - i, primer_length - i) # indices ranging from the end over to beginning e.g. (999-18)
+                                    primer = Primer(cur_primer, len(self.forward) - i,
+                                                    primer_length - i)  # indices ranging from the end over to beginning e.g. (999-18)
                                     self.forward_primers.append(primer)
             # Reverse strand
             for i in range(1, primer_length):
@@ -107,7 +110,8 @@ class Candidate_Primers:
                         if self.filters.annealing_temp(cur_primer, min_T, max_T):
                             if self.filters.GC_end(cur_primer):
                                 if self.filters.self_dimerisation(cur_primer, 10):
-                                    primer = Primer(cur_primer, -len(self.reverse) - i, -primer_length - i) # indicies ranging from the end over to the beginning, but negative e.g. ((-999)-(-18))
+                                    primer = Primer(cur_primer, -len(self.reverse) - i,
+                                                    -primer_length - i)  # indicies ranging from the end over to the beginning, but negative e.g. ((-999)-(-18))
                                     self.reverse_primers.append(primer)
 
     def remove_non_unique(self, trie: Trie):
@@ -130,6 +134,22 @@ class Candidate_Primers:
 
         self.forward_primers = tmp_flist
         self.reverse_primers = tmp_revlist
+
+    def remove_low_complexity_primers(self):
+        tmp_forward = []
+        for primer in self.forward_primers:
+            seq = primer.sequence
+            if self.filters.low_complexity(seq):
+                tmp_forward.append(primer)
+
+        tmp_reverse = []
+        for primer in self.reverse_primers:
+            seq = primer.sequence
+            if self.filters.low_complexity(seq):
+                tmp_reverse.append(primer)
+
+        self.forward_primers = tmp_forward
+        self.reverse_primers = tmp_reverse
 
     def remove_similar(self, trie: Trie, max_mismatches: int):
         """
@@ -171,7 +191,7 @@ class Candidate_Primers:
                     overlapping_dist = len(self.forward) + distance
 
                     if min_dist < overlapping_dist < max_dist:
-                         primer_pairs.append((forward_primer, reverse_primer, overlapping_dist))
+                        primer_pairs.append((forward_primer, reverse_primer, overlapping_dist))
 
         return primer_pairs
 

@@ -77,6 +77,7 @@ def main():
 
     candidate_primers.apply_filters(primer_length, T_min, T_max)  # Apply the rest of the filteres
     candidate_primers.remove_non_unique(t)
+    candidate_primers.remove_low_complexity_primers()
     logger.debug(f"The rest of the filters has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
     #print(len(candidate_primers.forward_primers))
     #print(len(candidate_primers.reverse_primers))

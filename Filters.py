@@ -102,6 +102,24 @@ class Filters:
         else:
             return True
 
+    def low_complexity(self, sequence: str) -> bool:
+        for base1 in ["A", "T", "C", "G"]:
+            one_peat = re.compile(rf"{base1}{5}")
+            result = re.search(one_peat, sequence)
+            if result:
+                return False
+            for base2 in ["A", "T", "C", "G"]:
+                two_peat = re.compile(rf"({base1}{base2}){{4}}")
+                result = re.search(two_peat, sequence)
+                if result:
+                    return False
+                for base3 in ["A", "T", "C", "G"]:
+                    three_peat = re.compile(rf"({base1}{base2}{base3}){{3}}")
+                    result = re.search(three_peat, sequence)
+                    if result:
+                        return False
+        return True
+
     def self_dimerisation(self, sequence: str, max_temp: int = 10) -> bool:
         """
         Returns False if the sequence can dimerize with itself
