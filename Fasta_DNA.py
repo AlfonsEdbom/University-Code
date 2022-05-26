@@ -12,13 +12,11 @@ class Fasta_DNA:
         self.forward_strand = self.read_fasta(fasta_file)
         self.reverse_strand = self.calculate_reverse_DNA(self.forward_strand)
 
-    def read_fasta(self, file_name: str) -> str:
+    def read_fasta(self, file_path: str) -> str:
         """
         Reads a Fasta file located inside the folder sequences
         Returns a string with forward strand
         """
-        sequence_dir = path.join(path.dirname(__file__), "sequences")  # file needs to be in sequences folder
-        file_path = path.join(sequence_dir, file_name)
         with open(file_path, 'r') as f:  # Read the file
             content = f.readlines()
 

@@ -38,12 +38,12 @@ def get_logger(log_file: str):
 
     return logger
 
-def write_pp_to_file(file_name: str, primer_pairs) -> None:
+def write_pp_to_file(file_name: str, primer_pairs, DNA: Fasta_DNA) -> None:
     with open(file_name, "w") as of:
         of.write("Primer pairs: Forward primer, Reverse primer, Contig length \n")
         for primer_pair in primer_pairs:
             of.write(f"{primer_pair[0].sequence}, {primer_pair[1].sequence}, "
-                     f"{primer_pair[2]} ({primer_pair[0].start}-{29903+primer_pair[1].start})\n")
+                     f"{primer_pair[2]} ({primer_pair[0].start}-{len(DNA.forward_strand) + primer_pair[1].start})\n")
 
 
 def main():
@@ -92,7 +92,7 @@ def main():
 
     logger.debug(primer_pairs)
     logger.debug(len(primer_pairs))
-    write_pp_to_file("output.txt", primer_pairs)
+    write_pp_to_file("output.txt", primer_pairs, genome_DNA)
     print(f"The program took {timedelta(seconds=time.monotonic() - start_time)} to execute)")
 
 
