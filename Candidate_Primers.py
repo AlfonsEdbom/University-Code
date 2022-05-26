@@ -68,23 +68,35 @@ class Candidate_Primers:
 
         for i in range(len(self.forward) - primer_length + 1):  # - primer_length + 1 to not get short primer in the end
             cur_primer = self.forward[i:i + primer_length]
-            if not ("-" in cur_primer):
-                if self.filters.GC_clamp(cur_primer):
-                    if self.filters.annealing_temp(cur_primer, min_T, max_T):
-                        if self.filters.GC_end(cur_primer):
-                            if self.filters.self_dimerisation(cur_primer, 10):
-                                primer = Primer(cur_primer, i, i + primer_length)
-                                self.forward_primers.append(primer)
+            if ("-" in cur_primer):
+                continue
+            if not self.filters.GC_clamp(cur_primer):
+                continue
+            if not self.filters.annealing_temp(cur_primer, min_T, max_T):
+                continue
+            if not self.filters.GC_end(cur_primer):
+                continue
+            if not self.filters.self_dimerisation(cur_primer, 10):
+                continue
+
+            primer = Primer(cur_primer, i, i + primer_length)
+            self.forward_primers.append(primer)
+
 
         for i in range(len(self.reverse) - primer_length + 1):
             cur_primer = self.reverse[i:i + primer_length]
-            if not ("-" in cur_primer):
-                if self.filters.GC_clamp(cur_primer):
-                    if self.filters.annealing_temp(cur_primer, min_T, max_T):
-                        if self.filters.GC_end(cur_primer):
-                            if self.filters.self_dimerisation(cur_primer, 10):
-                                primer = Primer(cur_primer, -i, -(i + primer_length))
-                                self.reverse_primers.append(primer)
+            if ("-" in cur_primer):
+                continue
+            if not self.filters.GC_clamp(cur_primer):
+                continue
+            if not self.filters.annealing_temp(cur_primer, min_T, max_T):
+                continue
+            if not self.filters.GC_end(cur_primer):
+                continue
+            if not self.filters.self_dimerisation(cur_primer, 10):
+                continue
+            primer = Primer(cur_primer, -i, -(i + primer_length))
+            self.reverse_primers.append(primer)
 
         if is_circular:  # If circular, add the end in front of the beginning
             # Start with forward strand
@@ -92,27 +104,36 @@ class Candidate_Primers:
                 end_part = self.forward[len(self.forward) - i:]  # Gets the i last bases in the sequence
                 start_part = self.forward[:primer_length - i]  # Gets the rest of bases in primer from the beginning
                 cur_primer = end_part + start_part  # combine end and start into string
-                if not ("-" in cur_primer):  # check all filters
-                    if self.filters.GC_clamp(cur_primer):
-                        if self.filters.annealing_temp(cur_primer, min_T, max_T):
-                            if self.filters.GC_end(cur_primer):
-                                if self.filters.self_dimerisation(cur_primer, 10):
-                                    primer = Primer(cur_primer, len(self.forward) - i,
-                                                    primer_length - i)  # indices ranging from the end over to beginning e.g. (999-18)
-                                    self.forward_primers.append(primer)
+                if ("-" in cur_primer):
+                    continue
+                if not self.filters.GC_clamp(cur_primer):
+                    continue
+                if not self.filters.annealing_temp(cur_primer, min_T, max_T):
+                    continue
+                if not self.filters.GC_end(cur_primer):
+                    continue
+                if not self.filters.self_dimerisation(cur_primer, 10):
+                    continue
+
+                primer = Primer(cur_primer, len(self.forward) - i, primer_length - i)  # indices ranging from the end over to beginning e.g. (999-18)
+                self.forward_primers.append(primer)
             # Reverse strand
             for i in range(1, primer_length):
                 end_part = self.reverse[len(self.reverse) - i:]
                 start_part = self.reverse[:primer_length - i]
                 cur_primer = end_part + start_part
-                if not ("-" in cur_primer):
-                    if self.filters.GC_clamp(cur_primer):
-                        if self.filters.annealing_temp(cur_primer, min_T, max_T):
-                            if self.filters.GC_end(cur_primer):
-                                if self.filters.self_dimerisation(cur_primer, 10):
-                                    primer = Primer(cur_primer, -len(self.reverse) - i,
-                                                    -primer_length - i)  # indicies ranging from the end over to the beginning, but negative e.g. ((-999)-(-18))
-                                    self.reverse_primers.append(primer)
+                if ("-" in cur_primer):
+                    continue
+                if not self.filters.GC_clamp(cur_primer):
+                    continue
+                if not self.filters.annealing_temp(cur_primer, min_T, max_T):
+                    continue
+                if not self.filters.GC_end(cur_primer):
+                    continue
+                if not self.filters.self_dimerisation(cur_primer, 10):
+                    continue
+                primer = Primer(cur_primer, -len(self.reverse) - i,-primer_length - i)  # indicies ranging from the end over to the beginning, but negative e.g. ((-999)-(-18))
+                self.reverse_primers.append(primer)
 
     def remove_non_unique(self, trie: Trie):
         all_primers = trie.query("")
