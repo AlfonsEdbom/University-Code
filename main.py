@@ -10,6 +10,7 @@ import logging
 
 from Fasta_DNA import Fasta_DNA
 from Candidate_Primers import Candidate_Primers
+from Primer_Pairs import Primer_Pairs
 
 
 def get_config(config_file: str) -> dict:
@@ -40,10 +41,16 @@ def get_logger(log_file: str):
 
 def write_pp_to_file(file_name: str, primer_pairs, DNA: Fasta_DNA) -> None:
     with open(file_name, "w") as of:
-        of.write("Primer pairs: Forward primer, Reverse primer, Contig length \n")
+        of.write("Forward primer, Reverse primer, Contig length, restriction enzyme sites \n")
         for primer_pair in primer_pairs:
-            of.write(f"{primer_pair[0].sequence}, {primer_pair[1].sequence}, "
-                     f"{primer_pair[2]} ({primer_pair[0].start}-{len(DNA.forward_strand) + primer_pair[1].start})\n")
+            outputstr = ""
+            for entry in primer_pair:
+                outputstr = outputstr + " " + str(entry) + ","
+
+            of.write(outputstr + "\n")
+
+            #of.write(f"{primer_pair[0].sequence}, {primer_pair[1].sequence}, "
+             #        f"{primer_pair[2]} ({primer_pair[0].start}-{len(DNA.forward_strand) + primer_pair[1].start})\n")
 
 
 def main():
@@ -63,7 +70,7 @@ def main():
     GC_window = config["settings"]["GC_window"]
     
     # Create DNA-object containing DNA in Fasta file
-    genome_DNA = Fasta_DNA(config["files"]["SARS"])
+    genome_DNA = Fasta_DNA(config["files"]["T4"])
 
     # Build a trie containing all primers of specific length (f and r)
     t = genome_DNA.build_primer_Trie(primer_length)
@@ -79,19 +86,24 @@ def main():
     candidate_primers.remove_non_unique(t)
     candidate_primers.remove_low_complexity_primers()
     logger.debug(f"The rest of the filters has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
-    #print(len(candidate_primers.forward_primers))
-    #print(len(candidate_primers.reverse_primers))
+
 
     candidate_primers.remove_similar(t, deltaT)  # Remove primers with too low deltaT
-    #print(len(candidate_primers.forward_primers))
-    #print(len(candidate_primers.reverse_primers))
-    logger.debug(f"deltaT filter has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
-    logger.debug(f"forward_strand: {candidate_primers.forward}")
-    primer_pairs = candidate_primers.get_primer_pairs(300, 1500)
-    primer_pairs = candidate_primers.filter_primer_pairs(primer_pairs, GC_min, GC_max)
 
-    logger.debug(primer_pairs)
-    logger.debug(len(primer_pairs))
+    logger.debug(f"deltaT filter has been applied! {timedelta(seconds=time.monotonic() - start_time)}")
+
+    PPs = Primer_Pairs(genome_DNA, candidate_primers.forward_primers, candidate_primers.reverse_primers)
+    PPs.find_primer_pairs(300, 1500, is_circular=True)
+    PPs.filter_primer_pairs(GC_min, GC_max)
+
+    PPs.restriction_enzymes_cut()
+
+    primer_pairs = PPs.get_primer_pairs(3)
+    print(primer_pairs)
+    #primer_pairs = candidate_primers.get_primer_pairs(300, 1500)
+    #primer_pairs = candidate_primers.filter_primer_pairs(primer_pairs, GC_min, GC_max)
+
+    logger.debug(f"Number of primer pairs found: {len(primer_pairs)} {timedelta(seconds=time.monotonic() - start_time)}")
     write_pp_to_file("output.txt", primer_pairs, genome_DNA)
     print(f"The program took {timedelta(seconds=time.monotonic() - start_time)} to execute)")
 

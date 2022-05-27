@@ -1,8 +1,9 @@
 from tkinter import *
 from tkinter import ttk, filedialog, Canvas
+
 from Fasta_DNA import Fasta_DNA
 from Candidate_Primers import Candidate_Primers
-
+from Primer_Pairs import Primer_Pairs
 
 class GUI:
     def __init__(self, root):
@@ -115,22 +116,29 @@ class GUI:
         candidate_primers = Candidate_Primers(genome_DNA)  # initiate filter object
         candidate_primers.filter_GC_content(GC_window, GC_min, GC_max)  # remove windows with too high GC-content
         candidate_primers.apply_filters(primer_length, T_min, T_max)  # Apply the rest of the filteres
+        candidate_primers.remove_non_unique(t)
+        candidate_primers.remove_low_complexity_primers()
         candidate_primers.remove_similar(t, deltaT)  # Remove primers with too low deltaT
-        primer_pairs = candidate_primers.get_primer_pairs(300, 1500)
-        primer_pairs = candidate_primers.filter_primer_pairs(primer_pairs, GC_min, GC_max)
+
+        PPs = Primer_Pairs(genome_DNA, candidate_primers.forward_primers, candidate_primers.reverse_primers)
+        PPs.find_primer_pairs(300, 1500, is_circular=True)
+        PPs.filter_primer_pairs(GC_min, GC_max)
+        PPs.restriction_enzymes_cut()
+
+        primer_pairs = PPs.get_primer_pairs()
 
         # Create new window
         result_window = Toplevel()
         result_window.title = "Primer pairs"
 
-        listbox = Listbox(result_window, width=200, height=40)
+        listbox = Listbox(result_window, width=400, height=40)
         ver_scrollbar = ttk.Scrollbar(result_window, orient="vertical")
 
 
         for i, primer_pair in enumerate(primer_pairs):
-            forward_primer, reverse_primer, contig_length = primer_pair
+            forward_primer, reverse_primer, contig_length, BAMHI, EcoRI, HINDIII, NotI, XbaI = primer_pair
 
-            insert_string = f"Forward primer: {forward_primer} | Reverse primer: {reverse_primer} | Contig length: {contig_length}"
+            insert_string = f"Forward primer: {forward_primer} | Reverse primer: {reverse_primer} | Contig length: {contig_length} | BAMHI fragment lengths {BAMHI} | EcoRI fragment lengths {EcoRI} | HINDIII fragment lengths {HINDIII} | NotI fragment lengths {NotI} | XbaI fragment lengths {XbaI}"
 
             listbox.insert(i, insert_string)
 

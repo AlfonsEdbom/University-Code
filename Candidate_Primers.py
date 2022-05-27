@@ -1,5 +1,3 @@
-import re
-
 from Fasta_DNA import Fasta_DNA
 from Trie import Trie
 from Filters import Filters, calc_anneal_temp
@@ -195,26 +193,6 @@ class Candidate_Primers:
         self.forward_primers = tmp_forward
         self.reverse_primers = tmp_reverse
 
-    def get_primer_pairs(self, min_dist: int, max_dist: int, is_circular: bool = True):
-        primer_pairs = []
-        for forward_primer in self.forward_primers:
-            for reverse_primer in self.reverse_primers:
-                forward_pos = forward_primer.start
-                reverse_pos = len(self.reverse) + reverse_primer.start  # reformat to be in forward position
-
-                distance = reverse_pos - forward_pos
-
-                if min_dist < distance < max_dist:
-                    primer_pairs.append((forward_primer, reverse_primer, distance))
-
-                if is_circular:
-
-                    overlapping_dist = len(self.forward) + distance
-
-                    if min_dist < overlapping_dist < max_dist:
-                        primer_pairs.append((forward_primer, reverse_primer, overlapping_dist))
-
-        return primer_pairs
 
     def filter_primer_pairs(self, primer_pairs: list[tuple[Primer, Primer, int]], min_GC: int, max_GC: int):
         tmp_primers = []
