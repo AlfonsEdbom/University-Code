@@ -70,7 +70,7 @@ def main():
     GC_window = config["settings"]["GC_window"]
     
     # Create DNA-object containing DNA in Fasta file
-    genome_DNA = Fasta_DNA(config["files"]["T4"])
+    genome_DNA = Fasta_DNA(config["files"]["P2"])
 
     # Build a trie containing all primers of specific length (f and r)
     t = genome_DNA.build_primer_Trie(primer_length)

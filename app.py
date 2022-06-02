@@ -55,6 +55,11 @@ class GUI:
         min_deltaT_box = ttk.Entry(settings_frame, textvariable=self.min_deltaT)
         min_deltaT_box.insert(0, "15")
 
+
+        ###
+        self.is_circular_var = BooleanVar()
+        is_circular_button = ttk.Checkbutton(settings_frame, text="Circular genome",
+                                             variable=self.is_circular_var, onvalue=True, offvalue=False)
         ## Get primers
         get_primers = ttk.Button(settings_frame, text="Get Primers", command=self.get_primers)
 
@@ -65,6 +70,7 @@ class GUI:
         file_label.grid(column=0, row=0)
         file_button.grid(column=1, row=0)
         file_name.grid(column=0, row=1)
+        is_circular_button.grid(column=0, row=2)
 
         primer_length_label.grid(column=2, row=0)
 
@@ -106,7 +112,7 @@ class GUI:
         deltaT = int(self.min_deltaT.get())
         GC_window = 30
         fasta_file = str(self.fasta_file.get())
-
+        circular = self.is_circular_var.get()
         # Create DNA-object containing DNA in Fasta file
         genome_DNA = Fasta_DNA(fasta_file)
 
@@ -115,13 +121,13 @@ class GUI:
 
         candidate_primers = Candidate_Primers(genome_DNA)  # initiate filter object
         candidate_primers.filter_GC_content(GC_window, GC_min, GC_max)  # remove windows with too high GC-content
-        candidate_primers.apply_filters(primer_length, T_min, T_max)  # Apply the rest of the filteres
+        candidate_primers.apply_filters(primer_length, T_min, T_max, is_circular=circular)  # Apply the rest of the filteres
         candidate_primers.remove_non_unique(t)
         candidate_primers.remove_low_complexity_primers()
         candidate_primers.remove_similar(t, deltaT)  # Remove primers with too low deltaT
 
         PPs = Primer_Pairs(genome_DNA, candidate_primers.forward_primers, candidate_primers.reverse_primers)
-        PPs.find_primer_pairs(300, 1500, is_circular=True)
+        PPs.find_primer_pairs(300, 1500, is_circular=circular)
         PPs.filter_primer_pairs(GC_min, GC_max)
         PPs.restriction_enzymes_cut()
 
@@ -131,7 +137,7 @@ class GUI:
         result_window = Toplevel()
         result_window.title = "Primer pairs"
 
-        listbox = Listbox(result_window, width=400, height=40)
+        listbox = Listbox(result_window, width=350, height=40)
         ver_scrollbar = ttk.Scrollbar(result_window, orient="vertical")
 
 
