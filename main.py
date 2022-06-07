@@ -70,7 +70,7 @@ def main():
     GC_window = config["settings"]["GC_window"]
     
     # Create DNA-object containing DNA in Fasta file
-    genome_DNA = Fasta_DNA(config["files"]["P2"])
+    genome_DNA = Fasta_DNA(config["file"])
 
     # Build a trie containing all primers of specific length (f and r)
     t = genome_DNA.build_primer_Trie(primer_length)
@@ -99,14 +99,11 @@ def main():
     PPs.restriction_enzymes_cut()
 
     primer_pairs = PPs.get_primer_pairs(3)
-    print(primer_pairs)
-    #primer_pairs = candidate_primers.get_primer_pairs(300, 1500)
-    #primer_pairs = candidate_primers.filter_primer_pairs(primer_pairs, GC_min, GC_max)
 
     logger.debug(f"Number of primer pairs found: {len(primer_pairs)} {timedelta(seconds=time.monotonic() - start_time)}")
     write_pp_to_file("output.txt", primer_pairs, genome_DNA)
-    print(f"The program took {timedelta(seconds=time.monotonic() - start_time)} to execute)")
 
+    print(f"The program took {timedelta(seconds=time.monotonic() - start_time)} to execute)")
 
 if __name__ == '__main__':
     main()
