@@ -88,47 +88,44 @@ def depthFirstSearch(problem: SearchProblem):
     """
     "*** YOUR CODE HERE ***"
     from game import Directions
-
+    # Random print statements, methods to get gamestate
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
 
-    stack = util.Stack()
-    visited = []
-
-    initial_position = problem.getStartState()
-    stack.push(initial_position)
-    current_pos = 0
-    found = False
-
+    # Directions for pacman
     s = Directions.SOUTH
     w = Directions.WEST
+
+    # Initialize variables needed for the search
+    stack = util.Stack() # Stack with nodes to search
+    visited = [] # List/Set of nodes already visited
+
+    initial_position = problem.getStartState() # Start position
+    stack.push(initial_position) # Add start position to stack
+    current_pos = 0 # initialize current_pos variable
+    found = False # continue the while loop
+
 
     while not found:
-        if stack.isEmpty():
+        if stack.isEmpty(): # Stack empty, no nodes left to visit, return error/empty list??
             print("Could not find a path to goal")
-        last_pos = current_pos
-        current_pos = stack.pop()
+            return
+        last_pos = current_pos # Saves previous position
+        current_pos = stack.pop() # Gets new position
 
-        if problem.isGoalState(current_pos):
-            found = True
+        if problem.isGoalState(current_pos): # check if position is goal
             print(f"the goal was reached: {current_pos}")
-            return [s, s, w, s, w, w, s, w]
-        successors = problem.getSuccessors(current_pos)
+            found = True # don't continue
+            return [s, s, w, s, w, w, s, w] # List of directions in order
+
+        # if not goal position
+        successors = problem.getSuccessors(current_pos) # All possible new nodes
         for successor in successors:
             if not (successor[0] == last_pos and successor[0] == initial_position):
+                # Add to stack if not last_pos or initial position
                 stack.push(successor[0])
 
-
-
-
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-
-    s = Directions.SOUTH
-    w = Directions.WEST
-    #return  [s, s, w, s, w, w, s, w]
 
 
 def breadthFirstSearch(problem: SearchProblem):
