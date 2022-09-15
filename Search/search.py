@@ -88,55 +88,107 @@ def depthFirstSearch(problem: SearchProblem):
     """
     "*** YOUR CODE HERE ***"
     from game import Directions
-    # Random print statements, methods to get gamestate
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
 
-    # Directions for pacman
     s = Directions.SOUTH
     w = Directions.WEST
+    e = Directions.EAST
+    n = Directions.NORTH
+    
+    nodes = util.Stack()
+    nodes.push((problem.getStartState(), 'Start', 1))
 
-    # Initialize variables needed for the search
-    stack = util.Stack() # Stack with nodes to search
-    visited = [] # List/Set of nodes already visited
+    visited = []
 
-    initial_position = problem.getStartState() # Start position
-    stack.push(initial_position) # Add start position to stack
-    current_pos = 0 # initialize current_pos variable
-    found = False # continue the while loop
+    path = {}
 
-
-    while not found:
-        if stack.isEmpty(): # Stack empty, no nodes left to visit, return error/empty list??
-            print("Could not find a path to goal")
-            return
-        last_pos = current_pos # Saves previous position
-        current_pos = stack.pop() # Gets new position
-
-        if problem.isGoalState(current_pos): # check if position is goal
-            print(f"the goal was reached: {current_pos}")
-            found = True # don't continue
-            return [s, s, w, s, w, w, s, w] # List of directions in order
-
-        # if not goal position
-        successors = problem.getSuccessors(current_pos) # All possible new nodes
+    while not nodes.isEmpty():
+        node = nodes.pop()
+        visited.append(node[0])
+        if problem.isGoalState(node[0]):
+            current = node
+            result = []
+            while current != (problem.getStartState(), 'Start', 1):
+                result.append(current[1])
+                current = path[current]
+            result.reverse()
+            return result
+        successors = problem.getSuccessors(node[0])
         for successor in successors:
-            if not (successor[0] == last_pos and successor[0] == initial_position):
-                # Add to stack if not last_pos or initial position
-                stack.push(successor[0])
+            if successor[0] not in visited:
+                nodes.push(successor)
+                path[successor] = node
 
 
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from game import Directions
+
+    s = Directions.SOUTH
+    w = Directions.WEST
+    e = Directions.EAST
+    n = Directions.NORTH
+    
+    nodes = util.Queue()
+    nodes.push((problem.getStartState(), 'Start', 1))
+
+    visited = []
+    visited.append(problem.getStartState())
+
+    path = {}
+
+    while not nodes.isEmpty():
+        node = nodes.pop()
+        if problem.isGoalState(node[0]):
+            current = node
+            result = []
+            while current != (problem.getStartState(), 'Start', 1):
+                result.append(current[1])
+                current = path[current]
+            result.reverse()
+            return result
+        successors = problem.getSuccessors(node[0])
+        for successor in successors:
+            if successor[0] not in visited:
+                visited.append(successor[0])
+                nodes.push(successor)
+                path[successor] = node
+
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from game import Directions
+
+    s = Directions.SOUTH
+    w = Directions.WEST
+    e = Directions.EAST
+    n = Directions.NORTH
+    
+    nodes = util.PriorityQueue()
+    nodes.push((problem.getStartState(), 'Start', 0), 0)
+
+    visited = []
+    visited.append(problem.getStartState())
+
+    path = {}
+
+    while not nodes.isEmpty():
+
+        node = nodes.pop()
+        if problem.isGoalState(node[0]): #I have to check if there is lower cost!
+            current = node
+            result = []
+            while current != (problem.getStartState(), 'Start', 0):
+                result.append(current[1])
+                current = path[current]
+            result.reverse()
+            return result
+        successors = problem.getSuccessors(node[0])
+        for successor in successors:
+            if successor[0] not in visited:
+                visited.append(successor[0])
+                nodes.update(successor, node[2] + successor[2])
+                path[successor] = node
 
 def nullHeuristic(state, problem=None):
     """
