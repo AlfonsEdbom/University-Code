@@ -189,15 +189,13 @@ def uniformCostSearch(problem: SearchProblem):
         successors = problem.getSuccessors(node[0])
         for successor in successors:
             if successor[0] not in visited:
-                visited.append(successor[0])
+                if not problem.isGoalState(successor[0]):
+                    visited.append(successor[0])
                 tmp = (successor[0], successor[1], successor[2] + node[2])
 
                 path[tmp] = node
                 nodes.push(tmp, tmp[2])
                 nodes.update(tmp, tmp[2])
-
-
-
 
 
 
