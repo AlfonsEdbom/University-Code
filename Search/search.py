@@ -167,6 +167,7 @@ def uniformCostSearch(problem: SearchProblem):
     nodes = util.PriorityQueue()
     nodes.push((problem.getStartState(), 'Start', 0), 0)
 
+    node = (problem.getStartState(), 'Start', 0)
     visited = []
     visited.append(problem.getStartState())
 
@@ -175,7 +176,8 @@ def uniformCostSearch(problem: SearchProblem):
     while not nodes.isEmpty():
 
         node = nodes.pop()
-        if problem.isGoalState(node[0]): #I have to check if there is lower cost!
+
+        if problem.isGoalState(node[0]):  # I have to check if there is lower cost!
             current = node
             result = []
             while current != (problem.getStartState(), 'Start', 0):
@@ -183,13 +185,21 @@ def uniformCostSearch(problem: SearchProblem):
                 current = path[current]
             result.reverse()
             return result
+
         successors = problem.getSuccessors(node[0])
         for successor in successors:
             if successor[0] not in visited:
                 visited.append(successor[0])
                 tmp = (successor[0], successor[1], successor[2] + node[2])
+
+                path[tmp] = node
+                nodes.push(tmp, tmp[2])
                 nodes.update(tmp, tmp[2])
-                path[successor] = node
+
+
+
+
+
 
 def nullHeuristic(state, problem=None):
     """
