@@ -187,7 +187,8 @@ def uniformCostSearch(problem: SearchProblem):
         for successor in successors:
             if successor[0] not in visited:
                 visited.append(successor[0])
-                nodes.update(successor, node[2] + successor[2])
+                tmp = (successor[0], successor[1], successor[2] + node[2])
+                nodes.update(tmp, tmp[2])
                 path[successor] = node
 
 def nullHeuristic(state, problem=None):
