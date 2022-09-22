@@ -1,11 +1,42 @@
 ---
-title: "R Notebook"
+title: "Multivariate Dataanalysis"
 output:
   html_document:
     df_print: paged
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code.
+
+# Part 1
+
+## Exercise 2.32
+test1
+
+## Exercise 3.18
+test 2
+
+## Exercise 4.16
+test 3
+
+# Part 2
+
+## Task 1
+test1
+```{r}
+x = "hello"
+```
+
+## Task 2
+test2
+
+## Task 3
+test3
+
+## Task 4
+test4
+
+
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook.
 
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*.
 
@@ -18,3 +49,5 @@ Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by press
 When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
 
 The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+
