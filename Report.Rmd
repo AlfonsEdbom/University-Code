@@ -9,6 +9,120 @@ output:
 # Part 1
 
 ## Exercise 2.32
+**Question**: You are given the random vector $X' = [X_1, X_2, ..., X_5]$ with mean vector 
+```{r}
+x_avg = matrix(c(2.4, -1,3, 0), nrow=1)
+x_avg
+```
+
+and variance-covariance matrix.
+
+```{r}
+S = matrix(c(4, -1, 0.5, -0.5, 0,
+             -1, 3, 1, -1, 0, 
+             0.5, 1, 6, 1, -1,
+             0, 0, -1, 0, 2), ncol=5, byrow=TRUE)
+S
+```
+
+
+
+Partition **X** as:
+
+X = $\begin{bmatrix} X_1 \\ X_2 \\ \hline X_3 \\ X_4 \\ X_5\end{bmatrix}=\begin{bmatrix} X^{(1)} \\ \hline X^{(2)}\end{bmatrix}$ 
+
+Let A and B
+```{r}
+A = matrix(c(1, -1, 1, 1), nrow=2, byrow=TRUE)
+A
+B = matrix(c(1, 1, 1, 1, 1, -2), nrow=2, byrow=TRUE)
+B
+```
+
+and consider the linear combinations $AX^{(1)}$ $BX^{(1)}$. Find
+
+a) $E(X^{(1)})$
+
+**Answer**:
+```{r}
+X1 = matrix(c(2, 4), nrow=2)
+X1
+```
+
+
+b) $E(AX^{(1)})$
+**Answer**:
+
+```{r}
+E = A %*% X1
+E
+```
+
+c) $Cov(X^{(1)})$
+**Answer**:
+```{r}
+S = matrix(c(4, -1, -1, 3), byrow=TRUE, nrow = 2)
+S
+```
+
+d) $Cov(AX^{(1)})$
+**Answer**:
+```{r}
+S2 = A %*% S %*% t(A) 
+S2
+```
+
+e) $E(X^{(2)})$
+**Answer**:
+```{r}
+X2 = matrix(c(-1, 3, 0), nrow=3)
+X2
+```
+
+f) $E(BX^{(2)})$
+**Answer**:
+
+```{r}
+S3 = B %*% X2
+S3
+```
+
+g) $Cov(X^{(2)})$
+**Answer**:
+
+```{r}
+S4 = matrix(c(6, 1, -1, 1, 4, 0, -1, 0, 2), byrow=TRUE, nrow=3)
+S4
+```
+
+h) $Cov(BB^{(2)}$
+**Answer**: 
+
+```{r}
+S5 = B %*% S4 %*% t(B)
+S5
+```
+
+
+i) $Cov(X^{(1)},X^{(2)})$
+**Answer**:
+
+```{r}
+S6 = matrix(c(0.5, -0.5, 0, 1, -1, 0), byrow = TRUE, nrow = 2)
+S6
+```
+
+j) $Cov(AX^{(1)},BX^{(2)})$
+
+**Answer**:
+```{r}
+S7 = A %*% S6 %*% t(B)
+S7
+```
+
+
+## Exercise 3.18
+
 **Question**: Energy consumption in 2001, by state, from the major sources
 
 $x_1$ = petroleum
@@ -19,7 +133,8 @@ $x_3$ = hydroelectric power
 
 $x_4$ = nuclear electric power
 
-The resulting mean and covariance matrix are:
+The mean vector and covariance matrix for these variables are:
+
 ```{r}
 avg = matrix(c(0.766, 0.508, 0.438, 0.161))
 avg
@@ -29,16 +144,17 @@ S
 ```
 
 
-a) Using the summary statistics, determine the sample mean and variance of a state's total energy consumption for these major sources. 
+a) **Using the summary statistics, determine the sample mean and variance of a state's total energy consumption for these major sources.** 
 
 **Answer**:
 
-We want to create a new variable that is a linear combination of all variables, $x_1$ - $x_4$. We use the constant vector c1 to get the average state's energy consumption. 
+We want to create a new variable that is a linear combination of all variables, $x_1$ - $x_4$. We use the constant vector c1 to get the total of states energy consumption.
+
 ```{r}
 c1 = c(1, 1, 1, 1)
 ```
 
-To get the new variable's mean and variance, we use result 2.5 from the book: 
+To get the new variable's sample mean and variance, we use result 2.5 from the book: 
 
 ```{r}
 tot_avg = c1 %*% avg 
@@ -49,18 +165,18 @@ tot_var
 ```
 
 
-b) Determine the sample mean and variance of the excess of petroleum consumption over natural gas consumption. Also find the sample covariance of this variable with the total variable in part a. 
+b) **Determine the sample mean and variance of the excess of petroleum consumption over natural gas consumption. Also find the sample covariance of this variable with the total variable in part a.** 
 
 **Answer**:
 
-We want to transform our original dataset to a new dataset, Z, containing two variables, the total energy consumption and the difference between petroleum and natural gas consumption. The transformation matrix is then
+We want to transform our original dataset to a new dataset, Z, containing two variables, the total energy consumption and the difference between petroleum and natural gas consumption. The transformation matrix c2 is then
 
 ```{r}
 c2 = matrix(c(1, 1, 1, 1, 1, -1, 0, 0), ncol = 2, byrow=FALSE)
 c2
 ```
 
-To get the new datasets average and variance, we use result 2.5 from the book.
+To get the new dataset's sample mean and the covariance matrix, we use result 2.5 from the book.
 
 ```{r}
 z_average = mean(t(c2) %*% avg)
@@ -70,43 +186,271 @@ Sz = t(c2) %*% S %*% t(t(c2))
 Sz
 ```
 
-## Exercise 3.18
-
+Where the variance of this new variable is `r Sz[2,2]` and the covariance between the new variable (petroleum - natural gas consumption) and the variable in a) is `r Sz[1, 2]`.
 
 ## Exercise 4.16
-test 3
 
 # Part 2
 
 ## Task 1
-test1
-```{r}
-x = "hello"
-```
+
 
 ## Task 2
-test2
+
 
 ## Task 3
-test3
 
-## Task 4
-test4
+**Task 3.1**: ’mixtools’ provides a function, ’rmvnorm’ by which data can be simulated from multivariate normal distribution with arbitrary mean vector and covariance matrix. Learn this function by generating 1000 realizations from a two dimension
+Gaussian distribution with mean vector $\mu = \begin{bmatrix}2 \\ 3\end{bmatrix}$, variances are $\sigma_1^2=1$, $\sigma_2^2=4$, and correlation$\rho=0.7$. Make a scatter plot for your random sample.
 
-
-
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook.
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*.
-
+**Answer**:
+The given values were initialized by:
 ```{r}
-plot(cars)
+mu = as.vector(c(2,3))
+sigma_1 = 1
+sigma_2 = 2
+corr = 0.7
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+To get the covariance between $\sigma_1$ and $\sigma_1$, $\sigma_{12}$ the following equation was used: $\sigma_{12}=\rho*{\sqrt{\sigma_1 * \sigma_2}}$. The resulting covariance matrix can be can be seen below:
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+```{r}
+sigma_12 = corr * sqrt(sigma_1 * sigma_2)
+S = matrix(c(sigma_1^2, sigma_12, sigma_12, sigma_2^2), byrow=TRUE, nrow=2)
+S
+```
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+To simulate 1000 observations from this two dimensional guassian distrubution, 'rmvnorm' from mixtools was used, and the results were then a scatter plot was done on those observations:
+
+```{r warning=FALSE, message=FALSE}
+library(mixtools)
+obs = rmvnorm(1000, mu = mu, sigma = S)
+plot(x=obs[, 1], y=obs[, 2], xlab = "x1", ylab = "x2", main="1000 observations from a two dimensional guassian distribution")
+
+```
+
+**Task 3.2**: Please simulate 1000 realizations from the following GMM:
+
+* The latent (label) variable $z_i$ belongs to Bernoulli distribution with parameter p= 0.6 for i = 1, ..., 1000
+
+* The conditional distribution given the value of latent variable: 
+$X_i|z_i = 1 ∼ N_2(μ_1,Σ_1) and X_i|z_i = 0 ∼ N_2(μ_2,Σ_2)$
+where $μ_1'$ = (2, 3) and $μ_2'$ = (3, 2). For $\Sigma_1$, the standard deviations are 0.2 and 0.6, the correlation is 0.5. For $\Sigma_2$, the standard deviations are 0.4 and 0.3, the correlation is 0.5.
+
+**Answer**:
+1000 simulations from the bernoulli distribution was generated and the distribution parameters initialized by:
+```{r}
+set.seed("2022")
+bernoulli_obs = rbinom(n=1000,size=1, prob=0.6)
+
+mu1 = as.vector(c(2, 3))
+mu2 = as.vector(c(3, 2))
+
+S1 = matrix(c(0.2^2, 0.5*0.2*0.6, 0.5*0.2*0.6, 0.6^2), byrow=TRUE, nrow=2)
+S2 = matrix(c(0.4^2, 0.5*0.4*0.3, 0.5*0.4*0.3, 0.3^2), byrow=TRUE, nrow=2)
+
+S1
+S2
+```
+
+Then depending on the outcome from the bernoulli distribution, the appropriate two dimensional guassian distribution was used to generate a observation. The resulting observations from this Guassian mixture model was then plotted by using a scatter plot.
+
+```{r}
+set.seed("2022")
+results = matrix(0, length(bernoulli_obs), 2)
+for (i in 1:length(bernoulli_obs)){
+  if (bernoulli_obs[i] == 1) {
+    random_sample1 = rmvnorm(1, mu=mu1, sigma=S1)
+    results[i, 1] = random_sample1[1, 1]
+    results[i, 2] = random_sample1[1, 2]
+  } else{
+    random_sample2 = rmvnorm(1, mu=mu2, sigma=S2)
+    results[i, 1] = random_sample2[1, 1]
+    results[i, 2] = random_sample2[1, 2]
+  }
+}
+
+plot(results)
+
+```
+
+**Task 3.3**: Please read the help document of function ’mvnormalmixEM’, then fit a GMM on your simulated data and compare the estimation results of parameters with the true values. 
+
+**Answer**: 
+To do the EM algorithm, we first had to estimate the different parameters, this was done by simply choosing a ''random'' guess for the following:
+
+```{r}
+lambda= c(0.70, 0.30)
+means = list(as.vector(c(1, 5)), as.vector(c(6, 2)))
+sigmas = list(matrix(c(0.1, 0.01, 0.01, 0.4), byrow=TRUE, nrow=2), 
+              matrix(c(0.2, 0.005, 0.005, 0.1), byrow=TRUE, nrow=2))
+
+epsilon = 1e-05 # Stop criterion
+```
+
+Then using these parameters as an initial guess for our GMM and fitting it upon the data generated in task 3.2 with the EM algorithm:
+
+```{r}
+out = mvnormalmixEM(results, mu=means ,sigma = sigmas, 
+                    lambda = lambda, epsilon = epsilon)
+```
+
+The new parameters can then be compared to the old, known parameters:
+
+```{r}
+out[2]
+c(0.6, 0.4)
+
+out[3]
+mu1
+mu2
+
+out[4]
+S1
+S2
+```
+As can be seen, all parameters seem to have converged to the original values of the parameters.
+
+## Task 4
+
+Poisson distribution, a discrete probability distribution, is used to express the probability of a given number of events occurring in a fixed interval of time, for example, the number of houses sold per day on the Hemnet . If a random variable X belongs to the Poisson distribution,
+its distribution can be presented as
+
+$Pr(X = x) = \frac{λ^xe^{−λ}}{x!}$
+
+where λ is the parameter. x = 1, 2, 3,..., is the number of occurrences. It is very easy to show that the maximum likelihood estimation (MLE) of λ is the sample mean $\bar{x}$ given a random sample. For example, a random sample is drawn from the Hemnet, 6, 9, 3, 6, 6, 13, 1, 10, 5, 4 It records the daily number of houses sold in a certain area in Sweden. If one wants to fit a Poisson model to the data, then the MLE of λ can be easily obtained by calculating the average and it is 6.3. The estimation of λ can be understood as market intensity. 
+
+However, notice that there is a clear seasonal difference in the real estate market, therefor one could model the data using a Poisson mixture model. To do so, one can assume that for the off-season, the daily number of houses sold belongs to the Poisson distribution with $λ_1$, and for the peak season, it belongs to the Poisson distribution with $λ_2$. The proportion of off-season is π. To obtain the MLE of parameters, λ1, λ2, and π, one can apply the EM algorithm.
+
+Write a program to estimate the unknown parameter by EM algorithm. Set the initial values of unknown parameters as $λ_1^{(0)}=5$, $λ_2^{(0)}=5$, and π(0) = 0.5. Explain the E-step and M-step in your report.
+
+**Answer**
+First the random sample from hemnet, the initial values for the parameters and some help variables were initialized in R:
+
+```{r}
+r_sample = c(6, 9, 3, 6, 6, 13, 1, 10, 5, 4)
+
+lambda1 = 5
+lambda2 = 7
+
+pi1 = 0.5
+pi2 = 0.5
+
+# loop variables
+min_diff = 0.0001
+
+curr_lambda1_diff = 10
+curr_lambda2_diff = 10
+i = 0
+
+```
+
+Then the EM-loop was done:
+
+```{r}
+while ((curr_lambda1_diff > min_diff) &(curr_lambda2_diff > min_diff)) {
+  i = i +1
+  
+  # E-step
+  prob1 = ppois(r_sample, lambda1) * pi1
+  prob2 = ppois(r_sample, lambda2) * pi2
+  
+  post_1 = prob1 / (prob1 + prob2)
+  post_2 = prob2 / (prob1 + prob2)
+  
+  # M-step
+  lambda1_new = mean(post_1*r_sample)
+  lambda2_new = mean(post_2*r_sample)
+  
+  pi1_new = mean(post_1)
+  pi2_new = mean(post_2)
+  
+  # Get current difference
+  curr_lambda1_diff = abs(lambda1_new-lambda2)
+  curr_lambda2_diff = abs(lambda2_new-lambda2)
+  
+  # set new variable to previous
+  lambda1 = lambda1_new
+  lambda2 = lambda2_new
+}
+```
+
+The loop was run for `r i` iterations and the MLE of the paramters were:
+```{r}
+lambda1_new
+pi1_new
+
+lambda2_new
+pi2_new
+```
+
+In the E-step in the EM-algorithm, the previous iterations estimation of the parameters are used to get the posterior probability the latent variables given the observations. This can be seen as using Bayes formula to get the posterior probability of observing each observation using our estimated parameters for the different latent variables. In this task, we first calculate the probability that each observation is from both poisson distributions ($\lambda_1$ and $\lambda_2$) given the probability that a observation is coming from that distribution ($\pi_1$ and $\pi_2$). The posterior probability for each observation given a distribution is then the probability of the observation being from the first probability divided by the sum of all probabilities for the observation being from any other distribution.
+
+In the M-step in the EM-algorithm, we use the posterior probability obtained in the E-step to get our new values for the parameters being estimated. In our case we are estimating the parameters ($\lambda_1$,$\lambda_2$) and ($\pi_1$, $\pi_2$). λ can be updated using the equation: $\hat{\mu}_k = \frac{1}{\sum_{i=1}^nw_{i,k}}*\sum_{i=i}^nw_{i,k}x_i$ where $w_{i,k}$ is the posterior probability given distribution k and n is the number of observations. π can be estimated by $\hat\pi_k=\frac{1}{n}\sum_{i=1}^nw_{i,k}$. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
