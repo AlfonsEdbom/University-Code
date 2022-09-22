@@ -9,10 +9,69 @@ output:
 # Part 1
 
 ## Exercise 2.32
-test1
+**Question**: Energy consumption in 2001, by state, from the major sources
+
+$x_1$ = petroleum
+
+$x_2$ = natural gas
+
+$x_3$ = hydroelectric power
+
+$x_4$ = nuclear electric power
+
+The resulting mean and covariance matrix are:
+```{r}
+avg = matrix(c(0.766, 0.508, 0.438, 0.161))
+avg
+
+S = matrix(c(0.856, 0.635, 0.173, 0.096, 0.635, 0.568, 0.128, 0.067, 0.173, 0.127, 0.171, 0.039, 0.096, 0.067, 0.039, 0.043), nrow=4, byrow=TRUE)
+S
+```
+
+
+a) Using the summary statistics, determine the sample mean and variance of a state's total energy consumption for these major sources. 
+
+**Answer**:
+
+We want to create a new variable that is a linear combination of all variables, $x_1$ - $x_4$. We use the constant vector c1 to get the average state's energy consumption. 
+```{r}
+c1 = c(1, 1, 1, 1)
+```
+
+To get the new variable's mean and variance, we use result 2.5 from the book: 
+
+```{r}
+tot_avg = c1 %*% avg 
+tot_avg
+
+tot_var = t(c1)%*% S %*%t(t(c1))
+tot_var
+```
+
+
+b) Determine the sample mean and variance of the excess of petroleum consumption over natural gas consumption. Also find the sample covariance of this variable with the total variable in part a. 
+
+**Answer**:
+
+We want to transform our original dataset to a new dataset, Z, containing two variables, the total energy consumption and the difference between petroleum and natural gas consumption. The transformation matrix is then
+
+```{r}
+c2 = matrix(c(1, 1, 1, 1, 1, -1, 0, 0), ncol = 2, byrow=FALSE)
+c2
+```
+
+To get the new datasets average and variance, we use result 2.5 from the book.
+
+```{r}
+z_average = mean(t(c2) %*% avg)
+z_average
+
+Sz = t(c2) %*% S %*% t(t(c2))
+Sz
+```
 
 ## Exercise 3.18
-test 2
+
 
 ## Exercise 4.16
 test 3

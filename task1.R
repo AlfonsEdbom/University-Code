@@ -17,10 +17,9 @@ tot_var = t(c1)%*%variance%*%t(t(c1))
 
 
 ### b) ###
-data = c(1, 1, 1, 1,
-         1, -1, 0, 0)
-c2 = matrix(data = data, ncol = 2, byrow=FALSE)
+c2 = matrix(c(1, 1, 1, 1, 1, -1, 0, 0), ncol = 2, byrow=FALSE)
 
+z_average = mean(t(c2) %*% avg)
 Sz = t(c2) %*% variance %*% t(t(c2))
 
 
