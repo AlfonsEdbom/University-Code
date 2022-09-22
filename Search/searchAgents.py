@@ -292,11 +292,6 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
-        # Want a costFn? Or is it loaded when run?
-        # Goalstate, use self.corners and list of visited corner nodes???
-        # Want a startState/position?
-        # Need warn, visualize for it to work???
-        # self.corners_visited = []
 
     def getStartState(self):
         """
