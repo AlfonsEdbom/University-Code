@@ -189,14 +189,168 @@ Sz
 Where the variance of this new variable is `r Sz[2,2]` and the covariance between the new variable (petroleum - natural gas consumption) and the variable in a) is `r Sz[1, 2]`.
 
 ## Exercise 4.16
+This task asks for the marginal distributions of the random vectors V1 and V2, as well as the joint density of the vectors. In part a), we find the marginal distributions and in part b) we find the joint density. Result 4.8 from the book was applied to solve both parts of this exercise.
+
+```{r}
+##### Part a) ######
+# Vector 1
+c1 = matrix(c(0.25, -0.25, 0.25, -0.25))
+my_1 = sum(c1)
+sigma_1 = sum(c1^2)
+my_1
+sigma_1
+# Vector 2
+c2 = matrix(c(0.25, 0.25, -0.25, -0.25))
+my_2 = sum(c2)
+sigma_2 = sum(c2^2)
+my_2
+sigma_2
+```
+Both vectors have the same marginal distributions. The covariance for V1 and V2 is zero, which implies that V1 and V2 are jointly multivariate normal distributed.
+```{r}
+sum(c1*c2)
+```
+The covariance matrix $\Sigma$ for the joint distribution is therefore:
+$$\Sigma = \begin{bmatrix}1/4\Sigma & 0 \\ 0 & 1/4\Sigma\end{bmatrix}$$
+The random vectors both have a mean vector $\mu$ = 0. The random vectors $\begin{bmatrix}V1 \\ V2 \end{bmatrix}$ have the distribution:
+$$N(0 ,\begin{bmatrix}\frac{1}{4}\Sigma & 0 \\ 0 & \frac{1}{4}\Sigma\end{bmatrix})$$
+
+The joint density for $\begin{bmatrix}V1 \\ V2 \end{bmatrix}$ is:
+\begin{align*}
+\frac{1}{(2\pi)|\frac{1}{4}\Sigma|^{-1}}exp\{-\frac{1}{2}\begin{bmatrix}V1^{'}, V2^{'} \end{bmatrix}\begin{bmatrix}\frac{1}{4}\Sigma & 0 \\ 0 & \frac{1}{4}\Sigma\end{bmatrix}^{-1}\begin{bmatrix}V1 \\ V2 \end{bmatrix}\}
+\end{align*}
 
 # Part 2
 
 ## Task 1
+In this task we use the R package "MVN" to check the normality assumption and to look for potential outliers. The data set used is the "scor" data set from the R package "bootstrap". The below code shows both the structure as well as the summary of the variables in the data set.
+```{r}
+library(bootstrap, MVN)
+data(scor)
+str(scor) # structure of scor
+summary(scor) # summary of each variabl
+```
+To test the normality assumption we can use several different tests from the "MVN" package.
+```{r}
+library(bootstrap)
+library(MVN)
+data(scor)
+mvn(data=scor, mvnTest = "mardia")
+mvn(data=scor, mvnTest = "hz")
+mvn(data=scor, mvnTest = "royston")
+mvn(data=scor, mvnTest = "dh")
+mvn(data=scor, mvnTest = "energy")
+```
+All the tests agree that the variables "vec" and "alg" are normally distributed but the other variables are not normally distributed. All test reject the MVN assumption. If there is no clear consensus from the normality tests we can do a Chi-square Q-Q plot to see if the data deviates from the $x=y$ line, but is probably not needed in this case since the tests reject the MVN assumption. To check for multivariate outliers in the data set we can use two different methods provided my the "MVN" package, bith of the distances are based on Mahalanobis distances.
 
+```{r}
+mvn(data=scor, multivariateOutlierMethod="quan") #quantile method based on mahalanobis distance
+mvn(data=scor, multivariateOutlierMethod="adj") #adjusted quantile method
+```
+Both methods detect several multivariate outliers, which could be removed before testing the multivariate assumption again.
 
 ## Task 2
+In this, a Gaussian mixture model will be applied to diagnose tumours as either benign or malignant. The data is divided into two sets: one for training and one for classifying, the training set being the larger of the two. In the training data set a benign diagnosis is marked with a "B" and a malignant diagnosis is marked with a "M". The first step is to separate the malignant from the benign:
 
+```{r}
+# read in the data
+train_data = read.table("Train.txt", sep=",")
+test_data = read.table("Test.txt", sep=",")
+# test data shenanigans
+test_data1 <- as.matrix(test_data[-1,-1])
+test_data2 <- matrix(as.numeric(test_data1), ncol = ncol(test_data1))
+# separate malignant  from benign
+# malignant
+malignant <- as.matrix(train_data[which(train_data[,1] == "M"), -1])
+malignant1 <- matrix(as.numeric(malignant), ncol = ncol(malignant))
+# benign
+benign <- as.matrix(train_data[which(train_data[,1] == "B"), -1])
+benign1 <- matrix(as.numeric(benign), ncol = ncol(benign))
+```
+
+The next step is to calculate the mean vectors and covariance matrices for the malignant and benign groups:
+```{r}
+# my vector for malignant and benign
+my_malignant <- colMeans(malignant1)
+my_benign <- colMeans(benign1)
+# covariance matrix for malignant and benign
+cov_malignant <- cov(as.matrix(malignant1))
+cov_benign <- cov(as.matrix(benign1))
+```
+
+Now we can make a gaussian mixture model classifier to predict the diagnosis of individual patients. The function:
+\begin{align*}
+f(x) = \frac{1}{(2\pi)^{1/2}|\Sigma|^{1/2}}exp\{-\frac{1}{2}(x-\mu)^{T}|\Sigma|(x-\mu)\}
+\end{align*}
+will be used to calculate the probability of a patient belonging to the benign or malignant group.
+```{r}
+##################################################################
+################### FUNCTIONS ####################################
+##################################################################
+exponent <- function(my_vector, row_observation, cov_matrix){
+  x <- as.vector(row_observation) - as.vector(my_vector)
+  S <- cov_matrix
+  result <- exp(-t(x) %*% solve(S) %*% t(t(x))/2)
+  return(result)
+}
+kvot <- function(cov_matrix){
+  result <- 1/(((2*pi)^1/2)*sqrt(det(cov_matrix)))
+  return(result)
+}
+Classifier <- function(row_observation){
+  M <- kvot(cov_malignant) * exponent(my_malignant, row_observation, cov_malignant) * 171/469
+  B <- kvot(cov_benign) * exponent(my_benign, row_observation, cov_benign) * 298/469
+  if (M > B){
+    prediction <- 1
+  } else{
+    prediction <- 0
+  }
+  return(prediction)
+}
+##################################################################
+################### END OF FUNCTIONS #############################
+##################################################################
+```
+
+The idea behind the classifier is to see if the probability of being in one group (benign or malignant) is higher than the other group, and classify the patient accordingly. The groups we chose were: if a patient is given a 1, it is malignant, if a patient is given a 0, it is benign.
+```{r}
+num_malignant = 0
+num_benign = 0
+pred_col <- c()
+for (patient in 1:nrow(test_data2)) {
+  guess <- Classifier(test_data2[patient, ])
+  if(guess == 1){
+    num_malignant = num_malignant + 1
+    pred_col <- append(pred_col, 1)
+  }else{
+    num_benign = num_benign + 1
+    pred_col <- append(pred_col, 0)
+  }
+}
+```
+
+The prediction results:
+```{r}
+print(num_malignant)
+print(num_benign)
+```
+
+Now to see how accurate the classifier is. We do this by going through the test data again and see if the prediction matches the diagnosis.
+```{r}
+cor_pred <- 0
+wr_pred <- 0
+for (i in 1:length(pred_col)){
+  if(pred_col[i]==1 & test_data[i+1,1]=="M"){
+    cor_pred <- cor_pred + 1
+  }
+  if(pred_col[i]==0 & test_data[i+1,1]=="B"){
+    cor_pred <- cor_pred + 1
+  }
+}
+accuracy <- cor_pred/length(pred_col)
+print(accuracy)
+```
+The classifier has an accuracy of 95%.
 
 ## Task 3
 
