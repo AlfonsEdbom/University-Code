@@ -8,12 +8,10 @@ Four <- data[which(data[,1]==4),2:257]
 
 colors <- c('white','black'); 
 cus_col <- colorRampPalette(colors=colors)
-z <- matrix(Four[1,256:1],16,16,byrow=T)[,16:1]
-image(t(z),col=cus_col(256))
-
 
 par(mfrow= c(4,6))
 par(mar=c(1, 1, 1, 1))
+
 for (i in 1:24) {
   z <- matrix(Four[i,256:1],16,16,byrow=T)[,16:1]
   image(t(z), col=cus_col(256))
@@ -24,14 +22,14 @@ for (i in 1:24) {
 S = cov(Four)
 
 eigen_dec = eigen(S)
-par(mfrow=c(2, 4))
+par(mfrow=c(2, 2))
 for (i in 1:4){
   p_vec = eigen_dec$vectors[, i]
   p_matrix = matrix(p_vec[256:1], 16, 16, byrow=T)[,16:1]
   image(t(p_matrix), col=cus_col(256))
 }
 
-
+par(mfrow=c(2, 2))
 for (i in 253:256) {
   p_vec = eigen_dec$vectors[, i]
   p_matrix = matrix(p_vec[256:1], 16, 16, byrow=T)[,16:1]
@@ -54,7 +52,7 @@ get_approx = function(obs, n, e_mat) {
 
 
 par(mfrow=c(2,3))
-
+par(mar=c(1,1,1,1))
 z <- matrix(Four[1,256:1],16,16,byrow=T)[,16:1]
 image(t(z), col=cus_col(256))
 
