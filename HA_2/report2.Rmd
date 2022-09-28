@@ -9,22 +9,152 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+# Part 1 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+In part 1 we will implement and practice Principal Components Analysis (PCA) in R. We will use the handwritten digit data set to solve the following questions.
 
-```{r cars}
-summary(cars)
+To read the data the into a data matrix in R the following code was run:
+
+```{r}
+data = read.table(gzfile("zip.train"))
+data <- as.matrix(data)
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
+## Task 1
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+Read the data set into R. Choose your favorite (or lucky) number and use the subset of images of this number as a working data matrix for the tasks 1 to 4. Use function ’image’ to display the first 24 cases of your lucky number.
+
+**Answer**:
+
+We chose the number 4 to use in the following tasks. To get only the rows containing information about 4's:
+
+```{r}
+Four <- data[which(data[,1]==4),2:257]
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Finally, we plot the 24 first images:
+
+```{r echo=FALSE}
+colors <- c('white','black'); 
+cus_col <- colorRampPalette(colors=colors)
+
+par(mfrow= c(4,6))
+par(mar=c(1, 1, 1, 1))
+
+for (i in 1:24) {
+  z <- matrix(Four[i,256:1],16,16,byrow=T)[,16:1]
+  image(t(z), col=cus_col(256))
+}
+```
+
+## Task 2
+Do PCA on your working data matrix. Display the first 4 and the last 4 principal vectors (eigenvectors) as 16 × 16 images.
+
+**Answer**:
+
+To get the eigenvectors, we first get the covariance matrix S, and then do a eigen decomposition:
+
+```{r}
+S = cov(Four)
+eigen_dec = eigen(S)
+```
+
+Then, the first 4 principal components are plotted by taking the first columns (1 x 256) and put it into a matrix (16 x 16). These first 4 matrices are then plotted:
+
+```{r echo=FALSE}
+par(mfrow=c(2, 2))
+par(mar=c(1, 1, 1, 1))
+
+for (i in 1:4){
+  p_vec = eigen_dec$vectors[, i]
+  p_matrix = matrix(p_vec[256:1], 16, 16, byrow=T)[,16:1]
+  image(t(p_matrix), col=cus_col(256))
+}
+```
+
+Similarly, the last 4 principal component can be plotted:
+
+```{r echo=FALSE}
+par(mfrow=c(2, 2))
+par(mar=c(1,1,1,1))
+for (i in 253:256) {
+  p_vec = eigen_dec$vectors[, i]
+  p_matrix = matrix(p_vec[256:1], 16, 16, byrow=T)[,16:1]
+  image(t(p_matrix), col=cus_col(256))
+}
+```
+
+We can see a large difference in the amount of information the first 4 principal components contains about the number 4 when compared to the last 4 principal components, which contains very little at all, and almost none about the number 4. 
+
+## Task 3
+
+Image reconstruction. Approximate one image in your data set by its first 30, 60, 100, 150, and 200 principal components separately. Put the original image and five approximated images in one plot. For each approximated image, calculate and report the mean square errors, $\frac{||x − \hat{x}||^2}{p}$, where $x_ {p×1}$ denotes the original image, $\hat{x}_{p×1}$ denotes the approximated image, and p = 256 is the number of pixels in a image.
+
+**Answer**:
+To approximate an image using a given amount of principal components we created this function:
+
+```{r}
+get_approx = function(obs, n, e_mat) {
+  approximation = 0 
+  for (i in 1:n) {
+    yi = t(obs) %*% e_mat$vectors[, i]
+    pcomp = yi %*% e_mat$vectors[, i]
+    approximation = approximation + pcomp
+  }
+  return(approximation)
+}
+
+```
+
+This function approximates the image by projecting the observation to n principal components and then adding the approximations together. The principal component $y_i$ was calculated by  $y_j = x'\mathbf{q}_j$ where $\mathbf{q}$ is the j-th principal component (1x256 vector), x is a 256x1 vector. The approximation $x_i$ is then obtained by $x_i= \sum_{j=1}^n y_j\mathbf{q}_j$. 
+
+We chose to approximate the first 4 in our dataset. Then the original image was plotted followed by approximations using 30, 60, 100, 150, 200 principal components in order. For each approximation the mean square error (MSE) was calculated by $\frac{||x − \hat{x}||^2}{p}$.
+
+```{r echo=FALSE}
+par(mfrow=c(2,3))
+par(mar=c(1,1,1,1))
+z <- matrix(Four[1,256:1],16,16,byrow=T)[,16:1]
+image(t(z), col=cus_col(256))
+
+for (i in c(30, 60, 100, 150, 200)) {
+  approximation = get_approx(Four[1, ], i , eigen_dec)
+  approx_mat = matrix(approximation[256:1], 16, 16, byrow=T)[,16:1]
+  print((norm(t(t(Four[1, ])) - t(approximation))^2)/256)
+  image(t(approx_mat), col=cus_col(256))
+}
+```
+
+It can be seen that the MSE drops a lot between the observations with 30, 60 and 100 observations, but after that the starts to decrease a bit slower. This also seems to be the case in the plots of the approximations, where the first 3 plots are a bit "blurry" but the last 2 look very close to the original image. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
