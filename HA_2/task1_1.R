@@ -122,21 +122,14 @@ test_dat = data.frame(train_labels, PC1, PC2)
 
 # separate 5s and 6s
 train_fives = test_dat[which(test_dat[,1]==5),2:3]
-train_sixs = test_dat[which(dat[,1]==6),2:3]
+train_sixs = test_dat[which(test_dat[,1]==6),2:3]
 
 # Get statistics for 5s and 6s
 mu5 = colMeans(train_fives)
 S5 = cov(train_fives)
 
-colnames(S5)<-NULL
-rownames(S5)<-NULL
-
 mu6 = colMeans(train_sixs)
 S6 = cov(train_sixs)
-
-colnames(S6)<-NULL
-rownames(S6)<-NULL
-
 
 # Get test data
 
@@ -154,7 +147,6 @@ for (i in 1:length(test_data[, 1])) {
 }
 
 test_labels = Five_Six_w_labels[-id, 1]
-
 test_dat = data.frame(test_labels, test_PC1, test_PC2)
 
 
@@ -186,10 +178,6 @@ five_prob = length(train_fives[,1]) / length(train_data[, 1])
 six_prob = length(train_sixs[,1]) / length(train_data[, 1])
   
 
-row_observation = test_dat[3, 2:3]
-classifier(row_observation, five_prob, six_prob) # return 5 or 6
-
-
 num_five = 0
 num_six = 0
 pred_col <- c()
@@ -205,8 +193,8 @@ for (i in 1:nrow(test_dat)) {
 }
 
 # Print number of malignant and benign in test data
-print(num_malignant)
-print(num_benign)
+num_five
+num_six
 
 # Calculate the classifier accuracy
 cor_pred <- 0
@@ -220,13 +208,12 @@ for (i in 1:length(pred_col)){
   }
 }
 
+accuracy = cor_pred / length(pred_col)
+accuracy
+
+
 cor_pred
 wr_pred
-
-
-
-
-
 
 
 
