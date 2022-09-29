@@ -11,7 +11,7 @@
 
 <meta name="author" content="Alfons" />
 
-<meta name="date" content="2022-09-28" />
+<meta name="date" content="2022-09-29" />
 
 <title>Home Assignment 2</title>
 
@@ -365,7 +365,7 @@ pre code {
 
 <h1 class="title toc-ignore">Home Assignment 2</h1>
 <h4 class="author">Alfons</h4>
-<h4 class="date">2022-09-28</h4>
+<h4 class="date">2022-09-29</h4>
 
 </div>
 
@@ -420,8 +420,9 @@ original image and five approximated images in one plot. For each
 approximated image, calculate and report the mean square errors, <span class="math inline">\(\frac{||x − \hat{x}||^2}{p}\)</span>, where <span class="math inline">\(x_ {p×1}\)</span> denotes the original image,
 <span class="math inline">\(\hat{x}_{p×1}\)</span> denotes the
 approximated image, and p = 256 is the number of pixels in a image.</p>
-<p><strong>Answer</strong>: To approximate an image using a given amount
-of principal components we created this function:</p>
+<p><strong>Answer</strong>:</p>
+<p>To approximate an image using a given amount of principal components
+we created this function:</p>
 <pre class="r"><code>get_approx = function(obs, n, e_mat) {
   approximation = 0 
   for (i in 1:n) {

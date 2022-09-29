@@ -94,6 +94,7 @@ We can see a large difference in the amount of information the first 4 principal
 Image reconstruction. Approximate one image in your data set by its first 30, 60, 100, 150, and 200 principal components separately. Put the original image and five approximated images in one plot. For each approximated image, calculate and report the mean square errors, $\frac{||x − \hat{x}||^2}{p}$, where $x_ {p×1}$ denotes the original image, $\hat{x}_{p×1}$ denotes the approximated image, and p = 256 is the number of pixels in a image.
 
 **Answer**:
+
 To approximate an image using a given amount of principal components we created this function:
 
 ```{r}
