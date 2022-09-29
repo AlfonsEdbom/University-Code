@@ -133,29 +133,3 @@ It can be seen that the MSE drops a lot between the observations with 30, 60 and
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
