@@ -87,12 +87,6 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    from game import Directions
-
-    s = Directions.SOUTH
-    w = Directions.WEST
-    e = Directions.EAST
-    n = Directions.NORTH
     
     nodes = util.Stack()
     nodes.push((problem.getStartState(), 'Start', 1))
@@ -122,13 +116,7 @@ def depthFirstSearch(problem: SearchProblem):
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
-    from game import Directions
 
-    s = Directions.SOUTH
-    w = Directions.WEST
-    e = Directions.EAST
-    n = Directions.NORTH
-    
     nodes = util.Queue()
     nodes.push((problem.getStartState(), 'Start', 1))
 
@@ -157,19 +145,11 @@ def breadthFirstSearch(problem: SearchProblem):
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
-    from game import Directions
 
-    s = Directions.SOUTH
-    w = Directions.WEST
-    e = Directions.EAST
-    n = Directions.NORTH
-    
     nodes = util.PriorityQueue()
     nodes.push((problem.getStartState(), 'Start', 0), 0)
 
-    node = (problem.getStartState(), 'Start', 0)
-    visited = []
-    visited.append(problem.getStartState())
+    visited = [problem.getStartState()]
 
     path = {}
 
@@ -177,7 +157,7 @@ def uniformCostSearch(problem: SearchProblem):
 
         node = nodes.pop()
 
-        if problem.isGoalState(node[0]):  # I have to check if there is lower cost!
+        if problem.isGoalState(node[0]):
             current = node
             result = []
             while current != (problem.getStartState(), 'Start', 0):
@@ -212,16 +192,14 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     nodes = util.PriorityQueue()
     nodes.push((problem.getStartState(), 'Start', 0), 0)
 
-    visited = []
-    visited.append(problem.getStartState())
-
+    visited = [problem.getStartState()]
     path = {}
 
     while not nodes.isEmpty():
 
         node = nodes.pop()
 
-        if problem.isGoalState(node[0]):  # I have to check if there is lower cost!
+        if problem.isGoalState(node[0]):
             current = node
             result = []
             while current != (problem.getStartState(), 'Start', 0):
