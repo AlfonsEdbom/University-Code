@@ -1,3 +1,259 @@
+## Task 1
+
+In this task we are going to simultaneously test if there is a strength difference between the injured and non-injured knees, for the two treatment groups. We will consider both the concentric and eccentric strength for the quadriceps and hamstrings.
+
+The R code below does some R acrobatics to remove observations with missing values.
+```{r}
+library(readxl)
+
+knee_data <- read_excel("Knee.xlsx")
+knee_tr1 <- knee_data[which(knee_data[,5] == 1), 51:58] # relevant columns only
+knee_tr2 <- knee_data[which(knee_data[,5] == 2), 51:58] # relevant columns only
+
+
+knee_no_m_tr1 <- subset(knee_tr1, I_Q_conNm_weight != "M" & C_Q_conNm_weight != "M" 
+       & I_Q_eccNm_weight != "M" & C_Q_eccNm_weight != "M" 
+       & I_H_conNm_weight != "M" & C_H_conNm_weight != "M" 
+       & I_H_eccNm_weight != "M" & C_H_eccNm_weight != "M")
+
+knee_no_m_tr2 <- subset(knee_tr2, I_Q_conNm_weight != "M" & C_Q_conNm_weight != "M" 
+                        & I_Q_eccNm_weight != "M" & C_Q_eccNm_weight != "M" 
+                        & I_H_conNm_weight != "M" & C_H_conNm_weight != "M" 
+                        & I_H_eccNm_weight != "M" & C_H_eccNm_weight != "M")
+# list of numeric values
+knee_matrix_tr1 <- as.numeric((unlist(knee_no_m_tr1)))
+knee_matrix_tr2 <- as.numeric((unlist(knee_no_m_tr2)))
+
+# convert to matrix
+knee_matrix_tr1 <-matrix(as.numeric(knee_matrix_tr1),
+                     ncol = 8)
+knee_matrix_tr2 <-matrix(as.numeric(knee_matrix_tr2),
+                         ncol = 8)
+```
+
+The data is paired, since both person performs both test on each muscle (quadriceps and hamstring). To simultaneously test the different muscles, we construct the difference matrices D1 and D2. Where an entry in the difference matrix D is defined as:
+\begin{align*}
+D_{i} = X_{i,1} - X_{i,2},....., X_{i,7} - X_{i,8}
+\end{align*}
+
+D1 is the difference matrix for the first treatments and D2 is the difference matrix for the second treatment.
+```{r}
+D1 <- cbind(knee_matrix_tr1[,1]-knee_matrix_tr1[,2], knee_matrix_tr1[,3]-knee_matrix_tr1[,4],
+           knee_matrix_tr1[,5]-knee_matrix_tr1[,6], knee_matrix_tr1[,7]-knee_matrix_tr1[,8])
+
+D2 <- cbind(knee_matrix_tr2[,1]-knee_matrix_tr2[,2], knee_matrix_tr2[,3]-knee_matrix_tr2[,4],
+            knee_matrix_tr2[,5]-knee_matrix_tr2[,6], knee_matrix_tr2[,7]-knee_matrix_tr2[,8])
+```
+
+We need the number of observations (n) and the number of variables (p) for both groups.
+```{r}
+# get dimensions of observations (n) and variables (p)
+n1 <- dim(D1)[1]; p1 <- dim(D1)[2]
+n2 <- dim(D2)[1]; p2 <- dim(D2)[2]
+```
+
+Now we can test if there is a difference between the injured an non-injured knees, within both groups, by doing a Hotelling T2-test. Under the null hypothesis, the mean should be equal to 0.
+\begin{align*}
+  H_{0}: \delta = 0
+\end{align*}
+```{r}
+# Hotelling T2-test for treatment 1
+(T2_1<-n1*t(colMeans(D1))%*%solve(cov(D1))%*%colMeans(D1))
+(cv <- ((n1-1)*p1)/(n1-p1)*qf(0.95, p1, n1-p1))
+
+# Hotelling T2-test for treatment 2
+(T2_2<-n2*t(colMeans(D2))%*%solve(cov(D2))%*%colMeans(D2))
+(cv <- ((n2-1)*p2)/(n2-p2)*qf(0.95, p2, n2-p2))
+```
+The null hypothesis can be rejected, there is a difference between the injured and non-injured knee withing the groups, the mean is not equal to 0.
+
+### Confidence intervals
+
+#### Hotelling T2 confidence intervals
+From both tests we can see that there is a significant difference between the injured and non-injured knees for both treatment groups. The null hypothesis can be rejected, the mean is not equal to 0. We can further investigate which of the variables are significant different. This will be done by constructing confidence intervals for the 4 different variables. The first confidence interval in the Hotelling T2 confidence interval, this is the most conservative confidence interval.
+```{r}
+# Check TÂ² confidence interval for treatment 1
+c(colMeans(D1)[1] - sqrt(p1*(n1-1)/(n1-p1)*qf(0.95, p1, n1-p1)*cov(D1)[1,1]/n1), 
+  colMeans(D1)[1] + sqrt(p1*(n1-1)/(n1-p1)*qf(0.95, p1, n1-p1)*cov(D1)[1,1]/n1))
+
+c(colMeans(D1)[2] - sqrt(p1*(n1-1)/(n1-p1)*qf(0.95, p1, n1-p1)*cov(D1)[2,2]/n1), 
+  colMeans(D1)[2] + sqrt(p1*(n1-1)/(n1-p1)*qf(0.95, p1, n1-p1)*cov(D1)[2,2]/n1))
+
+c(colMeans(D1)[3] - sqrt(p1*(n1-1)/(n1-p1)*qf(0.95, p1, n1-p1)*cov(D1)[3,3]/n1), 
+  colMeans(D1)[3] + sqrt(p1*(n1-1)/(n1-p1)*qf(0.95, p1, n1-p1)*cov(D1)[3,3]/n1))
+
+c(colMeans(D1)[4] - sqrt(p1*(n1-1)/(n1-p1)*qf(0.95, p1, n1-p1)*cov(D1)[4,4]/n1), 
+  colMeans(D1)[4] + sqrt(p1*(n1-1)/(n1-p1)*qf(0.95, p1, n1-p1)*cov(D1)[4,4]/n1))
+```
+
+For the first treatment group the variables 3 (concentric hamsting) and 4 (eccentric hamstring) are not significant since the confidence interval covers 0. 
+
+The Hotelling T2 condifence interval is also calculated for the second treatment group:
+```{r}
+# Check TÂ² confidence interval for treatment 2
+c(colMeans(D2)[1] - sqrt(p2*(n2-1)/(n2-p2)*qf(0.95, p2, n2-p2)*cov(D2)[1,1]/n2), 
+  colMeans(D2)[1] + sqrt(p2*(n2-1)/(n2-p2)*qf(0.95, p2, n2-p2)*cov(D2)[1,1]/n2))
+
+c(colMeans(D2)[2] - sqrt(p2*(n2-1)/(n2-p2)*qf(0.95, p2, n2-p2)*cov(D2)[2,2]/n2), 
+  colMeans(D2)[2] + sqrt(p2*(n2-1)/(n2-p2)*qf(0.95, p2, n2-p2)*cov(D2)[2,2]/n2))
+
+c(colMeans(D2)[3] - sqrt(p2*(n2-1)/(n2-p2)*qf(0.95, p2, n2-p2)*cov(D2)[3,3]/n2), 
+  colMeans(D2)[3] + sqrt(p2*(n2-1)/(n2-p2)*qf(0.95, p2, n2-p2)*cov(D2)[3,3]/n2))
+
+c(colMeans(D2)[4] - sqrt(p2*(n2-1)/(n2-p2)*qf(0.95, p2, n2-p2)*cov(D2)[4,4]/n2), 
+  colMeans(D2)[4] + sqrt(p2*(n2-1)/(n2-p2)*qf(0.95, p2, n2-p2)*cov(D2)[4,4]/n2))
+
+```
+
+The only significant variable in the second treatment group is variable 2 (eccentric quadriceps). We can also check the less conservative confidence interval, the Bonferroni correction confidence interval for both groups.
+
+#### Bonferroni correction confidence intervals
+The Bonferroni correction confidence interval for treatment group 1:
+```{r}
+# Bonferroni correction CI treatment 1
+c(colMeans(D1)[1] - qt(0.99375, n1-1)*sqrt(cov(D1)[1,1]/n1), 
+  colMeans(D1)[1] + qt(0.99375, n1-1)*sqrt(cov(D1)[1,1]/n1))
+
+c(colMeans(D1)[2] - qt(0.99375, n1-1)*sqrt(cov(D1)[2,2]/n1), 
+  colMeans(D1)[2] + qt(0.99375, n1-1)*sqrt(cov(D1)[2,2]/n1))
+
+c(colMeans(D1)[3] - qt(0.99375, n1-1)*sqrt(cov(D1)[3,3]/n1), 
+  colMeans(D1)[3] + qt(0.99375, n1-1)*sqrt(cov(D1)[3,3]/n1))
+
+c(colMeans(D1)[4] - qt(0.99375, n1-1)*sqrt(cov(D1)[4,4]/n1), 
+  colMeans(D1)[4] + qt(0.99375, n1-1)*sqrt(cov(D1)[4,4]/n1))
+```
+
+The results are the same for treatment group 1, in the sense that the last two variables are not significant (variables 3 and 4). 
+
+The Bonferroni correction confidence interval for treatment group 2:
+```{r}
+# Bonferroni correction CI treatment 2
+c(colMeans(D2)[1] - qt(0.99375, n2-1)*sqrt(cov(D2)[1,1]/n2), 
+  colMeans(D2)[1] + qt(0.99375, n2-1)*sqrt(cov(D2)[1,1]/n2))
+
+c(colMeans(D2)[2] - qt(0.99375, n2-1)*sqrt(cov(D2)[2,2]/n2), 
+  colMeans(D2)[2] + qt(0.99375, n2-1)*sqrt(cov(D2)[2,2]/n2))
+
+c(colMeans(D2)[3] - qt(0.99375, n2-1)*sqrt(cov(D2)[3,3]/n2),
+  colMeans(D2)[3] + qt(0.99375, n2-1)*sqrt(cov(D2)[3,3]/n2))
+
+c(colMeans(D2)[4] - qt(0.99375, n2-1)*sqrt(cov(D2)[4,4]/n2), 
+  colMeans(D2)[4] + qt(0.99375, n2-1)*sqrt(cov(D2)[4,4]/n2))
+```
+
+The variable 3 (concentric hamstring) is not significant for treatment group 2. We can continue with a normal T-test confidence interval for both groups to see if all variables are significant under the least conservative confidence interval (out of the ones done so far).
+
+#### Normal T-test confidence interval
+Normal T-test confidence interval for treatment group 1:
+```{r}
+# Normal T-test CI treatment 1
+c(colMeans(D1)[1] - qt(0.975, n1-1)*sqrt(cov(D1)[1,1]/n1), 
+  colMeans(D1)[1] + qt(0.975, n1-1)*sqrt(cov(D1)[1,1]/n1))
+
+c(colMeans(D1)[2] - qt(0.975, n1-1)*sqrt(cov(D1)[2,2]/n1), 
+  colMeans(D1)[2] + qt(0.975, n1-1)*sqrt(cov(D1)[2,2]/n1))
+
+c(colMeans(D1)[3] - qt(0.975, n1-1)*sqrt(cov(D1)[3,3]/n1), 
+  colMeans(D1)[3] + qt(0.975, n1-1)*sqrt(cov(D1)[3,3]/n1))
+
+c(colMeans(D1)[4] - qt(0.975, n1-1)*sqrt(cov(D1)[4,4]/n1), 
+  colMeans(D1)[4] + qt(0.975, n1-1)*sqrt(cov(D1)[4,4]/n1))
+```
+
+Variables 3 (concentric hamstring) and 4 (eccentric hamstring) are still not significant for treatment group 1. We can conclude that there is no significant difference between the hamstring for the injured and non-injured knee.
+
+The T-test confidence interval for treatment group 2:
+```{r}
+# Normal T-test CI treatment 2
+c(colMeans(D2)[1] - qt(0.975, n2-1)*sqrt(cov(D2)[1,1]/n2), 
+  colMeans(D2)[1] + qt(0.975, n2-1)*sqrt(cov(D2)[1,1]/n2))
+
+c(colMeans(D2)[2] - qt(0.975, n2-1)*sqrt(cov(D2)[2,2]/n2), 
+  colMeans(D2)[2] + qt(0.975, n2-1)*sqrt(cov(D2)[2,2]/n2))
+
+c(colMeans(D2)[3] - qt(0.975, n2-1)*sqrt(cov(D2)[3,3]/n2), 
+  colMeans(D2)[3] + qt(0.975, n2-1)*sqrt(cov(D2)[3,3]/n2))
+
+c(colMeans(D2)[4] - qt(0.975, n2-1)*sqrt(cov(D2)[4,4]/n2), 
+  colMeans(D2)[4] + qt(0.975, n2-1)*sqrt(cov(D2)[4,4]/n2))
+```
+
+Similar to treatment group 1, the variable 3 (concentric hamstring) is not significant for treatment group 2.
+
+## Task 2
+
+In this task we look at the height of three consecutive jumps on the non-injured knee. We will investigate if there is a significant difference between the jumps.
+
+Removing observations with missing data and only taking the relevant columns:
+```{r}
+library(readxl)
+
+data = read_excel("Knee.xlsx")
+
+data = data[,18:20]
+data = subset(data, C_D_Length1 != "M" & C_D_Length2 != "M" & C_D_Length3 != "M")
+
+data = as.matrix(data)
+data = matrix(as.numeric(data), ncol = ncol(data))
+```
+
+This a repeated measurement design, the null hypothesis states that 
+\begin{align*}
+  H_{0}: \mu_{1}=\mu_{2}=\mu_{3}
+\end{align*}
+
+This can be tested by constructing a contrast matrix C
+\begin{align*}
+  C = (1|-1)
+\end{align*}
+
+so that
+\begin{align*}
+  C\mu = (\mu_{1}-\mu_{2}, \mu_{1}-\mu_{3})^{T}
+\end{align*}
+This contrast matrix can then be used to create the difference matrix D:
+\begin{align*}
+  D = XC^{T}
+\end{align*}
+
+Creating the contrast matrix:
+```{r}
+# Contrast matrix
+(C = matrix(cbind(c(1,1), -diag(2)), 2, 3))
+```
+
+Calculating the difference matrix and getting the number of observations and variables:
+```{r}
+# Difference matrix
+D = data %*% t(C)
+C%*%colMeans(data) # diff in means(grp1-grp2, grp1-grp3
+
+(n <- dim(data)[1]) # num observations
+(p <- dim(data)[2]) # num variables
+```
+
+Now, to test the null hypothesis we do a Hotelling T2-test:
+```{r}
+# Hotellings T2-test
+(T2 <- n*t(colMeans(data))%*%t(C)%*%solve(C%*%cov(data)%*%t(C))%*%C%*%colMeans(data)) # T^2
+(cv <- qf(0.95, (p-1), (n-p+1)) * (n-1)*(p-1)/(n-p+1))
+```
+
+According to the Hotelling T2-test, there is a significant difference between the three jumps.
+
+To investigate further, we construct a Hotelling T2 confidence interval to see which of the jumps that are significant:
+```{r}
+# t^2 interval
+(first1 = c(colMeans(D)[1] - sqrt(p*(n-1)/(n-p)*qf(0.95, p, n-p)*cov(D)[1,1]/n), 
+            colMeans(D)[1] + sqrt(p*(n-1)/(n-p)*qf(0.95, p, n-p)*cov(D)[1,1]/n)))
+
+(second2 = c(colMeans(D)[2] - sqrt(p*(n-1)/(n-p)*qf(0.95, p, n-p)*cov(D)[2,2]/n), 
+             colMeans(D)[2] + sqrt(p*(n-1)/(n-p)*qf(0.95, p, n-p)*cov(D)[2,2]/n)))
+```
+
+The confidence interval for both variables do not cover 0, meaning that the null hypothesis can be rejected, the means do not equal 0 for the three jumps.
+
 # Task 3
 
 Consider the four variables that measure strengths in Quadriceps and Hamstrings (both concentric and eccentric) in the injured knees. Test if there is a difference **between the two treatment groups**. If there is a difference between treatment groups, find out between which variables there are differences.
