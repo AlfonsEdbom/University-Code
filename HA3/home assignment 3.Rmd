@@ -1,6 +1,6 @@
 ## Task 1
 
-In this task we are going to simultaneously test if there is a strength difference between the injured and non-injured knees, for the two treatment groups. We will consider both the concentric and eccentric strength for the quadriceps and hamstrings.
+In this task we are going to simultaneously test if there is a strength difference between the injured and non-injured knees for the two treatment groups. We will consider both the concentric and eccentric strength for the quadriceps and hamstrings.
 
 The R code below does some R acrobatics to remove observations with missing values.
 ```{r}
@@ -31,12 +31,12 @@ knee_matrix_tr2 <-matrix(as.numeric(knee_matrix_tr2),
                          ncol = 8)
 ```
 
-The data is paired, since both person performs both test on each muscle (quadriceps and hamstring). To simultaneously test the different muscles, we construct the difference matrices D1 and D2. Where an entry in the difference matrix D is defined as:
+The data is paired, since every person performs all tests on each muscle (quadriceps and hamstring). To simultaneously test the different muscles, we construct the difference matrices D1 and D2. Where an entry in the difference matrix D is defined as:
 \begin{align*}
 D_{i} = X_{i,1} - X_{i,2},....., X_{i,7} - X_{i,8}
 \end{align*}
 
-D1 is the difference matrix for the first treatments and D2 is the difference matrix for the second treatment.
+D1 is the difference matrix for the first treatment and D2 is the difference matrix for the second treatment.
 ```{r}
 D1 <- cbind(knee_matrix_tr1[,1]-knee_matrix_tr1[,2], knee_matrix_tr1[,3]-knee_matrix_tr1[,4],
            knee_matrix_tr1[,5]-knee_matrix_tr1[,6], knee_matrix_tr1[,7]-knee_matrix_tr1[,8])
@@ -65,12 +65,14 @@ Now we can test if there is a difference between the injured an non-injured knee
 (T2_2<-n2*t(colMeans(D2))%*%solve(cov(D2))%*%colMeans(D2))
 (cv <- ((n2-1)*p2)/(n2-p2)*qf(0.95, p2, n2-p2))
 ```
-The null hypothesis can be rejected, there is a difference between the injured and non-injured knee withing the groups, the mean is not equal to 0.
+The null hypothesis can be rejected, there is a difference between the injured and non-injured knee within the groups, the mean is not equal to 0.
 
 ### Confidence intervals
 
 #### Hotelling T2 confidence intervals
-From both tests we can see that there is a significant difference between the injured and non-injured knees for both treatment groups. The null hypothesis can be rejected, the mean is not equal to 0. We can further investigate which of the variables are significant different. This will be done by constructing confidence intervals for the 4 different variables. The first confidence interval in the Hotelling T2 confidence interval, this is the most conservative confidence interval.
+From both tests we can see that there is a significant difference between the injured and non-injured knees for both treatment groups. The null hypothesis can be rejected, the mean is not equal to 0. We can further investigate which of the variables are significantly different. This will be done by constructing confidence intervals for the 4 different variables. The first confidence interval in the Hotelling T2 confidence interval, this is the most conservative confidence interval.
+
+Hotelling T2 confidence interval for the first treatment group
 ```{r}
 # Check TÂ² confidence interval for treatment 1
 c(colMeans(D1)[1] - sqrt(p1*(n1-1)/(n1-p1)*qf(0.95, p1, n1-p1)*cov(D1)[1,1]/n1), 
@@ -240,7 +242,7 @@ Now, to test the null hypothesis we do a Hotelling T2-test:
 (cv <- qf(0.95, (p-1), (n-p+1)) * (n-1)*(p-1)/(n-p+1))
 ```
 
-According to the Hotelling T2-test, there is a significant difference between the three jumps.
+According to the Hotelling T2-test, there is a significant difference between the three jumps, the null hypothesis can be rejected, the means do not equal 0 for the three jumps.
 
 To investigate further, we construct a Hotelling T2 confidence interval to see which of the jumps that are significant:
 ```{r}
@@ -252,7 +254,7 @@ To investigate further, we construct a Hotelling T2 confidence interval to see w
              colMeans(D)[2] + sqrt(p*(n-1)/(n-p)*qf(0.95, p, n-p)*cov(D)[2,2]/n)))
 ```
 
-The confidence interval for both variables do not cover 0, meaning that the null hypothesis can be rejected, the means do not equal 0 for the three jumps.
+The confidence interval for both variables do not cover 0. There is a significant difference between the first and second jump, as well as the first and third jump.
 
 # Task 3
 
