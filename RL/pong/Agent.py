@@ -1,0 +1,123 @@
+import numpy as np
+import random
+from collections import defaultdict
+
+GAMMA = 0.6
+EPSILON = 0.95
+MIN_EPSILON = 0.10
+EPSILON_DECAY = 0.99
+ALPHA = 0.1
+
+
+def reshape_obs(observation):
+    """
+    Reshapes and 'discretizes' an observation for Q-table read/write
+    Make sure the state space is not too large!
+
+    :param observation: The to-be-reshaped/discretized observation. Contains the position of the
+    'players', as well as the position and movement.
+    direction of the ball.
+    :return: The reshaped/discretized observation
+    """
+    # TODO: Discretize/simplify
+    # transformation
+    agent_obs = observation[0]
+
+    return f"{agent_obs}"
+
+
+class Agent:
+    """
+    Skeleton q-learner agent that the students have to implement
+    """
+
+    def __init__(
+            self, id, actions_n, obs_space_shape,
+            gamma=GAMMA,  # pick reasonable values for all of these!
+            epsilon=EPSILON,
+            min_epsilon=MIN_EPSILON,
+            epsilon_decay=EPSILON_DECAY,
+            alpha=ALPHA
+    ):
+        """
+        Initiates the agent
+
+        :param id: The agent's id in the game environment
+        :param actions_n: The id of actions in the agent's action space
+        :param obs_space_shape: The shape of the agents observation space
+        :param gamma: Depreciation factor for expected future rewards
+        :param epsilon: The initial/current exploration rate
+        :param min_epsilon: The minimal/final exploration rate
+        :param epsilon_decay: The rate of epsilon/exploration decay
+        :param alpha: The learning rate
+        """
+        self.id = id
+        self.gamma = gamma
+        self.epsilon = epsilon
+        self.min_epsilon = min_epsilon
+        self.epsilon_decay = epsilon_decay
+        self.actions_n = actions_n
+        self.obs_space_shape = obs_space_shape
+        self.alpha = alpha
+        self.q = defaultdict(lambda: np.zeros(self.actions_n))
+
+    def determine_action_probabilities(self, observation):
+        """
+        A function that takes the state as an input and returns the probabilities for each
+        action in the form of a numpy array of length of the action space.
+        :param observation: The agent's current observation
+        :return: The probabilities for each action in the form of a numpy
+        array of length of the action space.
+        """
+        # TODO: implement this!
+        q_values = self.q[reshape_obs(observation)]
+
+        return q_values
+
+    def act(self, observation):
+        """
+        Determines and action, given the current observation.
+        :param observation: the agent's current observation of the state of
+        the world
+        :return: the agent's action
+        """
+        # TODO: implement this! Here, you will need to call
+        # `determine_action_probabilities(observation)`
+        action_probabilities = self.determine_action_probabilities(observation)
+        best_action = np.argmax(action_probabilities)
+
+        random_number = random.random()
+
+        if random_number < self.epsilon:  # explore
+            if self.epsilon > self.min_epsilon:
+                self.epsilon = self.epsilon * self.epsilon_decay
+
+            explore_action = random.choice([i for i in range(self.actions_n) if not i == best_action])
+            return explore_action  # random.randint(0, 2)  # do more fancy stuff?
+
+        else:  # exploit
+            if self.epsilon > self.min_epsilon:
+                self.epsilon = self.epsilon * self.epsilon_decay
+
+            if all(action_probabilities == 0):
+                return random.randint(0, 2)
+
+            return best_action
+
+    def update_history(
+            self, observation, action, reward, new_observation
+    ):
+        """
+        Updates the agent's Q-table
+
+        :param observation: The observation *before* the action
+        :param action: The action that has been executed
+        :param reward: The reward the action has yielded
+        :param new_observation: The observation *after* the action
+        :return:
+        """
+        # counterfactual next action, to later backpropagate reward to current action
+        next_action = np.argmax(self.q[reshape_obs(new_observation)])
+        td_target = reward + self.gamma * self.q[reshape_obs(new_observation)][next_action]
+        td_delta = td_target - self.q[reshape_obs(observation)][action]
+        self.q[reshape_obs(observation)][action] += self.alpha * td_delta

@@ -1,0 +1,11 @@
+Using gamma = 0.4, epsilon decay = 0.9, alpha = 0.05: Got Wins - losses: 1828
+Using gamma = 0.4, epsilon decay = 0.9, alpha = 0.2: Got Wins - losses: 1902
+
+Using gamma = 0.4, epsilon decay = 0.8, alpha = 0.05: Got Wins - losses: 2154
+Using gamma = 0.4, epsilon decay = 0.8, alpha = 0.2: Got Wins - losses: 1974
+
+Using gamma = 0.6, epsilon decay = 0.9, alpha = 0.05: Got Wins - losses: 1952
+Using gamma = 0.6, epsilon decay = 0.9, alpha = 0.2: Got Wins - losses: 1968
+
+Using gamma = 0.6, epsilon decay = 0.8, alpha = 0.05: Got Wins - losses: 1856
+Using gamma = 0.6, epsilon decay = 0.8, alpha = 0.2: Got Wins - losses: 1928
