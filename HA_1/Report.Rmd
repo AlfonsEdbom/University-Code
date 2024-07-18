@@ -1,0 +1,610 @@
+---
+title: "Multivariate Dataanalysis"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+# Part 1
+
+## Exercise 2.32
+**Question**: You are given the random vector $X' = [X_1, X_2, ..., X_5]$ with mean vector 
+```{r}
+x_avg = matrix(c(2.4, -1,3, 0), nrow=1)
+x_avg
+```
+
+and variance-covariance matrix.
+
+```{r}
+S = matrix(c(4, -1, 0.5, -0.5, 0,
+             -1, 3, 1, -1, 0, 
+             0.5, 1, 6, 1, -1,
+             0, 0, -1, 0, 2), ncol=5, byrow=TRUE)
+S
+```
+
+
+
+Partition **X** as:
+
+X = $\begin{bmatrix} X_1 \\ X_2 \\ \hline X_3 \\ X_4 \\ X_5\end{bmatrix}=\begin{bmatrix} X^{(1)} \\ \hline X^{(2)}\end{bmatrix}$ 
+
+Let A and B
+```{r}
+A = matrix(c(1, -1, 1, 1), nrow=2, byrow=TRUE)
+A
+B = matrix(c(1, 1, 1, 1, 1, -2), nrow=2, byrow=TRUE)
+B
+```
+
+and consider the linear combinations $AX^{(1)}$ $BX^{(1)}$. Find
+
+a) $E(X^{(1)})$
+
+**Answer**:
+```{r}
+X1 = matrix(c(2, 4), nrow=2)
+X1
+```
+
+
+b) $E(AX^{(1)})$
+**Answer**:
+
+```{r}
+E = A %*% X1
+E
+```
+
+c) $Cov(X^{(1)})$
+**Answer**:
+```{r}
+S = matrix(c(4, -1, -1, 3), byrow=TRUE, nrow = 2)
+S
+```
+
+d) $Cov(AX^{(1)})$
+**Answer**:
+```{r}
+S2 = A %*% S %*% t(A) 
+S2
+```
+
+e) $E(X^{(2)})$
+**Answer**:
+```{r}
+X2 = matrix(c(-1, 3, 0), nrow=3)
+X2
+```
+
+f) $E(BX^{(2)})$
+**Answer**:
+
+```{r}
+S3 = B %*% X2
+S3
+```
+
+g) $Cov(X^{(2)})$
+**Answer**:
+
+```{r}
+S4 = matrix(c(6, 1, -1, 1, 4, 0, -1, 0, 2), byrow=TRUE, nrow=3)
+S4
+```
+
+h) $Cov(BB^{(2)}$
+**Answer**: 
+
+```{r}
+S5 = B %*% S4 %*% t(B)
+S5
+```
+
+
+i) $Cov(X^{(1)},X^{(2)})$
+**Answer**:
+
+```{r}
+S6 = matrix(c(0.5, -0.5, 0, 1, -1, 0), byrow = TRUE, nrow = 2)
+S6
+```
+
+j) $Cov(AX^{(1)},BX^{(2)})$
+
+**Answer**:
+```{r}
+S7 = A %*% S6 %*% t(B)
+S7
+```
+
+
+## Exercise 3.18
+
+**Question**: Energy consumption in 2001, by state, from the major sources
+
+$x_1$ = petroleum
+
+$x_2$ = natural gas
+
+$x_3$ = hydroelectric power
+
+$x_4$ = nuclear electric power
+
+The mean vector and covariance matrix for these variables are:
+
+```{r}
+avg = matrix(c(0.766, 0.508, 0.438, 0.161))
+avg
+
+S = matrix(c(0.856, 0.635, 0.173, 0.096, 0.635, 0.568, 0.128, 0.067, 0.173, 0.127, 0.171, 0.039, 0.096, 0.067, 0.039, 0.043), nrow=4, byrow=TRUE)
+S
+```
+
+
+a) **Using the summary statistics, determine the sample mean and variance of a state's total energy consumption for these major sources.** 
+
+**Answer**:
+
+We want to create a new variable that is a linear combination of all variables, $x_1$ - $x_4$. We use the constant vector c1 to get the total of states energy consumption.
+
+```{r}
+c1 = c(1, 1, 1, 1)
+```
+
+To get the new variable's sample mean and variance, we use result 2.5 from the book: 
+
+```{r}
+tot_avg = c1 %*% avg 
+tot_avg
+
+tot_var = t(c1)%*% S %*%t(t(c1))
+tot_var
+```
+
+
+b) **Determine the sample mean and variance of the excess of petroleum consumption over natural gas consumption. Also find the sample covariance of this variable with the total variable in part a.** 
+
+**Answer**:
+
+We want to transform our original dataset to a new dataset, Z, containing two variables, the total energy consumption and the difference between petroleum and natural gas consumption. The transformation matrix c2 is then
+
+```{r}
+c2 = matrix(c(1, 1, 1, 1, 1, -1, 0, 0), ncol = 2, byrow=FALSE)
+c2
+```
+
+To get the new dataset's sample mean and the covariance matrix, we use result 2.5 from the book.
+
+```{r}
+z_average = mean(t(c2) %*% avg)
+z_average
+
+Sz = t(c2) %*% S %*% t(t(c2))
+Sz
+```
+
+Where the variance of this new variable is `r Sz[2,2]` and the covariance between the new variable (petroleum - natural gas consumption) and the variable in a) is `r Sz[1, 2]`.
+
+## Exercise 4.16
+This task asks for the marginal distributions of the random vectors V1 and V2, as well as the joint density of the vectors. In part a), we find the marginal distributions and in part b) we find the joint density. Result 4.8 from the book was applied to solve both parts of this exercise.
+
+```{r}
+##### Part a) ######
+# Vector 1
+c1 = matrix(c(0.25, -0.25, 0.25, -0.25))
+my_1 = sum(c1)
+sigma_1 = sum(c1^2)
+my_1
+sigma_1
+# Vector 2
+c2 = matrix(c(0.25, 0.25, -0.25, -0.25))
+my_2 = sum(c2)
+sigma_2 = sum(c2^2)
+my_2
+sigma_2
+```
+Both vectors have the same marginal distributions. The covariance for V1 and V2 is zero, which implies that V1 and V2 are jointly multivariate normal distributed.
+```{r}
+sum(c1*c2)
+```
+The covariance matrix $\Sigma$ for the joint distribution is therefore:
+$$\Sigma = \begin{bmatrix}1/4\Sigma & 0 \\ 0 & 1/4\Sigma\end{bmatrix}$$
+The random vectors both have a mean vector $\mu$ = 0. The random vectors $\begin{bmatrix}V1 \\ V2 \end{bmatrix}$ have the distribution:
+$$N(0 ,\begin{bmatrix}\frac{1}{4}\Sigma & 0 \\ 0 & \frac{1}{4}\Sigma\end{bmatrix})$$
+
+The joint density for $\begin{bmatrix}V1 \\ V2 \end{bmatrix}$ is:
+\begin{align*}
+\frac{1}{(2\pi)|\frac{1}{4}\Sigma|^{-1}}exp\{-\frac{1}{2}\begin{bmatrix}V1^{'}, V2^{'} \end{bmatrix}\begin{bmatrix}\frac{1}{4}\Sigma & 0 \\ 0 & \frac{1}{4}\Sigma\end{bmatrix}^{-1}\begin{bmatrix}V1 \\ V2 \end{bmatrix}\}
+\end{align*}
+
+# Part 2
+
+## Task 1
+In this task we use the R package "MVN" to check the normality assumption and to look for potential outliers. The data set used is the "scor" data set from the R package "bootstrap". The below code shows both the structure as well as the summary of the variables in the data set.
+```{r}
+library(bootstrap, MVN)
+data(scor)
+str(scor) # structure of scor
+summary(scor) # summary of each variabl
+```
+To test the normality assumption we can use several different tests from the "MVN" package.
+```{r}
+library(bootstrap)
+library(MVN)
+data(scor)
+mvn(data=scor, mvnTest = "mardia")
+mvn(data=scor, mvnTest = "hz")
+mvn(data=scor, mvnTest = "royston")
+mvn(data=scor, mvnTest = "dh")
+mvn(data=scor, mvnTest = "energy")
+```
+All the tests agree that the variables "vec" and "alg" are normally distributed but the other variables are not normally distributed. All test reject the MVN assumption. If there is no clear consensus from the normality tests we can do a Chi-square Q-Q plot to see if the data deviates from the $x=y$ line, but is probably not needed in this case since the tests reject the MVN assumption. To check for multivariate outliers in the data set we can use two different methods provided my the "MVN" package, bith of the distances are based on Mahalanobis distances.
+
+```{r}
+mvn(data=scor, multivariateOutlierMethod="quan") #quantile method based on mahalanobis distance
+mvn(data=scor, multivariateOutlierMethod="adj") #adjusted quantile method
+```
+Both methods detect several multivariate outliers, which could be removed before testing the multivariate assumption again.
+
+## Task 2
+In this, a Gaussian mixture model will be applied to diagnose tumours as either benign or malignant. The data is divided into two sets: one for training and one for classifying, the training set being the larger of the two. In the training data set a benign diagnosis is marked with a "B" and a malignant diagnosis is marked with a "M". The first step is to separate the malignant from the benign:
+
+```{r}
+# read in the data
+train_data = read.table("Train.txt", sep=",")
+test_data = read.table("Test.txt", sep=",")
+# test data shenanigans
+test_data1 <- as.matrix(test_data[-1,-1])
+test_data2 <- matrix(as.numeric(test_data1), ncol = ncol(test_data1))
+# separate malignant  from benign
+# malignant
+malignant <- as.matrix(train_data[which(train_data[,1] == "M"), -1])
+malignant1 <- matrix(as.numeric(malignant), ncol = ncol(malignant))
+# benign
+benign <- as.matrix(train_data[which(train_data[,1] == "B"), -1])
+benign1 <- matrix(as.numeric(benign), ncol = ncol(benign))
+```
+
+The next step is to calculate the mean vectors and covariance matrices for the malignant and benign groups:
+```{r}
+# my vector for malignant and benign
+my_malignant <- colMeans(malignant1)
+my_benign <- colMeans(benign1)
+# covariance matrix for malignant and benign
+cov_malignant <- cov(as.matrix(malignant1))
+cov_benign <- cov(as.matrix(benign1))
+```
+
+Now we can make a gaussian mixture model classifier to predict the diagnosis of individual patients. The function:
+\begin{align*}
+f(x) = \frac{1}{(2\pi)^{1/2}|\Sigma|^{1/2}}exp\{-\frac{1}{2}(x-\mu)^{T}|\Sigma|(x-\mu)\}
+\end{align*}
+will be used to calculate the probability of a patient belonging to the benign or malignant group.
+```{r}
+##################################################################
+################### FUNCTIONS ####################################
+##################################################################
+exponent <- function(my_vector, row_observation, cov_matrix){
+  x <- as.vector(row_observation) - as.vector(my_vector)
+  S <- cov_matrix
+  result <- exp(-t(x) %*% solve(S) %*% t(t(x))/2)
+  return(result)
+}
+kvot <- function(cov_matrix){
+  result <- 1/(((2*pi)^1/2)*sqrt(det(cov_matrix)))
+  return(result)
+}
+Classifier <- function(row_observation){
+  M <- kvot(cov_malignant) * exponent(my_malignant, row_observation, cov_malignant) * 171/469
+  B <- kvot(cov_benign) * exponent(my_benign, row_observation, cov_benign) * 298/469
+  if (M > B){
+    prediction <- 1
+  } else{
+    prediction <- 0
+  }
+  return(prediction)
+}
+##################################################################
+################### END OF FUNCTIONS #############################
+##################################################################
+```
+
+The idea behind the classifier is to see if the probability of being in one group (benign or malignant) is higher than the other group, and classify the patient accordingly. The groups we chose were: if a patient is given a 1, it is malignant, if a patient is given a 0, it is benign.
+```{r}
+num_malignant = 0
+num_benign = 0
+pred_col <- c()
+for (patient in 1:nrow(test_data2)) {
+  guess <- Classifier(test_data2[patient, ])
+  if(guess == 1){
+    num_malignant = num_malignant + 1
+    pred_col <- append(pred_col, 1)
+  }else{
+    num_benign = num_benign + 1
+    pred_col <- append(pred_col, 0)
+  }
+}
+```
+
+The prediction results:
+```{r}
+print(num_malignant)
+print(num_benign)
+```
+
+Now to see how accurate the classifier is. We do this by going through the test data again and see if the prediction matches the diagnosis.
+```{r}
+cor_pred <- 0
+wr_pred <- 0
+for (i in 1:length(pred_col)){
+  if(pred_col[i]==1 & test_data[i+1,1]=="M"){
+    cor_pred <- cor_pred + 1
+  }
+  if(pred_col[i]==0 & test_data[i+1,1]=="B"){
+    cor_pred <- cor_pred + 1
+  }
+}
+accuracy <- cor_pred/length(pred_col)
+print(accuracy)
+```
+The classifier has an accuracy of 95%.
+
+## Task 3
+
+**Task 3.1**: ’mixtools’ provides a function, ’rmvnorm’ by which data can be simulated from multivariate normal distribution with arbitrary mean vector and covariance matrix. Learn this function by generating 1000 realizations from a two dimension
+Gaussian distribution with mean vector $\mu = \begin{bmatrix}2 \\ 3\end{bmatrix}$, variances are $\sigma_1^2=1$, $\sigma_2^2=4$, and correlation$\rho=0.7$. Make a scatter plot for your random sample.
+
+**Answer**:
+The given values were initialized by:
+```{r}
+mu = as.vector(c(2,3))
+sigma_1 = 1
+sigma_2 = 2
+corr = 0.7
+```
+
+To get the covariance between $\sigma_1$ and $\sigma_1$, $\sigma_{12}$ the following equation was used: $\sigma_{12}=\rho*{\sqrt{\sigma_1 * \sigma_2}}$. The resulting covariance matrix can be can be seen below:
+
+```{r}
+sigma_12 = corr * sqrt(sigma_1 * sigma_2)
+S = matrix(c(sigma_1^2, sigma_12, sigma_12, sigma_2^2), byrow=TRUE, nrow=2)
+S
+```
+
+To simulate 1000 observations from this two dimensional guassian distrubution, 'rmvnorm' from mixtools was used, and the results were then a scatter plot was done on those observations:
+
+```{r warning=FALSE, message=FALSE}
+library(mixtools)
+obs = rmvnorm(1000, mu = mu, sigma = S)
+plot(x=obs[, 1], y=obs[, 2], xlab = "x1", ylab = "x2", main="1000 observations from a two dimensional guassian distribution")
+
+```
+
+**Task 3.2**: Please simulate 1000 realizations from the following GMM:
+
+* The latent (label) variable $z_i$ belongs to Bernoulli distribution with parameter p= 0.6 for i = 1, ..., 1000
+
+* The conditional distribution given the value of latent variable: 
+$X_i|z_i = 1 ∼ N_2(μ_1,Σ_1) and X_i|z_i = 0 ∼ N_2(μ_2,Σ_2)$
+where $μ_1'$ = (2, 3) and $μ_2'$ = (3, 2). For $\Sigma_1$, the standard deviations are 0.2 and 0.6, the correlation is 0.5. For $\Sigma_2$, the standard deviations are 0.4 and 0.3, the correlation is 0.5.
+
+**Answer**:
+1000 simulations from the bernoulli distribution was generated and the distribution parameters initialized by:
+```{r}
+set.seed("2022")
+bernoulli_obs = rbinom(n=1000,size=1, prob=0.6)
+
+mu1 = as.vector(c(2, 3))
+mu2 = as.vector(c(3, 2))
+
+S1 = matrix(c(0.2^2, 0.5*0.2*0.6, 0.5*0.2*0.6, 0.6^2), byrow=TRUE, nrow=2)
+S2 = matrix(c(0.4^2, 0.5*0.4*0.3, 0.5*0.4*0.3, 0.3^2), byrow=TRUE, nrow=2)
+
+S1
+S2
+```
+
+Then depending on the outcome from the bernoulli distribution, the appropriate two dimensional guassian distribution was used to generate a observation. The resulting observations from this Guassian mixture model was then plotted by using a scatter plot.
+
+```{r}
+set.seed("2022")
+results = matrix(0, length(bernoulli_obs), 2)
+for (i in 1:length(bernoulli_obs)){
+  if (bernoulli_obs[i] == 1) {
+    random_sample1 = rmvnorm(1, mu=mu1, sigma=S1)
+    results[i, 1] = random_sample1[1, 1]
+    results[i, 2] = random_sample1[1, 2]
+  } else{
+    random_sample2 = rmvnorm(1, mu=mu2, sigma=S2)
+    results[i, 1] = random_sample2[1, 1]
+    results[i, 2] = random_sample2[1, 2]
+  }
+}
+
+plot(results)
+
+```
+
+**Task 3.3**: Please read the help document of function ’mvnormalmixEM’, then fit a GMM on your simulated data and compare the estimation results of parameters with the true values. 
+
+**Answer**: 
+To do the EM algorithm, we first had to estimate the different parameters, this was done by simply choosing a ''random'' guess for the following:
+
+```{r}
+lambda= c(0.70, 0.30)
+means = list(as.vector(c(1, 5)), as.vector(c(6, 2)))
+sigmas = list(matrix(c(0.1, 0.01, 0.01, 0.4), byrow=TRUE, nrow=2), 
+              matrix(c(0.2, 0.005, 0.005, 0.1), byrow=TRUE, nrow=2))
+
+epsilon = 1e-05 # Stop criterion
+```
+
+Then using these parameters as an initial guess for our GMM and fitting it upon the data generated in task 3.2 with the EM algorithm:
+
+```{r}
+out = mvnormalmixEM(results, mu=means ,sigma = sigmas, 
+                    lambda = lambda, epsilon = epsilon)
+```
+
+The new parameters can then be compared to the old, known parameters:
+
+```{r}
+out[2]
+c(0.6, 0.4)
+
+out[3]
+mu1
+mu2
+
+out[4]
+S1
+S2
+```
+As can be seen, all parameters seem to have converged to the original values of the parameters.
+
+## Task 4
+
+Poisson distribution, a discrete probability distribution, is used to express the probability of a given number of events occurring in a fixed interval of time, for example, the number of houses sold per day on the Hemnet . If a random variable X belongs to the Poisson distribution,
+its distribution can be presented as
+
+$Pr(X = x) = \frac{λ^xe^{−λ}}{x!}$
+
+where λ is the parameter. x = 1, 2, 3,..., is the number of occurrences. It is very easy to show that the maximum likelihood estimation (MLE) of λ is the sample mean $\bar{x}$ given a random sample. For example, a random sample is drawn from the Hemnet, 6, 9, 3, 6, 6, 13, 1, 10, 5, 4 It records the daily number of houses sold in a certain area in Sweden. If one wants to fit a Poisson model to the data, then the MLE of λ can be easily obtained by calculating the average and it is 6.3. The estimation of λ can be understood as market intensity. 
+
+However, notice that there is a clear seasonal difference in the real estate market, therefor one could model the data using a Poisson mixture model. To do so, one can assume that for the off-season, the daily number of houses sold belongs to the Poisson distribution with $λ_1$, and for the peak season, it belongs to the Poisson distribution with $λ_2$. The proportion of off-season is π. To obtain the MLE of parameters, λ1, λ2, and π, one can apply the EM algorithm.
+
+Write a program to estimate the unknown parameter by EM algorithm. Set the initial values of unknown parameters as $λ_1^{(0)}=5$, $λ_2^{(0)}=5$, and π(0) = 0.5. Explain the E-step and M-step in your report.
+
+**Answer**
+First the random sample from hemnet, the initial values for the parameters and some help variables were initialized in R:
+
+```{r}
+r_sample = c(6, 9, 3, 6, 6, 13, 1, 10, 5, 4)
+
+lambda1 = 5
+lambda2 = 7
+
+pi1 = 0.5
+pi2 = 0.5
+
+# loop variables
+min_diff = 0.0001
+
+curr_lambda1_diff = 10
+curr_lambda2_diff = 10
+i = 0
+
+```
+
+Then the EM-loop was done:
+
+```{r}
+while ((curr_lambda1_diff > min_diff) &(curr_lambda2_diff > min_diff)) {
+  i = i +1
+  
+  # E-step
+  prob1 = ppois(r_sample, lambda1) * pi1
+  prob2 = ppois(r_sample, lambda2) * pi2
+  
+  post_1 = prob1 / (prob1 + prob2)
+  post_2 = prob2 / (prob1 + prob2)
+  
+  # M-step
+  lambda1_new = mean(post_1*r_sample)
+  lambda2_new = mean(post_2*r_sample)
+  
+  pi1_new = mean(post_1)
+  pi2_new = mean(post_2)
+  
+  # Get current difference
+  curr_lambda1_diff = abs(lambda1_new-lambda2)
+  curr_lambda2_diff = abs(lambda2_new-lambda2)
+  
+  # set new variable to previous
+  lambda1 = lambda1_new
+  lambda2 = lambda2_new
+}
+```
+
+The loop was run for `r i` iterations and the MLE of the paramters were:
+```{r}
+lambda1_new
+pi1_new
+
+lambda2_new
+pi2_new
+```
+
+In the E-step in the EM-algorithm, the previous iterations estimation of the parameters are used to get the posterior probability the latent variables given the observations. This can be seen as using Bayes formula to get the posterior probability of observing each observation using our estimated parameters for the different latent variables. In this task, we first calculate the probability that each observation is from both poisson distributions ($\lambda_1$ and $\lambda_2$) given the probability that a observation is coming from that distribution ($\pi_1$ and $\pi_2$). The posterior probability for each observation given a distribution is then the probability of the observation being from the first probability divided by the sum of all probabilities for the observation being from any other distribution.
+
+In the M-step in the EM-algorithm, we use the posterior probability obtained in the E-step to get our new values for the parameters being estimated. In our case we are estimating the parameters ($\lambda_1$,$\lambda_2$) and ($\pi_1$, $\pi_2$). λ can be updated using the equation: $\hat{\mu}_k = \frac{1}{\sum_{i=1}^nw_{i,k}}*\sum_{i=i}^nw_{i,k}x_i$ where $w_{i,k}$ is the posterior probability given distribution k and n is the number of observations. π can be estimated by $\hat\pi_k=\frac{1}{n}\sum_{i=1}^nw_{i,k}$. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
