@@ -1,0 +1,73 @@
+########################################
+# Program: Biostrings (version 2.62.0), a Bioconductor package
+# Rundate: Sun Mar 20 16:43:20 2022
+########################################
+#=======================================
+#
+# Aligned_sequences: 2
+# 1: AY211276.1 Bos taurus Q50-type retinal homeobox (Qrx) mRNA, complete cds
+# 2: AY211277.1 Homo sapiens Q50-type retinal homeobox (QRX) mRNA, complete cds
+# Matrix: NA
+# Gap_penalty: 4.0
+# Extend_penalty: 1.0
+#
+# Length: 594
+# Identity:     515/594 (86.7%)
+# Similarity:    NA/594 (NA%)
+# Gaps:           1/594 (0.2%)
+# Score: 433
+#
+#
+#=======================================
+
+AY211276.1 Bos taurus Q50-type retinal homeobox (Qrx) mRNA, complete cds    43 GGAGCCATGTTCCTGAGCCCAGGTGAGGGGCCGGCGGCTGAGGGTGGGGG     92
+                                                                               |||||||||||||||||||| || |||||||||||  | |||||||||||
+AY211277.1 Homo sapiens Q50-type retinal homeobox (QRX) mRNA, complete cds  54 GGAGCCATGTTCCTGAGCCCGGGCGAGGGGCCGGCAACCGAGGGTGGGGG    103
+
+AY211276.1 Bos taurus Q50-type retinal homeobox (Qrx) mRNA, complete cds    93 GCCAGGGCCCGGAGAGGAGGCCCCCAAGAAGAAGCACCGGAGGAACCGCA    142
+                                                                                |  ||||| || |||||||||||||||||||||||||||||||||||||
+AY211277.1 Homo sapiens Q50-type retinal homeobox (QRX) mRNA, complete cds 104 TCTGGGGCCGGGCGAGGAGGCCCCCAAGAAGAAGCACCGGAGGAACCGCA    153
+
+AY211276.1 Bos taurus Q50-type retinal homeobox (Qrx) mRNA, complete cds   143 CAACCTTTACCACGTACCAGCTGCACCAGCTGGAGCGGGCGTTCGAGGCC    192
+                                                                               | ||||| ||||| ||||||||||||||||||||||||||||||||||||
+AY211277.1 Homo sapiens Q50-type retinal homeobox (QRX) mRNA, complete cds 154 CCACCTTCACCACCTACCAGCTGCACCAGCTGGAGCGGGCGTTCGAGGCC    203
+
+AY211276.1 Bos taurus Q50-type retinal homeobox (Qrx) mRNA, complete cds   193 TCCCACTACCCGGACGTTTACAGCCGTGAGGAGCTGGCAGCCAAGGTGCA    242
+                                                                               || ||||||||||| || ||||||||||||||||||||||||||||||||
+AY211277.1 Homo sapiens Q50-type retinal homeobox (QRX) mRNA, complete cds 204 TCTCACTACCCGGATGTGTACAGCCGTGAGGAGCTGGCAGCCAAGGTGCA    253
+
+AY211276.1 Bos taurus Q50-type retinal homeobox (Qrx) mRNA, complete cds   243 CCTGCCCGAGGTGCGCGTGCAGGTGTGGTTCCAGAACCGCCGGGCCAAGT    292
+                                                                               ||| || |||||||||||||||||||||||||||||||||||||||||||
+AY211277.1 Homo sapiens Q50-type retinal homeobox (QRX) mRNA, complete cds 254 CCTACCTGAGGTGCGCGTGCAGGTGTGGTTCCAGAACCGCCGGGCCAAGT    303
+
+AY211276.1 Bos taurus Q50-type retinal homeobox (Qrx) mRNA, complete cds   293 GGCGCCGCCAGGAGCGTCTGGAGTCCGGCTCTGGGGCCGTGGCAGCCCCA    342
+                                                                               |||||||||||||||| |||||||| ||||| || ||||||||||| || 
+AY211277.1 Homo sapiens Q50-type retinal homeobox (QRX) mRNA, complete cds 304 GGCGCCGCCAGGAGCGGCTGGAGTCAGGCTCGGGTGCCGTGGCAGCTCCG    353
+
+AY211276.1 Bos taurus Q50-type retinal homeobox (Qrx) mRNA, complete cds   343 AGACTCCCTGAGGTCCCAGCACTGCCCTTTGCCCGCCCTCCCACCATGCC    392
+                                                                               |||||||| |||| |||||| ||||| || |||||||| ||  ||||| |
+AY211277.1 Homo sapiens Q50-type retinal homeobox (QRX) mRNA, complete cds 354 AGACTCCCCGAGGCCCCAGCGCTGCCGTTCGCCCGCCCCCCGGCCATGTC    403
+
+AY211276.1 Bos taurus Q50-type retinal homeobox (Qrx) mRNA, complete cds   393 ACTGTCCCTGGAGCCCTGGCTGGGCCCAGGGCCCCCAGCTGTGCCAGCCC    442
+                                                                                ||| |||||||||||||| ||||||| || || || || ||||||| ||
+AY211277.1 Homo sapiens Q50-type retinal homeobox (QRX) mRNA, complete cds 404 GCTGCCCCTGGAGCCCTGGTTGGGCCCCGGACCGCCGGCCGTGCCAGGCC    453
+
+AY211276.1 Bos taurus Q50-type retinal homeobox (Qrx) mRNA, complete cds   443 TCCCACGCCTCCTGGGCTCGGGCCCAGGGTTGCAGGGCTCCTTTGGGCCC    492
+                                                                               |||| |||||||||||| ||||||| ||| |||| |  ||||| ||||| 
+AY211277.1 Homo sapiens Q50-type retinal homeobox (QRX) mRNA, complete cds 454 TCCCCCGCCTCCTGGGCCCGGGCCCGGGGCTGCAAGCGTCCTTCGGGCCT    503
+
+AY211276.1 Bos taurus Q50-type retinal homeobox (Qrx) mRNA, complete cds   493 CACGCCTTCAGTCCAGCCTTCATGGATGGCTTCACCCTGGAGGAGGGTTC    542
+                                                                               || |||||   |||  |||||   ||||||||| ||||||||||||  ||
+AY211277.1 Homo sapiens Q50-type retinal homeobox (QRX) mRNA, complete cds 504 CATGCCTTTGCTCCCACCTTCGCAGATGGCTTCGCCCTGGAGGAGGCGTC    553
+
+AY211276.1 Bos taurus Q50-type retinal homeobox (Qrx) mRNA, complete cds   543 CCTGCGGCTTCTGGCCAAGGAGCACGTGCAGGCTCTGGACAGGGCCTGGC    592
+                                                                               ||||||||| ||||||||||| || |  ||||||||||||||||||||||
+AY211277.1 Homo sapiens Q50-type retinal homeobox (QRX) mRNA, complete cds 554 CCTGCGGCTGCTGGCCAAGGAACATGCACAGGCTCTGGACAGGGCCTGGC    603
+
+AY211276.1 Bos taurus Q50-type retinal homeobox (Qrx) mRNA, complete cds   593 CGTCGGCCTGAGCCTGGTGCCTGCCCAGCCCCTCCTGCTCAGCC    636
+                                                                               || | |||||||||||  |||  ||| | ||| ||| ||| |||
+AY211277.1 Homo sapiens Q50-type retinal homeobox (QRX) mRNA, complete cds 604 CGCCAGCCTGAGCCTGCCGCCCTCCCGGGCCC-CCTCCTCGGCC    646
+
+
+#---------------------------------------
+#---------------------------------------
