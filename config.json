@@ -1,0 +1,12 @@
+{
+  "file":  "C:\\Users\\alfon\\Documents\\Skolprojekt\\PCR-primer\\sequences\\SARS-CoV-2-isolate-Wuhan-Hu-1-complete-genome.fasta",
+  "settings": {
+    "GC_window": 30,
+    "length": 20,
+    "GC_min": 30,
+    "GC_max": 80,
+    "T_min": 58,
+    "T_max": 62,
+    "deltaT": 15
+  }
+}
